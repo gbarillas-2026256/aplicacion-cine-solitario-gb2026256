@@ -1,0 +1,47 @@
+@import "EvaIdentityStyles.css";
+
+.root {
+    -fx-background-color: -eva-black;
+}
+
+.panel-formulario {
+    -fx-background-color: -eva-black;
+}
+
+.avatar-login {
+    -fx-effect: dropshadow(gaussian, -eva-orange-glow, 18, 0, 0, 0);
+}
+
+.link-register {
+    -fx-text-fill: -eva-muted;
+    -fx-font-size: 11.5px;
+    -fx-border-color: transparent;
+}
+.link-register:hover {
+    -fx-text-fill: -eva-orange;
+}
+.link-register:visited {
+    -fx-text-fill: -eva-muted;
+}
+
+/* ---------- Panel decorativo (Shinji) ---------- */
+
+.panel-decorativo {
+    -fx-background-color: linear-gradient(to bottom right, -eva-red, -eva-orange 42%, -eva-purple-deep 100%);
+    -fx-border-color: -eva-orange;
+    -fx-border-width: 0 0 0 2;
+}
+
+.panel-decorativo-titulo {
+    -fx-text-fill: -eva-ink;
+    -fx-font-size: 15px;
+    -fx-font-style: italic;
+    -fx-font-weight: bold;
+}
+
+.panel-decorativo-texto {
+    -fx-text-fill: rgba(236,237,233,0.75);
+    -fx-font-size: 11px;
+    -fx-text-alignment: center;
+    -fx-line-spacing: 2px;
+}

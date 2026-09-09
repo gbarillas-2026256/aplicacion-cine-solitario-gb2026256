@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="820.0" stylesheets="@../resources/styles/LoginStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kennethvelasquez.system.controller.LoginController">
+   <children>
+
+      <!-- franja de peligro superior, decorativa -->
+      <VBox alignment="TOP_CENTER" pickOnBounds="false" StackPane.alignment="TOP_CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" prefWidth="820.0" styleClass="eva-hazard-strip" />
+         </children>
+      </VBox>
+
+      <HBox prefHeight="500.0" prefWidth="820.0">
+         <children>
+
+            <!-- Panel del formulario -->
+            <VBox alignment="CENTER" prefHeight="500.0" prefWidth="460.0" spacing="10.0" styleClass="panel-formulario">
+               <padding>
+                  <Insets bottom="36.0" left="52.0" right="52.0" top="36.0" />
+               </padding>
+               <children>
+                  <ImageView fitHeight="86.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true" styleClass="avatar-login">
+                     <image>
+                        <Image url="@../resources/images/eva/login_avatar_kaworu.gif" />
+                     </image>
+                  </ImageView>
+                  <Label styleClass="eva-title" text="NERV MAGI SYSTEM" />
+                  <Label styleClass="eva-subtitle" text="ACCESO RESTRINGIDO · INGRESE SUS CREDENCIALES">
+                     <VBox.margin>
+                        <Insets bottom="10.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label styleClass="eva-label" text="ID DE OPERADOR" />
+                        <TextField fx:id="txtUser" maxWidth="Infinity" promptText="usuario" styleClass="eva-field" />
+                     </children>
+                  </VBox>
+
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label styleClass="eva-label" text="CLAVE DE ACCESO" />
+                        <PasswordField fx:id="pwdPassword" maxWidth="Infinity" promptText="contraseña" styleClass="eva-field" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="4.0" />
+                     </VBox.margin>
+                  </VBox>
+
+                  <Button fx:id="btnLogin" maxWidth="Infinity" mnemonicParsing="false" onMouseClicked="#onLogin" styleClass="eva-button-primary" text="INICIAR SESIÓN">
+                     <VBox.margin>
+                        <Insets top="14.0" />
+                     </VBox.margin>
+                  </Button>
+
+                  <HBox alignment="CENTER" prefHeight="40.0">
+                     <children>
+                        <Hyperlink onMouseClicked="#onRegister" styleClass="link-register" text="¿No tienes cuenta? Solicitar acceso" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="4.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
+
+            <!-- Panel decorativo -->
+            <StackPane prefHeight="500.0" prefWidth="360.0" styleClass="panel-decorativo">
+               <children>
+                  <VBox alignment="CENTER" spacing="10.0">
+                     <padding>
+                        <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
+                     </padding>
+                     <children>
+                        <ImageView fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../resources/images/eva/login_side_shinji.png" />
+                           </image>
+                        </ImageView>
+                        <Label styleClass="panel-decorativo-titulo" text="&quot;NO HUYAS.&quot;" />
+                        <Label styleClass="panel-decorativo-texto" text="Terminal de acceso al sistema de auditoría de usuarios y productos." wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+
+         </children>
+      </HBox>
+   </children>
+</StackPane>
