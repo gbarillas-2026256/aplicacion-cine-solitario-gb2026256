@@ -7,9 +7,14 @@
 -- necesites: borra y recrea todo desde cero.
 -- ============================================================
 
-drop database if exists cine_db;
-create database cine_db;
-use cine_db;
+drop database if exists cine_db_in4av;
+create database cine_db_in4av;
+use cine_db_in4av;
+
+-- Crea el usuario de MySQL que usa la app (Enviroment.java) y le da permisos sobre esta BD.
+create user if not exists 'IN4AV'@'localhost' identified by '&mnid4AV';
+grant all privileges on cine_db_in4av.* to 'IN4AV'@'localhost';
+flush privileges;
 
 -- ============================================================
 -- TABLAS
@@ -427,4 +432,4 @@ Delimiter ;
 -- Verificacion rapida: debe devolver 21 filas (los 21 procedimientos)
 -- ============================================================
 select routine_name from information_schema.routines
-    where routine_schema = 'cine_db';
+    where routine_schema = 'cine_db_in4av';

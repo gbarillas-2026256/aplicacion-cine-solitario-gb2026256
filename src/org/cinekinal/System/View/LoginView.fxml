@@ -12,10 +12,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="820.0" stylesheets="@../resources/styles/LoginStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.kennethvelasquez.system.controller.LoginController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="820.0" stylesheets="@../styles/LoginStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.LoginController">
    <children>
 
-      <!-- franja de peligro superior, decorativa -->
       <VBox alignment="TOP_CENTER" pickOnBounds="false" StackPane.alignment="TOP_CENTER">
          <children>
             <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" prefWidth="820.0" styleClass="eva-hazard-strip" />
@@ -31,13 +30,8 @@
                   <Insets bottom="36.0" left="52.0" right="52.0" top="36.0" />
                </padding>
                <children>
-                  <ImageView fitHeight="86.0" fitWidth="86.0" pickOnBounds="true" preserveRatio="true" styleClass="avatar-login">
-                     <image>
-                        <Image url="@../resources/images/eva/login_avatar_kaworu.gif" />
-                     </image>
-                  </ImageView>
-                  <Label styleClass="eva-title" text="NERV MAGI SYSTEM" />
-                  <Label styleClass="eva-subtitle" text="ACCESO RESTRINGIDO · INGRESE SUS CREDENCIALES">
+                  <Label styleClass="eva-title" text="CINE SYSTEM" />
+                  <Label styleClass="eva-subtitle" text="INGRESA CON TU CUENTA DE EMPLEADO O DE CLIENTE">
                      <VBox.margin>
                         <Insets bottom="10.0" />
                      </VBox.margin>
@@ -45,14 +39,14 @@
 
                   <VBox spacing="4.0">
                      <children>
-                        <Label styleClass="eva-label" text="ID DE OPERADOR" />
-                        <TextField fx:id="txtUser" maxWidth="Infinity" promptText="usuario" styleClass="eva-field" />
+                        <Label styleClass="eva-label" text="USUARIO O CORREO" />
+                        <TextField fx:id="txtUser" maxWidth="Infinity" promptText="usuario (empleado) o correo (cliente)" styleClass="eva-field" />
                      </children>
                   </VBox>
 
                   <VBox spacing="4.0">
                      <children>
-                        <Label styleClass="eva-label" text="CLAVE DE ACCESO" />
+                        <Label styleClass="eva-label" text="CONTRASEÑA" />
                         <PasswordField fx:id="pwdPassword" maxWidth="Infinity" promptText="contraseña" styleClass="eva-field" />
                      </children>
                      <VBox.margin>
@@ -68,7 +62,7 @@
 
                   <HBox alignment="CENTER" prefHeight="40.0">
                      <children>
-                        <Hyperlink onMouseClicked="#onRegister" styleClass="link-register" text="¿No tienes cuenta? Solicitar acceso" />
+                        <Hyperlink onMouseClicked="#onRegister" styleClass="link-register" text="¿No tienes cuenta? Regístrate" />
                      </children>
                      <VBox.margin>
                         <Insets top="4.0" />
@@ -85,13 +79,8 @@
                         <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
                      </padding>
                      <children>
-                        <ImageView fitHeight="300.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../resources/images/eva/login_side_shinji.png" />
-                           </image>
-                        </ImageView>
-                        <Label styleClass="panel-decorativo-titulo" text="&quot;NO HUYAS.&quot;" />
-                        <Label styleClass="panel-decorativo-texto" text="Terminal de acceso al sistema de auditoría de usuarios y productos." wrapText="true" />
+                        <Label styleClass="panel-decorativo-titulo" text="Bienvenido de vuelta" />
+                        <Label styleClass="panel-decorativo-texto" text="Sistema de administración cinematográfica. Un mismo acceso para el personal del cine y para los clientes." wrapText="true" />
                      </children>
                   </VBox>
                </children>

@@ -12,7 +12,7 @@ import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Scene;
 import java.io.UncheckedIOException;
 public class ViewFactory {
-    private final String PATH_VIEWS="/org/kennethvelasquez/system/view/";
+    private final String PATH_VIEWS="/org/cinekinal/system/view/";
     
     public Scene loadFileFXML(String nameFile, int width, int height){
         String pathOfFile = PATH_VIEWS + nameFile;
