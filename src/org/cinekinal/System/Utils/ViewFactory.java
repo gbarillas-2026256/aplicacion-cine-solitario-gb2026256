@@ -21,6 +21,11 @@ public class ViewFactory {
             FXMLLoader loadFXML = new FXMLLoader();
             //Obtener la URL del archivo, viene de la clase main
             URL urlFile = ClasePrincipal.class.getResource(pathOfFile);
+            if (urlFile == null) {
+                throw new IllegalStateException(
+                    "No se encontro la vista '" + pathOfFile + "'. "
+                    + "Revisa que el archivo .fxml exista en esa ruta exacta dentro de src.");
+            }
             loadFXML.setBuilderFactory(new JavaFXBuilderFactory() );
             loadFXML.setLocation(urlFile);
             
@@ -42,9 +47,8 @@ public class ViewFactory {
                 default      -> scene = loadFileFXML("LoginView.fxml",0,0); 
             }
             SceneManager.getInstanciaSceneManager().changeScene(scene);
-        } catch (NullPointerException e) {
-            System.out.println("Error load scene");
-            //Alert
+        } catch (RuntimeException e) {
+            System.out.println("Error al cargar la vista '" + nameFile + "': " + e.getMessage());
         }
     }
     

@@ -9,5 +9,6 @@ package org.cinekinal.system.model;
 public enum ClienteRegistroStatus {
     CLIENTE_CREADO,
     CORREO_YA_REGISTRADO,
+    USUARIO_YA_REGISTRADO,
     ERROR_AL_CREAR
 }

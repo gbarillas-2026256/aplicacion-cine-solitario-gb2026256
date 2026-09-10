@@ -23,8 +23,8 @@ public class LoginController implements Initializable {
     private PasswordField pwdPassword;
 
     private final AlertInformation alertInfo = new AlertInformation();
-    private final EmpleadoService empleadoService = new EmpleadoService();
-    private final ClienteService clienteService = new ClienteService();
+    private final EmpleadoService employeeService = new EmpleadoService();
+    private final ClienteService customereService = new ClienteService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -32,21 +32,21 @@ public class LoginController implements Initializable {
 
     @FXML
     public void onLogin(MouseEvent event) {
-        //Este campo sirve como "usuario" (si quien entra es un Empleado)
-        //o como "correo" (si quien entra es un Cliente) — el formulario
-        //es el mismo para los dos, y decidimos cual es DESPUES de intentar.
-        String identificador = txtUser.getText().trim();
+        //Empleados y Clientes ahora inician sesion con "usuario" los dos —
+        //el formulario es el mismo, y decidimos a cual tabla pertenece
+        //DESPUES de intentar contra la primera.
+        String usuario = txtUser.getText().trim();
         String password = pwdPassword.getText().trim();
 
-        if (identificador.isEmpty() || password.isEmpty()) {
+        if (usuario.isEmpty() || password.isEmpty()) {
             alertInfo.viewAlert("WARNING", "CAMPOS INCOMPLETOS",
                     "FALTAN DATOS",
-                    "Ingresa tu usuario/correo y tu contraseña.");
+                    "Ingresa tu usuario y tu contraseña.");
             return;
         }
 
-        //1. Primero intentamos como Empleado (login por "usuario")
-        Empleado empleado = empleadoService.login(identificador, password);
+        //1. Primero intentamos como Empleado
+        Empleado empleado = employeeService.login(usuario, password);
         if (empleado != null) {
             Session.iniciarSesionComoEmpleado(empleado);
             ViewFactory viewFactory = new ViewFactory();
@@ -54,9 +54,8 @@ public class LoginController implements Initializable {
             return;
         }
 
-        //2. Si no coincidio con ningun empleado, intentamos como
-        //Cliente (login por "correo")
-        Cliente cliente = clienteService.login(identificador, password);
+        //2. Si no coincidio con ningun empleado, intentamos como Cliente
+        Cliente cliente = customereService.login(usuario, password);
         if (cliente != null) {
             Session.iniciarSesionComoCliente(cliente);
             ViewFactory viewFactory = new ViewFactory();
@@ -67,7 +66,7 @@ public class LoginController implements Initializable {
         //3. No coincidio con ninguno de los dos
         alertInfo.viewAlert("WARNING", "ERROR DE ACCESO",
                 "CREDENCIALES INCORRECTAS",
-                "El usuario/correo o la contraseña no son correctos.");
+                "El usuario o la contraseña no son correctos.");
     }
 
     @FXML

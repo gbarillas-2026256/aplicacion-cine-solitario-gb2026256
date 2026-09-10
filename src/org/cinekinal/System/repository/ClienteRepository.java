@@ -12,22 +12,26 @@ public class ClienteRepository {
 
     public void crear(Cliente cliente) {
         try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_crear_cliente(?,?,?,?)}")) {
+                     .prepareCall("{call sp_crear_cliente(?,?,?,?,?)}")) {
             callSP.setString(1, cliente.getNombres());
             callSP.setString(2, cliente.getApellidos());
             callSP.setString(3, cliente.getCorreo());
-            callSP.setString(4, cliente.getPassword());
-            callSP.execute();
+            callSP.setString(4, cliente.getUsuario());
+            callSP.setString(5, cliente.getPassword());
+
+            int filasAfectadas = callSP.executeUpdate();
+            System.out.println("[DEBUG] sp_crear_cliente -> filas insertadas: " + filasAfectadas);
+
         } catch (SQLException e) {
             System.out.println("Error al crear cliente: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
-    
-    public Cliente login(String correo, String password) {
+
+    public Cliente login(String usuario, String password) {
         try (CallableStatement callSP = conexionDB.getConnection()
                      .prepareCall("{call sp_login_cliente(?,?)}")) {
-            callSP.setString(1, correo);
+            callSP.setString(1, usuario);
             callSP.setString(2, password);
 
             try (ResultSet resultado = callSP.executeQuery()) {
@@ -37,6 +41,7 @@ public class ClienteRepository {
                     cliente.setNombres(resultado.getString("nombres"));
                     cliente.setApellidos(resultado.getString("apellidos"));
                     cliente.setCorreo(resultado.getString("correo"));
+                    cliente.setUsuario(resultado.getString("usuario"));
                     cliente.setEsVip(resultado.getBoolean("es_vip"));
                     return cliente;
                 }

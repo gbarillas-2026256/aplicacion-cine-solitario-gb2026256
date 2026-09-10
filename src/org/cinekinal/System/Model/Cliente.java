@@ -5,6 +5,7 @@ public class Cliente {
     private String nombres;
     private String apellidos;
     private String correo;
+    private String usuario;
     private String password;
     private boolean esVip;
 
@@ -12,11 +13,12 @@ public class Cliente {
     }
 
     public Cliente(String idCliente, String nombres, String apellidos, String correo,
-                    String password, boolean esVip) {
+                    String usuario, String password, boolean esVip) {
         this.idCliente = idCliente;
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.correo = correo;
+        this.usuario = usuario;
         this.password = password;
         this.esVip = esVip;
     }
@@ -51,6 +53,14 @@ public class Cliente {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public String getPassword() {

@@ -56,6 +56,13 @@
                      </VBox.margin>
                   </Label>
 
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label styleClass="eva-label" text="USUARIO" />
+                        <TextField fx:id="txtUsuario" maxWidth="Infinity" styleClass="eva-field" />
+                     </children>
+                  </VBox>
+
                   <HBox spacing="20.0">
                      <children>
                         <VBox spacing="4.0" HBox.hgrow="ALWAYS">

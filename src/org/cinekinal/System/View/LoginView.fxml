@@ -39,8 +39,8 @@
 
                   <VBox spacing="4.0">
                      <children>
-                        <Label styleClass="eva-label" text="USUARIO O CORREO" />
-                        <TextField fx:id="txtUser" maxWidth="Infinity" promptText="usuario (empleado) o correo (cliente)" styleClass="eva-field" />
+                        <Label styleClass="eva-label" text="USUARIO" />
+                        <TextField fx:id="txtUser" maxWidth="Infinity" promptText="usuario" styleClass="eva-field" />
                      </children>
                   </VBox>
 

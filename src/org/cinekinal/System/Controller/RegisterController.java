@@ -16,15 +16,17 @@ import org.cinekinal.system.utils.ViewFactory;
 public class RegisterController implements Initializable {
 
     @FXML
-    private TextField txtNombres;
+    private TextField txtUser;
     @FXML
-    private TextField txtApellidos;
+    private TextField txtName;
     @FXML
-    private TextField txtCorreo;
+    private TextField txtLastName;
+    @FXML
+    private TextField txtEmail;
     @FXML
     private PasswordField pwdPassword;
     @FXML
-    private PasswordField pwdConfirmarPassword;
+    private PasswordField pwdConfirmedPassword;
 
     private final Validations validate = new Validations();
     private final AlertInformation alertInfo = new AlertInformation();
@@ -42,13 +44,14 @@ public class RegisterController implements Initializable {
 
     @FXML
     public void onRegistrarCliente(MouseEvent event) {
-        String nombres = txtNombres.getText().trim();
-        String apellidos = txtApellidos.getText().trim();
-        String correo = txtCorreo.getText().trim();
+        String usuario = txtUser.getText().trim();
+        String nombres = txtName.getText().trim();
+        String apellidos = txtLastName.getText().trim();
+        String correo = txtEmail.getText().trim();
         String password = pwdPassword.getText().trim();
-        String confirmarPassword = pwdConfirmarPassword.getText().trim();
+        String confirmarPassword = pwdConfirmedPassword.getText().trim();
 
-        if (validate.validateTextEmpty(nombres) || validate.validateTextEmpty(apellidos)
+        if (validate.validateTextEmpty(usuario) || validate.validateTextEmpty(nombres) || validate.validateTextEmpty(apellidos)
                 || validate.validateTextEmpty(correo) || validate.validateTextEmpty(password)
                 || validate.validateTextEmpty(confirmarPassword)) {
             alertInfo.viewAlert("WARNING", "CAMPOS INCOMPLETOS",
@@ -65,7 +68,9 @@ public class RegisterController implements Initializable {
         }
 
         String campoFueraDeLongitud = "";
-        if (!validate.validateTextLength(nombres, 60)) {
+        if (!validate.validateTextLength(usuario, 30)) {
+            campoFueraDeLongitud = "El campo USUARIO supera los 30 caracteres.";
+        } else if (!validate.validateTextLength(nombres, 60)) {
             campoFueraDeLongitud = "El campo NOMBRES supera los 60 caracteres.";
         } else if (!validate.validateTextLength(apellidos, 60)) {
             campoFueraDeLongitud = "El campo APELLIDOS supera los 60 caracteres.";
@@ -89,7 +94,7 @@ public class RegisterController implements Initializable {
             return;
         }
 
-        ClienteRegistroStatus resultado = clienteService.registrar(nombres, apellidos, correo, password);
+        ClienteRegistroStatus resultado = clienteService.registrar(nombres, apellidos, correo, usuario, password);
 
         switch (resultado) {
             case CLIENTE_CREADO -> {
@@ -102,6 +107,9 @@ public class RegisterController implements Initializable {
             case CORREO_YA_REGISTRADO -> alertInfo.viewAlert("WARNING", "CORREO EN USO",
                     "ESTE CORREO YA TIENE CUENTA",
                     "Ya existe una cuenta registrada con ese correo. Intenta iniciar sesión.");
+            case USUARIO_YA_REGISTRADO -> alertInfo.viewAlert("WARNING", "USUARIO EN USO",
+                    "ESTE USUARIO YA EXISTE",
+                    "Ese nombre de usuario ya está en uso. Elige otro.");
             case ERROR_AL_CREAR -> alertInfo.viewAlert("ERROR", "ERROR AL REGISTRAR",
                     "NO SE PUDO CREAR LA CUENTA",
                     "Ocurrió un error al guardar tus datos. Verifica la conexión a la base de datos.");

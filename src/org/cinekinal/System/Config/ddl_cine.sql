@@ -63,11 +63,13 @@ create table if not exists Clientes (
     nombres varchar(60) not null,
     apellidos varchar(60) not null,
     correo varchar(80) not null,
+    usuario varchar(30) not null,
     password varchar(60) not null,
     es_vip boolean not null default false,
     fecha_registro datetime not null default current_timestamp,
     constraint pk_clientes primary key (id_cliente),
-    constraint uq_clientes_correo unique (correo)
+    constraint uq_clientes_correo unique (correo),
+    constraint uq_clientes_usuario unique (usuario)
 );
 
 create table if not exists Peliculas (
@@ -242,20 +244,21 @@ Delimiter ;
 drop procedure if exists sp_crear_cliente;
 Delimiter $$
 create procedure sp_crear_cliente(in nombres_p varchar(60), in apellidos_p varchar(60),
-                                   in correo_p varchar(80), in password_p varchar(60))
+                                   in correo_p varchar(80), in usuario_p varchar(30),
+                                   in password_p varchar(60))
 begin
-    insert into Clientes(id_cliente, nombres, apellidos, correo, password)
-        values(uuid(), nombres_p, apellidos_p, correo_p, password_p);
+    insert into Clientes(id_cliente, nombres, apellidos, correo, usuario, password)
+        values(uuid(), nombres_p, apellidos_p, correo_p, usuario_p, password_p);
 end$$
 Delimiter ;
 
 drop procedure if exists sp_login_cliente;
 Delimiter $$
-create procedure sp_login_cliente(in correo_p varchar(80), in password_p varchar(60))
+create procedure sp_login_cliente(in usuario_p varchar(30), in password_p varchar(60))
 begin
-    select id_cliente, nombres, apellidos, correo, es_vip
+    select id_cliente, nombres, apellidos, correo, usuario, es_vip
         from Clientes
-        where correo = correo_p and password = password_p;
+        where usuario = usuario_p and password = password_p;
 end$$
 Delimiter ;
 
