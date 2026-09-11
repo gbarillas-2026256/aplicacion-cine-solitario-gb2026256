@@ -44,6 +44,8 @@ public class ViewFactory {
                 case "register" -> scene = loadFileFXML("RegisterView.fxml", 900, 560);
                 case "mainmenu" -> scene = loadFileFXML("MainMenuView.fxml", 860, 560);
                 case "users" -> scene = loadFileFXML("ManageUsersView.fxml", 900, 600);
+                case "solicitudes" -> scene = loadFileFXML("SolicitudesView.fxml", 900, 600);
+                case "comprarboletos" -> scene = loadFileFXML("CompraBoletoView.fxml", 900, 640);
                 default      -> scene = loadFileFXML("LoginView.fxml",0,0); 
             }
             SceneManager.getInstanciaSceneManager().changeScene(scene);
@@ -68,24 +70,12 @@ public class ViewFactory {
     public void viewManageUsers(){
         loadScene("users");
     }
-    
-    
-    
-    
+
+    public void viewSolicitudes(){
+        loadScene("solicitudes");
+    }
+
+    public void viewComprarBoletos(){
+        loadScene("comprarboletos");
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

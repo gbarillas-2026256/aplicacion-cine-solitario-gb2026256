@@ -137,3 +137,62 @@
     -fx-font-size: 11px;
     -fx-wrap-text: true;
 }
+
+/* ---------------------------------------------------------------
+ * Agregado para MainMenu (sidebar), Solicitudes (boton rechazar) y
+ * CompraBoleto (mapa de asientos).
+ * --------------------------------------------------------------- */
+
+.eva-sidebar {
+    -fx-background-color: -eva-panel;
+    -fx-border-color: -eva-line;
+    -fx-border-width: 0 1.4 0 0;
+}
+
+.eva-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: -eva-red;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1px;
+    -fx-border-color: -eva-red;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-padding: 9 20;
+    -fx-cursor: hand;
+}
+.eva-button-danger:hover {
+    -fx-background-color: -eva-red;
+    -fx-text-fill: -eva-ink;
+}
+
+.eva-seat {
+    -fx-background-radius: 3;
+    -fx-border-radius: 3;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-min-width: 38px;
+    -fx-min-height: 32px;
+    -fx-cursor: hand;
+}
+.eva-seat-libre {
+    -fx-background-color: -eva-panel-light;
+    -fx-text-fill: -eva-green;
+    -fx-border-color: -eva-green-deep;
+    -fx-border-width: 1;
+}
+.eva-seat-ocupado {
+    -fx-background-color: -eva-red-deep;
+    -fx-text-fill: -eva-muted;
+    -fx-border-color: -eva-red;
+    -fx-border-width: 1;
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}
+.eva-seat-seleccionado {
+    -fx-background-color: -eva-orange;
+    -fx-text-fill: -eva-black-deep;
+    -fx-border-color: -eva-orange-deep;
+    -fx-border-width: 1.4;
+}
