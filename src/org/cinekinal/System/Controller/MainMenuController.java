@@ -74,7 +74,9 @@ public class MainMenuController implements Initializable {
         agregarBotonAccion(empleado, Accion.VER_REPORTES, () -> mostrarEnConstruccion("Reportes"));
         agregarBotonAccion(empleado, Accion.VER_GANANCIAS, () -> mostrarEnConstruccion("Ganancias"));
         agregarBotonAccion(empleado, Accion.CAMBIAR_PRECIO, () -> mostrarEnConstruccion("Cambiar precio"));
-        agregarBotonAccion(empleado, Accion.DAR_BAJA_EMPLEADO, () -> new ViewFactory().viewManageUsers());
+        // "Dar de baja a un empleado" ya NO es un boton aparte: vive dentro
+        // de "Gestion de empleados" (mas abajo), donde tiene sentido junto
+        // con crear y editar empleados en un solo lugar.
 
         // Solo el Dueño ve esto -- pantallas administrativas exclusivas de jerarquía 1
         if (empleado.getNivelJerarquico() == 1) {

@@ -65,6 +65,7 @@ public class ViewFactory {
     
     public void viewMainMenu(){
         loadScene("mainmenu");
+        SceneManager.getInstanciaSceneManager().getStagePrincipal().setMaximized(true);
     }
     
     public void viewManageUsers(){
