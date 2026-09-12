@@ -57,6 +57,35 @@ begin
 end$$
 Delimiter ;
 
+drop procedure if exists sp_editar_empleado;
+Delimiter $$
+create procedure sp_editar_empleado(in id_empleado_p varchar(36),
+                                    in nombres_p varchar(60),
+                                    in apellidos_p varchar(60),
+                                    in correo_p varchar(80),
+                                    in id_puesto_p int)
+begin
+    update Empleados
+        set nombres = nombres_p,
+            apellidos = apellidos_p,
+            correo = correo_p,
+            id_puesto = id_puesto_p
+        where id_empleado = id_empleado_p;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_reportar_empleado;
+Delimiter $$
+create procedure sp_reportar_empleado(in id_empleado_p varchar(36),
+                                      in id_reportador_p varchar(36),
+                                      in tipo_reporte_p varchar(60),
+                                      in descripcion_p varchar(500))
+begin
+    insert into ReportesEmpleados(id_reporte, id_empleado, id_reportador, tipo_reporte, descripcion)
+        values(uuid(), id_empleado_p, id_reportador_p, tipo_reporte_p, descripcion_p);
+end$$
+Delimiter ;
+
 -- ---------- SOLICITUDES (flujo de aprobacion) ----------
 
 drop procedure if exists sp_crear_solicitud;

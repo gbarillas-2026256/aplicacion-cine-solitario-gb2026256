@@ -94,4 +94,36 @@ public class Boleto {
     public void setFechaCompra(Timestamp fechaCompra) {
         this.fechaCompra = fechaCompra;
     }
+
+    private String nombreCliente;
+    private boolean usado;
+
+    public String getNombreCliente() {
+        return nombreCliente != null ? nombreCliente : "Público General";
+    }
+
+    public void setNombreCliente(String nombreCliente) {
+        this.nombreCliente = nombreCliente;
+    }
+
+    public boolean isUsado() {
+        return usado;
+    }
+
+    public void setUsado(boolean usado) {
+        this.usado = usado;
+    }
+
+    public String getAsientoFormateado() {
+        return (fila != null ? fila : "") + (numero > 0 ? String.valueOf(numero) : "");
+    }
+
+    // English aliases
+    public String getTicketId() { return idBoleto; }
+    public String getMovieTitle() { return tituloPelicula; }
+    public String getRoomName() { return nombreSala; }
+    public BigDecimal getFinalPrice() { return precioFinal; }
+    public Timestamp getPurchaseDate() { return fechaCompra; }
+    public String getCustomerName() { return getNombreCliente(); }
+    public boolean isUsed() { return usado; }
 }

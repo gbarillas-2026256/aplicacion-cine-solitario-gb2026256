@@ -65,7 +65,47 @@ public class PeliculaRepository {
             callSP.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error al desactivar pelicula: " + e.getMessage());
-            throw new RuntimeException(e);
+            try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(
+                    "UPDATE Peliculas SET activa = false WHERE id_pelicula = ?")) {
+                ps.setString(1, idPelicula);
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    public void editar(String idPelicula, String titulo, String genero, String clasificacion,
+                       int duracionMin, String sinopsis, String posterUrl, String trailerUrl) {
+        try (CallableStatement callSP = conexionDB.getConnection()
+                     .prepareCall("{call sp_editar_pelicula(?,?,?,?,?,?,?,?)}")) {
+            callSP.setString(1, idPelicula);
+            callSP.setString(2, titulo);
+            callSP.setString(3, genero);
+            callSP.setString(4, clasificacion);
+            callSP.setInt(5, duracionMin);
+            callSP.setString(6, sinopsis);
+            callSP.setString(7, posterUrl);
+            callSP.setString(8, trailerUrl);
+            callSP.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Aviso: intentando fallback para editar pelicula: " + e.getMessage());
+            String sql = "UPDATE Peliculas SET titulo=?, genero=?, clasificacion=?, duracion_min=?, "
+                    + "sinopsis=?, poster_url=?, trailer_url=? WHERE id_pelicula=?";
+            try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(sql)) {
+                ps.setString(1, titulo);
+                ps.setString(2, genero);
+                ps.setString(3, clasificacion);
+                ps.setInt(4, duracionMin);
+                ps.setString(5, sinopsis);
+                ps.setString(6, posterUrl);
+                ps.setString(7, trailerUrl);
+                ps.setString(8, idPelicula);
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                System.out.println("Error al editar pelicula: " + ex.getMessage());
+                throw new RuntimeException(ex);
+            }
         }
     }
 }

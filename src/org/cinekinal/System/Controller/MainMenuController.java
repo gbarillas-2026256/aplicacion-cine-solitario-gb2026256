@@ -67,13 +67,13 @@ public class MainMenuController implements Initializable {
 
     private void construirMenuEmpleado(Empleado empleado) {
         agregarBotonAccion(empleado, Accion.VER_CARTELERA, () -> new ViewFactory().viewComprarBoletos());
-        agregarBotonAccion(empleado, Accion.VERIFICAR_ENTRADA, () -> mostrarEnConstruccion("Verificar entrada"));
-        agregarBotonAccion(empleado, Accion.REGISTRAR_VENTA, () -> mostrarEnConstruccion("Registrar venta"));
-        agregarBotonAccion(empleado, Accion.ADMINISTRAR_FUNCIONES_SALAS, () -> mostrarEnConstruccion("Administrar funciones y salas"));
-        agregarBotonAccion(empleado, Accion.ADMINISTRAR_PELICULAS, () -> mostrarEnConstruccion("Administrar películas"));
-        agregarBotonAccion(empleado, Accion.VER_REPORTES, () -> mostrarEnConstruccion("Reportes"));
-        agregarBotonAccion(empleado, Accion.VER_GANANCIAS, () -> mostrarEnConstruccion("Ganancias"));
-        agregarBotonAccion(empleado, Accion.CAMBIAR_PRECIO, () -> mostrarEnConstruccion("Cambiar precio"));
+        agregarBotonAccion(empleado, Accion.VERIFICAR_ENTRADA, () -> new ViewFactory().viewVerificarEntrada());
+        agregarBotonAccion(empleado, Accion.REGISTRAR_VENTA, () -> new ViewFactory().viewRegistrarVenta());
+        agregarBotonAccion(empleado, Accion.ADMINISTRAR_FUNCIONES_SALAS, () -> new ViewFactory().viewAdministrarFuncionesSalas());
+        agregarBotonAccion(empleado, Accion.ADMINISTRAR_PELICULAS, () -> new ViewFactory().viewAdministrarPeliculas());
+        agregarBotonAccion(empleado, Accion.VER_REPORTES, () -> new ViewFactory().viewReportes());
+        agregarBotonAccion(empleado, Accion.VER_GANANCIAS, () -> new ViewFactory().viewGanancias());
+        agregarBotonAccion(empleado, Accion.CAMBIAR_PRECIO, () -> new ViewFactory().viewCambiarPrecio());
         // "Dar de baja a un empleado" ya NO es un boton aparte: vive dentro
         // de "Gestion de empleados" (mas abajo), donde tiene sentido junto
         // con crear y editar empleados en un solo lugar.

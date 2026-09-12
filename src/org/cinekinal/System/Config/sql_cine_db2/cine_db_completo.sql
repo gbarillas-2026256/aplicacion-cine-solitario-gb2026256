@@ -1,4 +1,4 @@
-﻿-- ============================================================
+-- ============================================================
 -- 01_tablas.sql
 -- Crea la base de datos y todas las tablas con sus llaves e indices.
 -- Debe ejecutarse SIEMPRE antes que cualquiera de los otros archivos.
@@ -54,6 +54,18 @@ create table if not exists Solicitudes (
     constraint pk_solicitudes primary key (id_solicitud),
     constraint fk_solicitudes_solicitante foreign key (id_solicitante) references Empleados(id_empleado),
     constraint fk_solicitudes_aprobador foreign key (id_aprobador) references Empleados(id_empleado)
+);
+
+create table if not exists ReportesEmpleados (
+    id_reporte varchar(36) not null,
+    id_empleado varchar(36) not null,
+    id_reportador varchar(36) not null,
+    tipo_reporte varchar(60) not null,
+    descripcion varchar(500) not null,
+    fecha_reporte datetime not null default current_timestamp,
+    constraint pk_reportes primary key (id_reporte),
+    constraint fk_reportes_empleado foreign key (id_empleado) references Empleados(id_empleado),
+    constraint fk_reportes_reportador foreign key (id_reportador) references Empleados(id_empleado)
 );
 
 create table if not exists Clientes (
@@ -259,6 +271,35 @@ begin
 end$$
 Delimiter ;
 
+drop procedure if exists sp_editar_empleado;
+Delimiter $$
+create procedure sp_editar_empleado(in id_empleado_p varchar(36),
+                                    in nombres_p varchar(60),
+                                    in apellidos_p varchar(60),
+                                    in correo_p varchar(80),
+                                    in id_puesto_p int)
+begin
+    update Empleados
+        set nombres = nombres_p,
+            apellidos = apellidos_p,
+            correo = correo_p,
+            id_puesto = id_puesto_p
+        where id_empleado = id_empleado_p;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_reportar_empleado;
+Delimiter $$
+create procedure sp_reportar_empleado(in id_empleado_p varchar(36),
+                                      in id_reportador_p varchar(36),
+                                      in tipo_reporte_p varchar(60),
+                                      in descripcion_p varchar(500))
+begin
+    insert into ReportesEmpleados(id_reporte, id_empleado, id_reportador, tipo_reporte, descripcion)
+        values(uuid(), id_empleado_p, id_reportador_p, tipo_reporte_p, descripcion_p);
+end$$
+Delimiter ;
+
 -- ---------- SOLICITUDES (flujo de aprobacion) ----------
 
 drop procedure if exists sp_crear_solicitud;
@@ -367,6 +408,21 @@ Delimiter $$
 create procedure sp_desactivar_pelicula(in id_pelicula_p varchar(36))
 begin
     update Peliculas set activa = false where id_pelicula = id_pelicula_p;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_editar_pelicula;
+Delimiter $$
+create procedure sp_editar_pelicula(in id_pelicula_p varchar(36), in titulo_p varchar(120),
+                                    in genero_p varchar(60), in clasificacion_p varchar(10),
+                                    in duracion_min_p int, in sinopsis_p varchar(500),
+                                    in poster_url_p varchar(300), in trailer_url_p varchar(300))
+begin
+    update Peliculas
+        set titulo = titulo_p, genero = genero_p, clasificacion = clasificacion_p,
+            duracion_min = duracion_min_p, sinopsis = sinopsis_p,
+            poster_url = poster_url_p, trailer_url = trailer_url_p
+        where id_pelicula = id_pelicula_p;
 end$$
 Delimiter ;
 

@@ -110,3 +110,40 @@
 .tabla-usuarios .table-row-cell:selected .table-cell {
     -fx-text-fill: -eva-ink;
 }
+
+.status-hint {
+    -fx-text-fill: -eva-muted;
+    -fx-font-size: 12px;
+}
+
+.boton-gestionar {
+    -fx-background-color: transparent;
+    -fx-text-fill: -eva-orange;
+    -fx-border-color: -eva-orange;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1.2px;
+    -fx-padding: 9 20;
+    -fx-cursor: hand;
+}
+.boton-gestionar:hover {
+    -fx-background-color: -eva-orange;
+    -fx-text-fill: -eva-black-deep;
+}
+.boton-gestionar:disabled {
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+.dialog-eva {
+    -fx-background-color: -eva-panel;
+}
+.dialog-eva > .dialog-pane {
+    -fx-background-color: -eva-panel;
+}
+.dialog-eva .header-panel {
+    -fx-background-color: -eva-panel-light;
+}

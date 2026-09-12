@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ReportesGananciasController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" styleClass="eva-hazard-strip" />
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="12.0" styleClass="header">
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label styleClass="header-titulo" text="NERV CINE · PANEL DE REPORTES, OCUPACIÓN Y GANANCIAS" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox spacing="14.0" styleClass="area-central" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="22.0" right="22.0" top="16.0" />
+         </padding>
+         <children>
+            <!-- TARJETAS SUPERIORES DE RESUMEN DEL DÍA -->
+            <HBox spacing="14.0">
+               <children>
+                  <VBox spacing="4.0" style="-fx-background-color: #17181B; -fx-padding: 12 18; -fx-border-color: #1F9C3D; -fx-border-width: 1.2; -fx-border-radius: 2;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="eva-label" text="🎟️ BOLETOS VENDIDOS HOY" />
+                        <Label fx:id="lblBoletosHoy" style="-fx-text-fill: #39FF6A; -fx-font-size: 24px; -fx-font-weight: bold;" text="0" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="4.0" style="-fx-background-color: #17181B; -fx-padding: 12 18; -fx-border-color: #FF6A13; -fx-border-width: 1.2; -fx-border-radius: 2;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="eva-label" text="💰 INGRESOS TOTALES HOY" />
+                        <Label fx:id="lblIngresosHoy" style="-fx-text-fill: #FFD500; -fx-font-size: 24px; -fx-font-weight: bold;" text="Q 0.00" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- TABPANE DE REPORTES DETALLADOS -->
+            <TabPane styleClass="tabla-usuarios" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+              <tabs>
+                <!-- PESTAÑA 1: INGRESOS POR DÍA -->
+                <Tab text="  INGRESOS POR DÍA  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <HBox alignment="CENTER_LEFT" spacing="12.0">
+                             <children>
+                                <Label styleClass="eva-label" text="DESDE:" />
+                                <DatePicker fx:id="dpInicio" maxWidth="150.0" styleClass="eva-field" />
+                                <Label styleClass="eva-label" text="HASTA:" />
+                                <DatePicker fx:id="dpFin" maxWidth="150.0" styleClass="eva-field" />
+                                <Button mnemonicParsing="false" onAction="#onFiltrarIngresos" styleClass="eva-button-ghost" text="🔄 ACTUALIZAR" />
+                             </children>
+                          </HBox>
+                          <TableView fx:id="tableIngresos" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colIngresoFecha" prefWidth="280.0" text="FECHA" />
+                                <TableColumn fx:id="colIngresoBoletos" prefWidth="260.0" text="BOLETOS VENDIDOS" />
+                                <TableColumn fx:id="colIngresoTotal" prefWidth="320.0" text="INGRESOS (Q)" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 2: TOP PELÍCULAS -->
+                <Tab text="  TOP PELÍCULAS MÁS TAQUILLERAS  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <TableView fx:id="tableTopPeliculas" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colTopRanking" prefWidth="380.0" text="RANKING / TÍTULO" />
+                                <TableColumn fx:id="colTopBoletos" prefWidth="240.0" text="BOLETOS TOTALES" />
+                                <TableColumn fx:id="colTopIngresos" prefWidth="260.0" text="TOTAL RECAUDADO (Q)" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 3: OCUPACIÓN DE SALAS -->
+                <Tab text="  OCUPACIÓN DE CARTELERA  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <TableView fx:id="tableOcupacion" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colOcupacionPelicula" prefWidth="300.0" text="PELÍCULA" />
+                                <TableColumn fx:id="colOcupacionSalaHorario" prefWidth="280.0" text="SALA Y HORARIO" />
+                                <TableColumn fx:id="colOcupacionButacas" prefWidth="200.0" text="BUTACAS VENDIDAS" />
+                                <TableColumn fx:id="colOcupacionPorcentaje" prefWidth="150.0" text="OCUPACIÓN (%)" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

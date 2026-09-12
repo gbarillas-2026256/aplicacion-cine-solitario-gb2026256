@@ -95,4 +95,16 @@ public class FuncionRepository {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean actualizarPrecioBase(String idFuncion, BigDecimal nuevoPrecio) {
+        String sql = "UPDATE Funciones SET precio_base = ? WHERE id_funcion = ?";
+        try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(sql)) {
+            ps.setBigDecimal(1, nuevoPrecio);
+            ps.setString(2, idFuncion);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Error al actualizar precio de funcion: " + e.getMessage());
+            return false;
+        }
+    }
 }

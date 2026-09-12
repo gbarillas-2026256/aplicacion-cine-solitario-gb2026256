@@ -39,6 +39,21 @@ begin
 end$$
 Delimiter ;
 
+drop procedure if exists sp_editar_pelicula;
+Delimiter $$
+create procedure sp_editar_pelicula(in id_pelicula_p varchar(36), in titulo_p varchar(120),
+                                    in genero_p varchar(60), in clasificacion_p varchar(10),
+                                    in duracion_min_p int, in sinopsis_p varchar(500),
+                                    in poster_url_p varchar(300), in trailer_url_p varchar(300))
+begin
+    update Peliculas
+        set titulo = titulo_p, genero = genero_p, clasificacion = clasificacion_p,
+            duracion_min = duracion_min_p, sinopsis = sinopsis_p,
+            poster_url = poster_url_p, trailer_url = trailer_url_p
+        where id_pelicula = id_pelicula_p;
+end$$
+Delimiter ;
+
 -- ---------- SALAS Y ASIENTOS ----------
 
 -- Crea la sala Y genera automaticamente todos sus asientos

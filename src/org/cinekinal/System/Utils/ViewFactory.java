@@ -9,17 +9,16 @@ import javafx.fxml.FXMLLoader;
 import java.net.URL;
 import org.cinekinal.system.ClasePrincipal;
 import javafx.fxml.JavaFXBuilderFactory;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import java.io.UncheckedIOException;
 public class ViewFactory {
     private final String PATH_VIEWS="/org/cinekinal/system/view/";
     
-    public Scene loadFileFXML(String nameFile, int width, int height){
+    public Parent loadRootFXML(String nameFile){
         String pathOfFile = PATH_VIEWS + nameFile;
         try {
-            //Llamar al FXMLLoader
             FXMLLoader loadFXML = new FXMLLoader();
-            //Obtener la URL del archivo, viene de la clase main
             URL urlFile = ClasePrincipal.class.getResource(pathOfFile);
             if (urlFile == null) {
                 throw new IllegalStateException(
@@ -28,27 +27,47 @@ public class ViewFactory {
             }
             loadFXML.setBuilderFactory(new JavaFXBuilderFactory() );
             loadFXML.setLocation(urlFile);
-            
-            return new Scene( loadFXML.load(), width, height  );
-            
+            return loadFXML.load();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
+
+    public Scene loadFileFXML(String nameFile, int width, int height){
+        Parent root = loadRootFXML(nameFile);
+        if (width > 0 && height > 0) {
+            return new Scene(root, width, height);
+        }
+        return new Scene(root);
+    }
             
     public void loadScene(String nameFile){
-        Scene scene = null;
         try {
+            String fxmlFile;
+            int width = 0;
+            int height = 0;
+            boolean esDialogo = "login".equals(nameFile) || "register".equals(nameFile);
+
             switch (nameFile) {
-                case "login" -> scene = loadFileFXML("LoginView.fxml",820,500);
-                case "register" -> scene = loadFileFXML("RegisterView.fxml", 900, 560);
-                case "mainmenu" -> scene = loadFileFXML("MainMenuView.fxml", 860, 560);
-                case "users" -> scene = loadFileFXML("ManageUsersView.fxml", 900, 600);
-                case "solicitudes" -> scene = loadFileFXML("SolicitudesView.fxml", 900, 600);
-                case "comprarboletos" -> scene = loadFileFXML("CompraBoletoView.fxml", 1040, 720);
-                default      -> scene = loadFileFXML("LoginView.fxml",0,0); 
+                case "login" -> { fxmlFile = "LoginView.fxml"; width = 820; height = 500; }
+                case "register" -> { fxmlFile = "RegisterView.fxml"; width = 900; height = 560; }
+                case "mainmenu" -> fxmlFile = "MainMenuView.fxml";
+                case "users" -> fxmlFile = "ManageUsersView.fxml";
+                case "solicitudes" -> fxmlFile = "SolicitudesView.fxml";
+                case "comprarboletos" -> fxmlFile = "CompraBoletoView.fxml";
+                case "verificarentrada" -> fxmlFile = "VerificarEntradaView.fxml";
+                case "ventataquilla" -> fxmlFile = "VentaTaquillaView.fxml";
+                case "administrarpeliculas" -> fxmlFile = "AdministrarPeliculasView.fxml";
+                case "administrarfuncionessalas" -> fxmlFile = "AdministrarFuncionesSalasView.fxml";
+                case "cambiarprecio" -> fxmlFile = "CambiarPrecioView.fxml";
+                case "reportes" -> fxmlFile = "ReportesView.fxml";
+                case "ganancias" -> fxmlFile = "GananciasView.fxml";
+                case "reportesganancias" -> fxmlFile = "ReportesGananciasView.fxml";
+                default -> { fxmlFile = "LoginView.fxml"; width = 820; height = 500; }
             }
-            SceneManager.getInstanciaSceneManager().changeScene(scene);
+
+            Parent root = loadRootFXML(fxmlFile);
+            SceneManager.getInstanciaSceneManager().changeRoot(root, width, height, !esDialogo);
         } catch (RuntimeException e) {
             System.out.println("Error al cargar la vista '" + nameFile + "': " + e.getMessage());
         }
@@ -56,16 +75,26 @@ public class ViewFactory {
     
     
     public void viewLogin(){
+        if (SceneManager.getInstanciaSceneManager().getStagePrincipal() != null) {
+            SceneManager.getInstanciaSceneManager().getStagePrincipal().setMaximized(false);
+            SceneManager.getInstanciaSceneManager().getStagePrincipal().setFullScreen(false);
+        }
         loadScene("login");
     }
     
     public void viewRegister(){
+        if (SceneManager.getInstanciaSceneManager().getStagePrincipal() != null) {
+            SceneManager.getInstanciaSceneManager().getStagePrincipal().setMaximized(false);
+            SceneManager.getInstanciaSceneManager().getStagePrincipal().setFullScreen(false);
+        }
         loadScene("register");
     }
     
     public void viewMainMenu(){
         loadScene("mainmenu");
-        SceneManager.getInstanciaSceneManager().getStagePrincipal().setMaximized(true);
+        if (SceneManager.getInstanciaSceneManager().getStagePrincipal() != null) {
+            SceneManager.getInstanciaSceneManager().getStagePrincipal().setMaximized(true);
+        }
     }
     
     public void viewManageUsers(){
@@ -78,5 +107,37 @@ public class ViewFactory {
 
     public void viewComprarBoletos(){
         loadScene("comprarboletos");
+    }
+
+    public void viewVerificarEntrada(){
+        loadScene("verificarentrada");
+    }
+
+    public void viewRegistrarVenta(){
+        loadScene("ventataquilla");
+    }
+
+    public void viewAdministrarPeliculas(){
+        loadScene("administrarpeliculas");
+    }
+
+    public void viewAdministrarFuncionesSalas(){
+        loadScene("administrarfuncionessalas");
+    }
+
+    public void viewCambiarPrecio(){
+        loadScene("cambiarprecio");
+    }
+
+    public void viewReportes(){
+        loadScene("reportes");
+    }
+
+    public void viewGanancias(){
+        loadScene("ganancias");
+    }
+
+    public void viewReportesGanancias(){
+        loadScene("reportesganancias");
     }
 }

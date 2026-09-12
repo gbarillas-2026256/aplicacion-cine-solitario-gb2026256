@@ -97,5 +97,83 @@ public class EmpleadoRepository {
     public void desactivar(String idEmpleado) {
         desactivar(idEmpleado, "Baja administrativa");
     }
+
+    public void editar(String idEmpleado, String nombres, String apellidos, String correo, int idPuesto) {
+        try (CallableStatement callSP = conexionDB.getConnection()
+                     .prepareCall("{call sp_editar_empleado(?,?,?,?,?)}")) {
+            callSP.setString(1, idEmpleado);
+            callSP.setString(2, nombres);
+            callSP.setString(3, apellidos);
+            callSP.setString(4, correo);
+            callSP.setInt(5, idPuesto);
+            callSP.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Aviso: intentando fallback para editar empleado: " + e.getMessage());
+            try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(
+                    "UPDATE Empleados SET nombres = ?, apellidos = ?, correo = ?, id_puesto = ? WHERE id_empleado = ?")) {
+                ps.setString(1, nombres);
+                ps.setString(2, apellidos);
+                ps.setString(3, correo);
+                ps.setInt(4, idPuesto);
+                ps.setString(5, idEmpleado);
+                ps.executeUpdate();
+            } catch (SQLException ex) {
+                System.out.println("Error al editar empleado: " + ex.getMessage());
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    public void reportar(String idEmpleado, String idReportador, String tipoReporte, String descripcion) {
+        try (CallableStatement callSP = conexionDB.getConnection()
+                     .prepareCall("{call sp_reportar_empleado(?,?,?,?)}")) {
+            callSP.setString(1, idEmpleado);
+            callSP.setString(2, idReportador);
+            callSP.setString(3, tipoReporte);
+            callSP.setString(4, descripcion);
+            callSP.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Aviso: intentando registrar reporte en BD directamente: " + e.getMessage());
+            try {
+                try (java.sql.Statement st = conexionDB.getConnection().createStatement()) {
+                    st.executeUpdate("create table if not exists ReportesEmpleados ("
+                            + "id_reporte varchar(36) not null primary key, "
+                            + "id_empleado varchar(36) not null, "
+                            + "id_reportador varchar(36) not null, "
+                            + "tipo_reporte varchar(60) not null, "
+                            + "descripcion varchar(500) not null, "
+                            + "fecha_reporte datetime not null default current_timestamp)");
+                }
+                try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(
+                        "INSERT INTO ReportesEmpleados(id_reporte, id_empleado, id_reportador, tipo_reporte, descripcion) VALUES(uuid(), ?, ?, ?, ?)")) {
+                    ps.setString(1, idEmpleado);
+                    ps.setString(2, idReportador);
+                    ps.setString(3, tipoReporte);
+                    ps.setString(4, descripcion);
+                    ps.executeUpdate();
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error al guardar reporte de empleado: " + ex.getMessage());
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    // English aliases
+    public void edit(String employeeId, String firstName, String lastName, String email, int positionId) {
+        editar(employeeId, firstName, lastName, email, positionId);
+    }
+
+    public void report(String employeeId, String reporterId, String reportType, String description) {
+        reportar(employeeId, reporterId, reportType, description);
+    }
+
+    public void deactivate(String employeeId, String reason) {
+        desactivar(employeeId, reason);
+    }
+
+    public List<Empleado> getAll() {
+        return obtenerTodos();
+    }
 }
 

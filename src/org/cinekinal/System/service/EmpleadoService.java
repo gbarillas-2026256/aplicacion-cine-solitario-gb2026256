@@ -63,5 +63,40 @@ public class EmpleadoService {
     public boolean desactivar(String idEmpleado) {
         return desactivar(idEmpleado, "Baja administrativa");
     }
+
+    public boolean editar(String idEmpleado, String nombres, String apellidos, String correo, int idPuesto) {
+        try {
+            empleadoRepo.editar(idEmpleado, nombres, apellidos, correo, idPuesto);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean reportar(String idEmpleado, String idReportador, String tipoReporte, String descripcion) {
+        try {
+            empleadoRepo.reportar(idEmpleado, idReportador, tipoReporte, descripcion);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // English aliases
+    public boolean edit(String employeeId, String firstName, String lastName, String email, int positionId) {
+        return editar(employeeId, firstName, lastName, email, positionId);
+    }
+
+    public boolean report(String employeeId, String reporterId, String reportType, String description) {
+        return reportar(employeeId, reporterId, reportType, description);
+    }
+
+    public boolean deactivate(String employeeId, String reason) {
+        return desactivar(employeeId, reason);
+    }
+
+    public List<Empleado> getAll() {
+        return obtenerTodos();
+    }
 }
 

@@ -3,6 +3,8 @@ package org.cinekinal.system.repository;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import org.cinekinal.system.config.ConexionDB;
 import org.cinekinal.system.model.Cliente;
 
@@ -49,6 +51,64 @@ public class ClienteRepository {
         } catch (SQLException e) {
             System.out.println("Error al validar login de cliente: " + e.getMessage());
             throw new RuntimeException(e);
+        }
+        return null;
+    }
+
+    public List<Cliente> obtenerTodos() {
+        List<Cliente> lista = new ArrayList<>();
+        String sql = "SELECT id_cliente, nombres, apellidos, correo, usuario, es_vip FROM Clientes ORDER BY nombres";
+        try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Cliente c = new Cliente();
+                c.setIdCliente(rs.getString("id_cliente"));
+                c.setNombres(rs.getString("nombres"));
+                c.setApellidos(rs.getString("apellidos"));
+                c.setCorreo(rs.getString("correo"));
+                c.setUsuario(rs.getString("usuario"));
+                c.setEsVip(rs.getBoolean("es_vip"));
+                lista.add(c);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al listar clientes: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public Cliente obtenerOcrearClienteGenerico() {
+        String sql = "SELECT id_cliente, nombres, apellidos, correo, usuario, es_vip FROM Clientes WHERE usuario = 'taquilla_general'";
+        try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Cliente c = new Cliente();
+                    c.setIdCliente(rs.getString("id_cliente"));
+                    c.setNombres(rs.getString("nombres"));
+                    c.setApellidos(rs.getString("apellidos"));
+                    c.setCorreo(rs.getString("correo"));
+                    c.setUsuario(rs.getString("usuario"));
+                    c.setEsVip(rs.getBoolean("es_vip"));
+                    return c;
+                }
+            }
+        } catch (SQLException ignored) {}
+
+        String nuevoId = java.util.UUID.randomUUID().toString();
+        String insert = "INSERT INTO Clientes(id_cliente, nombres, apellidos, correo, usuario, password, es_vip) "
+                + "VALUES(?, 'Público', 'General', 'taquilla@cinekinal.org', 'taquilla_general', 'taquilla123', false)";
+        try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(insert)) {
+            ps.setString(1, nuevoId);
+            ps.executeUpdate();
+            Cliente c = new Cliente();
+            c.setIdCliente(nuevoId);
+            c.setNombres("Público");
+            c.setApellidos("General");
+            c.setCorreo("taquilla@cinekinal.org");
+            c.setUsuario("taquilla_general");
+            c.setEsVip(false);
+            return c;
+        } catch (SQLException e) {
+            System.out.println("Error al asegurar cliente de taquilla: " + e.getMessage());
         }
         return null;
     }

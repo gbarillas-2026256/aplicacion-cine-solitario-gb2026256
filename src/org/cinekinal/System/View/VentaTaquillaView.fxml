@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" stylesheets="@../styles/CompraBoletoStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.VentaTaquillaController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" styleClass="eva-hazard-strip" />
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="12.0" styleClass="header">
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label styleClass="header-titulo" text="NERV CINE · TERMINAL DE VENTA FÍSICA EN TAQUILLA" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <HBox spacing="16.0" styleClass="area-central" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="18.0" left="20.0" right="20.0" top="18.0" />
+         </padding>
+         <children>
+            <!-- COLUMNA 1: Selector de Funciones -->
+            <VBox maxWidth="320.0" minWidth="280.0" prefWidth="300.0" spacing="10.0" styleClass="tarjeta-lateral">
+               <padding>
+                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+               </padding>
+               <children>
+                  <Label styleClass="tarjeta-titulo" text="FUNCIONES DISPONIBLES" />
+                  <HBox spacing="6.0">
+                     <children>
+                        <Button fx:id="btnHoy" mnemonicParsing="false" onAction="#onFiltrarHoy" styleClass="boton-filtro-activo" text="HOY" />
+                        <Button fx:id="btnManana" mnemonicParsing="false" onAction="#onFiltrarManana" styleClass="boton-filtro" text="MAÑANA" />
+                        <Button fx:id="btnTodas" mnemonicParsing="false" onAction="#onFiltrarTodas" styleClass="boton-filtro" text="TODAS" />
+                     </children>
+                  </HBox>
+                  <ListView fx:id="listFunciones" styleClass="lista-funciones" VBox.vgrow="ALWAYS" />
+               </children>
+            </VBox>
+
+            <!-- COLUMNA 2: Mapa de Asientos -->
+            <VBox spacing="10.0" styleClass="tarjeta-central" HBox.hgrow="ALWAYS">
+               <padding>
+                  <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+               </padding>
+               <children>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <VBox spacing="2.0">
+                           <children>
+                              <Label styleClass="tarjeta-titulo" text="SELECCIÓN DE BUTACAS EN SALA" />
+                              <Label fx:id="lblSalaSeleccionada" styleClass="subtitulo-sala" text="Selecciona una función de la lista para ver la sala" />
+                           </children>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER" spacing="12.0">
+                           <children>
+                              <HBox alignment="CENTER" spacing="5.0">
+                                 <children>
+                                    <Region prefHeight="12.0" prefWidth="12.0" style="-fx-background-color: #202226; -fx-border-color: #1F9C3D; -fx-border-width: 1;" />
+                                    <Label style="-fx-text-fill: #39FF6A; -fx-font-size: 10px;" text="Libre" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="5.0">
+                                 <children>
+                                    <Region prefHeight="12.0" prefWidth="12.0" style="-fx-background-color: #7A0C14; -fx-border-color: #C1121F; -fx-border-width: 1;" />
+                                    <Label style="-fx-text-fill: #9AA095; -fx-font-size: 10px;" text="Ocupado" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" spacing="5.0">
+                                 <children>
+                                    <Region prefHeight="12.0" prefWidth="12.0" style="-fx-background-color: #FF6A13;" />
+                                    <Label style="-fx-text-fill: #FF6A13; -fx-font-size: 10px;" text="Elegido" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+
+                  <VBox alignment="CENTER" maxHeight="28.0" minHeight="28.0" prefHeight="28.0" styleClass="pantalla-cine">
+                     <children>
+                        <Label styleClass="label-pantalla" text="══════════ PANTALLA ══════════" />
+                     </children>
+                  </VBox>
+
+                  <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="scroll-asientos" VBox.vgrow="ALWAYS">
+                     <content>
+                        <GridPane fx:id="gridAsientos" alignment="CENTER" hgap="6.0" vgap="6.0">
+                           <padding>
+                              <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                           </padding>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+
+            <!-- COLUMNA 3: Resumen de Cobro y Cliente -->
+            <VBox maxWidth="320.0" minWidth="280.0" prefWidth="300.0" spacing="12.0" styleClass="tarjeta-lateral">
+               <padding>
+                  <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+               </padding>
+               <children>
+                  <Label styleClass="tarjeta-titulo" text="COBRO Y EMISIÓN" />
+
+                  <VBox spacing="4.0">
+                     <children>
+                        <Label styleClass="eva-label" text="CLIENTE:" />
+                        <ComboBox fx:id="cmbCliente" maxWidth="Infinity" styleClass="eva-field" />
+                     </children>
+                  </VBox>
+
+                  <VBox spacing="6.0" style="-fx-background-color: #202226; -fx-padding: 10; -fx-border-color: #33352E; -fx-border-width: 1;">
+                     <children>
+                        <Label fx:id="lblPeliculaResumen" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 13px;" text="Película: —" />
+                        <Label fx:id="lblHorarioResumen" style="-fx-text-fill: #ECEDE9; -fx-font-size: 11.5px;" text="Horario: —" />
+                        <Label fx:id="lblAsientosResumen" style="-fx-text-fill: #39FF6A; -fx-font-weight: bold; -fx-font-size: 12px;" text="Butacas: Ninguna" />
+                     </children>
+                  </VBox>
+
+                  <VBox spacing="4.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT">
+                           <children>
+                              <Label styleClass="eva-label" text="TOTAL A PAGAR:" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblTotalPagar" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 18px;" text="Q 0.00" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
+                  <Region VBox.vgrow="ALWAYS" />
+
+                  <Button fx:id="btnCobrar" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCobrar" styleClass="eva-button-primary" text="💳 EMITIR Y COBRAR">
+                     <padding>
+                        <Insets bottom="12.0" top="12.0" />
+                     </padding>
+                  </Button>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </center>
+</BorderPane>

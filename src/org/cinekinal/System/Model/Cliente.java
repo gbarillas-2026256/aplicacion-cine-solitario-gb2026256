@@ -78,4 +78,16 @@ public class Cliente {
     public void setEsVip(boolean esVip) {
         this.esVip = esVip;
     }
+
+    public String getNombreCompleto() {
+        return (nombres != null ? nombres : "") + " " + (apellidos != null ? apellidos : "").trim();
+    }
+
+    // English aliases
+    public String getCustomerId() { return idCliente; }
+    public String getFirstName() { return nombres; }
+    public String getLastName() { return apellidos; }
+    public String getEmail() { return correo; }
+    public String getUsername() { return usuario; }
+    public boolean isVip() { return esVip; }
 }

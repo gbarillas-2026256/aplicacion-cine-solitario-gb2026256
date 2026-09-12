@@ -2,18 +2,15 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ManageUsersController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="960.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ManageUsersController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -25,7 +22,7 @@
                <children>
                   <Label styleClass="header-titulo" text="NERV CINE · GESTIÓN DE PERSONAL Y SUBORDINADOS" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" onMouseClicked="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
+                  <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
                </children>
             </HBox>
          </children>
@@ -34,89 +31,47 @@
    <center>
       <VBox spacing="16.0" styleClass="area-central" BorderPane.alignment="CENTER">
          <padding>
-            <Insets bottom="18.0" left="24.0" right="24.0" top="18.0" />
+            <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
          </padding>
          <children>
-
-            <VBox spacing="10.0" styleClass="tarjeta-form">
+            <VBox spacing="14.0" styleClass="tarjeta-tabla" VBox.vgrow="ALWAYS">
                <padding>
-                  <Insets bottom="14.0" left="18.0" right="18.0" top="14.0" />
+                  <Insets bottom="18.0" left="20.0" right="20.0" top="18.0" />
                </padding>
                <children>
-                  <Label styleClass="tarjeta-titulo" text="ALTA DE EMPLEADO / SUBORDINADO" />
-                  <HBox spacing="12.0">
+                  <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
-                        <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                        <VBox spacing="3.0">
                            <children>
-                              <Label styleClass="eva-label" text="USUARIO" />
-                              <TextField fx:id="txtUser" maxWidth="Infinity" styleClass="eva-field" />
+                              <Label styleClass="tarjeta-titulo" text="PERSONAL Y SUBORDINADOS ACTIVOS" />
+                              <Label styleClass="eva-subtitle" text="Selecciona un empleado para gestionarlo (editar, dar de baja o reportar), o agrega uno nuevo." />
                            </children>
                         </VBox>
-                        <VBox spacing="3.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label styleClass="eva-label" text="NOMBRES" />
-                              <TextField fx:id="txtName" maxWidth="Infinity" styleClass="eva-field" />
-                           </children>
-                        </VBox>
-                        <VBox spacing="3.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label styleClass="eva-label" text="APELLIDOS" />
-                              <TextField fx:id="txtLastName" maxWidth="Infinity" styleClass="eva-field" />
-                           </children>
-                        </VBox>
-                        <VBox spacing="3.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label styleClass="eva-label" text="PUESTO / ROL" />
-                              <ComboBox fx:id="cmbPuesto" maxWidth="Infinity" promptText="Selecciona puesto..." styleClass="eva-field" />
-                           </children>
-                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#onAgregarEmpleado" styleClass="eva-button-primary" text="+ AGREGAR EMPLEADO">
+                           <padding>
+                              <Insets bottom="9.0" left="18.0" right="18.0" top="9.0" />
+                           </padding>
+                        </Button>
                      </children>
                   </HBox>
-                  <HBox alignment="BOTTOM_LEFT" spacing="12.0">
-                     <children>
-                        <VBox spacing="3.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label styleClass="eva-label" text="CORREO" />
-                              <TextField fx:id="txtEmail" maxWidth="Infinity" styleClass="eva-field" />
-                           </children>
-                        </VBox>
-                        <VBox spacing="3.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label styleClass="eva-label" text="CONTRASEÑA" />
-                              <PasswordField fx:id="pwdPassword" maxWidth="Infinity" styleClass="eva-field" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="BOTTOM_LEFT">
-                           <children>
-                              <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#onAddUser" styleClass="eva-button-primary" text="AGREGAR EMPLEADO" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-
-            <VBox spacing="8.0" styleClass="tarjeta-tabla" VBox.vgrow="ALWAYS">
-               <padding>
-                  <Insets bottom="14.0" left="18.0" right="18.0" top="14.0" />
-               </padding>
-               <children>
-                  <Label styleClass="tarjeta-titulo" text="PERSONAL Y SUBORDINADOS ACTIVOS" />
-                  <TableView fx:id="tableUsers" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="tableUsers" onMouseClicked="#onTableClicked" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
                      <columns>
-                        <TableColumn fx:id="colFullName" prefWidth="320.0" text="NOMBRE COMPLETO" />
-                        <TableColumn fx:id="colEmail" prefWidth="290.0" text="CORREO ELECTRÓNICO" />
-                        <TableColumn fx:id="colPuesto" prefWidth="200.0" text="PUESTO / ROL" />
+                        <TableColumn fx:id="colUser" prefWidth="140.0" text="USUARIO" />
+                        <TableColumn fx:id="colFullName" prefWidth="280.0" text="NOMBRE COMPLETO" />
+                        <TableColumn fx:id="colEmail" prefWidth="280.0" text="CORREO ELECTRÓNICO" />
+                        <TableColumn fx:id="colPuesto" prefWidth="180.0" text="PUESTO / ROL" />
                      </columns>
                   </TableView>
-                  <HBox alignment="CENTER_RIGHT">
+                  <HBox alignment="CENTER_RIGHT" spacing="12.0">
                      <children>
-                        <Button mnemonicParsing="false" onMouseClicked="#onDeleteUser" styleClass="boton-logout" text="DAR DE BAJA SELECCIONADO" />
+                        <Label fx:id="lblStatus" styleClass="status-hint" text="Ningún empleado seleccionado. Haz clic en una fila para seleccionarlo." />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnGestionarEmpleado" disable="true" mnemonicParsing="false" onAction="#onGestionarEmpleado" styleClass="boton-gestionar" text="⚙ GESTIONAR EMPLEADO" />
                      </children>
                   </HBox>
                </children>
             </VBox>
-
          </children>
       </VBox>
    </center>

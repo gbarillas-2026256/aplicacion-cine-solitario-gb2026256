@@ -56,6 +56,18 @@ create table if not exists Solicitudes (
     constraint fk_solicitudes_aprobador foreign key (id_aprobador) references Empleados(id_empleado)
 );
 
+create table if not exists ReportesEmpleados (
+    id_reporte varchar(36) not null,
+    id_empleado varchar(36) not null,
+    id_reportador varchar(36) not null,
+    tipo_reporte varchar(60) not null,
+    descripcion varchar(500) not null,
+    fecha_reporte datetime not null default current_timestamp,
+    constraint pk_reportes primary key (id_reporte),
+    constraint fk_reportes_empleado foreign key (id_empleado) references Empleados(id_empleado),
+    constraint fk_reportes_reportador foreign key (id_reportador) references Empleados(id_empleado)
+);
+
 create table if not exists Clientes (
     id_cliente varchar(36) not null,
     nombres varchar(60) not null,

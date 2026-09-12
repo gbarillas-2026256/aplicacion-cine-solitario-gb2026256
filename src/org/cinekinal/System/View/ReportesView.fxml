@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ReportesController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" styleClass="eva-hazard-strip" />
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="12.0" styleClass="header">
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label styleClass="header-titulo" text="NERV CINE · REPORTES OPERATIVOS Y OCUPACIÓN DE SALAS" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox spacing="14.0" styleClass="area-central" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="22.0" right="22.0" top="16.0" />
+         </padding>
+         <children>
+            <!-- Resumen Operativo Superior -->
+            <HBox spacing="14.0">
+               <children>
+                  <VBox spacing="4.0" style="-fx-background-color: #17181B; -fx-padding: 12 18; -fx-border-color: #39FF6A; -fx-border-width: 1.2; -fx-border-radius: 2;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="eva-label" text="👥 ASISTENCIA TOTAL REGISTRADA HOY" />
+                        <Label fx:id="lblAsistenciaHoy" style="-fx-text-fill: #39FF6A; -fx-font-size: 24px; -fx-font-weight: bold;" text="0 espectadores" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="4.0" style="-fx-background-color: #17181B; -fx-padding: 12 18; -fx-border-color: #FF6A13; -fx-border-width: 1.2; -fx-border-radius: 2;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="eva-label" text="🎬 FUNCIONES Y SALAS ACTIVAS" />
+                        <Label fx:id="lblFuncionesActivas" style="-fx-text-fill: #FF6A13; -fx-font-size: 24px; -fx-font-weight: bold;" text="En cartelera" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- Pestañas Operativas -->
+            <TabPane styleClass="tabla-usuarios" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+              <tabs>
+                <!-- PESTAÑA 1: OCUPACIÓN DE SALAS -->
+                <Tab text="  OCUPACIÓN DE CARTELERA Y BUTACAS  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <HBox alignment="CENTER_LEFT">
+                             <children>
+                                <Label styleClass="tarjeta-titulo" text="PORCENTAJE DE OCUPACIÓN POR FUNCIÓN" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#onRefrescarOcupacion" styleClass="eva-button-ghost" text="🔄 REFRESCAR" />
+                             </children>
+                          </HBox>
+                          <TableView fx:id="tableOcupacion" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colOcupacionPelicula" prefWidth="320.0" text="TÍTULO DE LA PELÍCULA" />
+                                <TableColumn fx:id="colOcupacionSalaHorario" prefWidth="280.0" text="SALA, FECHA Y HORA" />
+                                <TableColumn fx:id="colOcupacionButacas" prefWidth="200.0" text="BUTACAS OCUPADAS" />
+                                <TableColumn fx:id="colOcupacionPorcentaje" prefWidth="160.0" text="OCUPACIÓN (%)" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 2: PELÍCULAS MÁS VISTAS -->
+                <Tab text="  PELÍCULAS MÁS VISTAS (ASISTENCIA)  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <Label styleClass="tarjeta-titulo" text="RANKING DE POPULARIDAD POR NÚMERO DE ESPECTADORES" />
+                          <TableView fx:id="tableTopAsistencia" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colAsistenciaRanking" prefWidth="480.0" text="POSICIÓN / PELÍCULA" />
+                                <TableColumn fx:id="colAsistenciaBoletos" prefWidth="320.0" text="TOTAL DE ASISTENTES / ENTRADAS" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

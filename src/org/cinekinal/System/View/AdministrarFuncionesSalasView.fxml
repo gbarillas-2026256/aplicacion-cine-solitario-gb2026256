@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.AdministrarFuncionesSalasController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" styleClass="eva-hazard-strip" />
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="12.0" styleClass="header">
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label styleClass="header-titulo" text="NERV CINE · PROGRAMACIÓN DE FUNCIONES Y GESTIÓN DE SALAS" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox spacing="14.0" styleClass="area-central" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="22.0" right="22.0" top="16.0" />
+         </padding>
+         <children>
+            <TabPane styleClass="tabla-usuarios" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+              <tabs>
+                <!-- PESTAÑA 1: FUNCIONES PROGRAMADAS -->
+                <Tab text="  PROGRAMACIÓN DE FUNCIONES  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 16;">
+                       <children>
+                          <HBox alignment="CENTER_LEFT" spacing="12.0">
+                             <children>
+                                <VBox spacing="2.0">
+                                   <children>
+                                      <Label styleClass="tarjeta-titulo" text="FUNCIONES EN CARTELERA" />
+                                      <Label styleClass="eva-subtitle" text="Programa proyecciones asignando títulos a salas con fecha, horario y precio base." />
+                                   </children>
+                                </VBox>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#onProgramarFuncion" styleClass="eva-button-primary" text="+ PROGRAMAR FUNCIÓN">
+                                   <padding>
+                                      <Insets bottom="9.0" left="18.0" right="18.0" top="9.0" />
+                                   </padding>
+                                </Button>
+                             </children>
+                          </HBox>
+
+                          <TableView fx:id="tableFunciones" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colFuncionPelicula" prefWidth="300.0" text="PELÍCULA" />
+                                <TableColumn fx:id="colFuncionSala" prefWidth="200.0" text="SALA" />
+                                <TableColumn fx:id="colFuncionFecha" prefWidth="130.0" text="FECHA" />
+                                <TableColumn fx:id="colFuncionHora" prefWidth="120.0" text="HORA" />
+                                <TableColumn fx:id="colFuncionPrecio" prefWidth="130.0" text="PRECIO BASE" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 2: SALAS Y BUTACAS -->
+                <Tab text="  SALAS Y BUTACAS  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 16;">
+                       <children>
+                          <HBox alignment="CENTER_LEFT" spacing="12.0">
+                             <children>
+                                <VBox spacing="2.0">
+                                   <children>
+                                      <Label styleClass="tarjeta-titulo" text="SALAS DE CINE REGISTRADAS" />
+                                      <Label styleClass="eva-subtitle" text="Administra las salas de proyección y sus dimensiones de butacas." />
+                                   </children>
+                                </VBox>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#onCrearSala" styleClass="eva-button-primary" text="+ CREAR NUEVA SALA">
+                                   <padding>
+                                      <Insets bottom="9.0" left="18.0" right="18.0" top="9.0" />
+                                   </padding>
+                                </Button>
+                             </children>
+                          </HBox>
+
+                          <TableView fx:id="tableSalas" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colSalaNombre" prefWidth="280.0" text="NOMBRE DE SALA" />
+                                <TableColumn fx:id="colSalaTipo" prefWidth="160.0" text="TIPO DE SALA" />
+                                <TableColumn fx:id="colSalaFilas" prefWidth="120.0" text="FILAS" />
+                                <TableColumn fx:id="colSalaColumnas" prefWidth="120.0" text="COLUMNAS" />
+                                <TableColumn fx:id="colSalaCapacidad" prefWidth="160.0" text="CAPACIDAD TOTAL" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
