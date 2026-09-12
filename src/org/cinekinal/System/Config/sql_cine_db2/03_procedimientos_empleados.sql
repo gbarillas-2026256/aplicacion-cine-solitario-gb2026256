@@ -37,9 +37,10 @@ Delimiter $$
 create procedure sp_obtener_empleados()
 begin
     select e.id_empleado, e.nombres, e.apellidos, e.correo, e.usuario,
-           p.nombre_puesto, p.nivel_jerarquico, e.activo
+           p.id_puesto, p.nombre_puesto, p.nivel_jerarquico, e.activo
         from Empleados e
         inner join Puestos p on p.id_puesto = e.id_puesto
+        where e.activo = true
         order by p.nivel_jerarquico, e.nombres;
 end$$
 Delimiter ;
@@ -48,9 +49,11 @@ Delimiter ;
 -- se desactivan.
 drop procedure if exists sp_desactivar_empleado;
 Delimiter $$
-create procedure sp_desactivar_empleado(in id_empleado_p varchar(36))
+create procedure sp_desactivar_empleado(in id_empleado_p varchar(36), in motivo_baja_p varchar(255))
 begin
-    update Empleados set activo = false where id_empleado = id_empleado_p;
+    update Empleados
+        set activo = false, motivo_baja = motivo_baja_p
+        where id_empleado = id_empleado_p;
 end$$
 Delimiter ;
 

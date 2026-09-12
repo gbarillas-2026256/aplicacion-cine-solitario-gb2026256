@@ -1,0 +1,112 @@
+@import "EvaIdentityStyles.css";
+
+.root {
+    -fx-background-color: -eva-black;
+}
+
+.header {
+    -fx-background-color: -eva-panel;
+    -fx-border-color: -eva-orange;
+    -fx-border-width: 0 0 2 0;
+}
+.header-titulo {
+    -fx-text-fill: -eva-orange;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-letter-spacing: 1.5px;
+}
+
+.boton-volver {
+    -fx-background-color: transparent;
+    -fx-text-fill: -eva-ink;
+    -fx-border-color: -eva-line;
+    -fx-border-width: 1.2;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 14;
+    -fx-cursor: hand;
+}
+.boton-volver:hover {
+    -fx-background-color: -eva-orange;
+    -fx-text-fill: -eva-black-deep;
+    -fx-border-color: -eva-orange;
+}
+
+.area-central {
+    -fx-background-color: -eva-black-deep;
+}
+
+.tarjeta-form, .tarjeta-tabla {
+    -fx-background-color: -eva-panel;
+    -fx-border-color: -eva-line;
+    -fx-border-width: 1.2;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+}
+
+.tarjeta-titulo {
+    -fx-text-fill: -eva-orange;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1.4px;
+}
+
+.boton-logout {
+    -fx-background-color: transparent;
+    -fx-text-fill: -eva-red;
+    -fx-border-color: -eva-red;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1px;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.boton-logout:hover {
+    -fx-background-color: -eva-red;
+    -fx-text-fill: -eva-ink;
+}
+
+/* ---------- Tabla ---------- */
+
+.tabla-usuarios {
+    -fx-background-color: -eva-black-deep;
+    -fx-border-color: -eva-line;
+    -fx-border-width: 1;
+}
+.tabla-usuarios .column-header-background {
+    -fx-background-color: -eva-black-deep;
+}
+.tabla-usuarios .column-header, .tabla-usuarios .filler {
+    -fx-background-color: -eva-panel-light;
+    -fx-border-color: transparent -eva-line transparent transparent;
+}
+.tabla-usuarios .column-header .label {
+    -fx-text-fill: -eva-orange;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-letter-spacing: 1px;
+}
+.tabla-usuarios .table-row-cell {
+    -fx-background-color: -eva-black-deep;
+    -fx-text-fill: -eva-ink;
+    -fx-border-color: transparent transparent -eva-line transparent;
+}
+.tabla-usuarios .table-row-cell:odd {
+    -fx-background-color: -eva-panel;
+}
+.tabla-usuarios .table-row-cell:selected {
+    -fx-background-color: -eva-orange-deep;
+}
+.tabla-usuarios .table-cell {
+    -fx-text-fill: -eva-ink;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER_LEFT;
+}
+.tabla-usuarios .table-row-cell:selected .table-cell {
+    -fx-text-fill: -eva-ink;
+}

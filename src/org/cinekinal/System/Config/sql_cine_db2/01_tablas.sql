@@ -35,6 +35,7 @@ create table if not exists Empleados (
     password varchar(60) not null,
     id_puesto int not null,
     activo boolean not null default true,
+    motivo_baja varchar(255) null,
     constraint pk_empleados primary key (id_empleado),
     constraint uq_empleados_usuario unique (usuario),
     constraint fk_empleados_puesto foreign key (id_puesto) references Puestos(id_puesto)
@@ -76,6 +77,8 @@ create table if not exists Peliculas (
     clasificacion varchar(10) null,
     duracion_min int not null,
     sinopsis varchar(500) null,
+    poster_url varchar(300) null,
+    trailer_url varchar(300) null,
     activa boolean not null default true,
     constraint pk_peliculas primary key (id_pelicula)
 );

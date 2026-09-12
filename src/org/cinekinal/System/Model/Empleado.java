@@ -8,6 +8,7 @@ public class Empleado {
     private String usuario;
     private String password;
     private boolean activo;
+    private String motivoBaja;
 
     //Datos del puesto, "aplanados" aqui porque sp_login_empleado ya los
     //trae con un JOIN en la misma fila. Si mas adelante se necesita
@@ -18,6 +19,10 @@ public class Empleado {
     private int nivelJerarquico;
 
     public Empleado() {
+    }
+
+    public String getNombreCompleto() {
+        return (nombres != null ? nombres : "") + " " + (apellidos != null ? apellidos : "").trim();
     }
 
     public String getIdEmpleado() {
@@ -99,4 +104,24 @@ public class Empleado {
     public void setNivelJerarquico(int nivelJerarquico) {
         this.nivelJerarquico = nivelJerarquico;
     }
+
+    public String getMotivoBaja() {
+        return motivoBaja;
+    }
+
+    public void setMotivoBaja(String motivoBaja) {
+        this.motivoBaja = motivoBaja;
+    }
+
+    // English alias methods
+    public String getEmployeeId() { return idEmpleado; }
+    public String getFirstName() { return nombres; }
+    public String getLastName() { return apellidos; }
+    public String getEmail() { return correo; }
+    public String getUsername() { return usuario; }
+    public int getPositionId() { return idPuesto; }
+    public String getPositionName() { return nombrePuesto; }
+    public int getHierarchyLevel() { return nivelJerarquico; }
+    public String getDeactivationReason() { return motivoBaja; }
 }
+

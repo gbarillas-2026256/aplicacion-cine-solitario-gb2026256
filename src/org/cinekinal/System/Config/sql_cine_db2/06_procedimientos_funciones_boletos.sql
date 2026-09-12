@@ -18,18 +18,35 @@ begin
 end$$
 Delimiter ;
 
--- La cartelera: funciones futuras con el titulo y la sala ya resueltos
+-- La cartelera: funciones futuras con el titulo, la sala y ficha tecnica resueltos
 drop procedure if exists sp_obtener_cartelera;
 Delimiter $$
 create procedure sp_obtener_cartelera()
 begin
-    select f.id_funcion, f.id_sala, p.titulo, p.duracion_min, s.nombre_sala, s.tipo_sala,
+    select f.id_funcion, f.id_sala, p.titulo, p.duracion_min, p.genero, p.clasificacion,
+           p.sinopsis, p.poster_url, p.trailer_url, s.nombre_sala, s.tipo_sala,
            f.fecha, f.hora, f.precio_base
         from Funciones f
         inner join Peliculas p on p.id_pelicula = f.id_pelicula
         inner join Salas s on s.id_sala = f.id_sala
         where f.fecha >= curdate()
         order by f.fecha, f.hora;
+end$$
+Delimiter ;
+
+-- Cartelera filtrada por una fecha especifica (hoy, mañana, etc.)
+drop procedure if exists sp_obtener_cartelera_por_fecha;
+Delimiter $$
+create procedure sp_obtener_cartelera_por_fecha(in fecha_p date)
+begin
+    select f.id_funcion, f.id_sala, p.titulo, p.duracion_min, p.genero, p.clasificacion,
+           p.sinopsis, p.poster_url, p.trailer_url, s.nombre_sala, s.tipo_sala,
+           f.fecha, f.hora, f.precio_base
+        from Funciones f
+        inner join Peliculas p on p.id_pelicula = f.id_pelicula
+        inner join Salas s on s.id_sala = f.id_sala
+        where f.fecha = fecha_p
+        order by f.hora;
 end$$
 Delimiter ;
 

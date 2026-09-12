@@ -66,7 +66,7 @@ public class MainMenuController implements Initializable {
     }
 
     private void construirMenuEmpleado(Empleado empleado) {
-        agregarBotonAccion(empleado, Accion.VER_CARTELERA, this::mostrarCarteleraRapida);
+        agregarBotonAccion(empleado, Accion.VER_CARTELERA, () -> new ViewFactory().viewComprarBoletos());
         agregarBotonAccion(empleado, Accion.VERIFICAR_ENTRADA, () -> mostrarEnConstruccion("Verificar entrada"));
         agregarBotonAccion(empleado, Accion.REGISTRAR_VENTA, () -> mostrarEnConstruccion("Registrar venta"));
         agregarBotonAccion(empleado, Accion.ADMINISTRAR_FUNCIONES_SALAS, () -> mostrarEnConstruccion("Administrar funciones y salas"));
@@ -74,12 +74,14 @@ public class MainMenuController implements Initializable {
         agregarBotonAccion(empleado, Accion.VER_REPORTES, () -> mostrarEnConstruccion("Reportes"));
         agregarBotonAccion(empleado, Accion.VER_GANANCIAS, () -> mostrarEnConstruccion("Ganancias"));
         agregarBotonAccion(empleado, Accion.CAMBIAR_PRECIO, () -> mostrarEnConstruccion("Cambiar precio"));
-        agregarBotonAccion(empleado, Accion.DAR_BAJA_EMPLEADO, () -> mostrarEnConstruccion("Dar de baja a un empleado"));
+        agregarBotonAccion(empleado, Accion.DAR_BAJA_EMPLEADO, () -> new ViewFactory().viewManageUsers());
 
-        // Solo el Dueño ve esto -- no es una Accion del catalogo porque
-        // no es una accion que se "intente" y pueda generar Solicitud,
-        // es la pantalla donde el Dueño resuelve las Solicitudes.
+        // Solo el Dueño ve esto -- pantallas administrativas exclusivas de jerarquía 1
         if (empleado.getNivelJerarquico() == 1) {
+            Button btnGestionUsuarios = crearBotonSidebar("Gestión de empleados");
+            btnGestionUsuarios.setOnAction(e -> new ViewFactory().viewManageUsers());
+            vboxSidebar.getChildren().add(btnGestionUsuarios);
+
             Button btnSolicitudes = crearBotonSidebar("Solicitudes pendientes");
             btnSolicitudes.setOnAction(e -> new ViewFactory().viewSolicitudes());
             vboxSidebar.getChildren().add(btnSolicitudes);

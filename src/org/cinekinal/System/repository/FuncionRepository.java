@@ -27,16 +27,7 @@ public class FuncionRepository {
                      .prepareCall("{call sp_obtener_cartelera()}")) {
             try (ResultSet resultado = callSP.executeQuery()) {
                 while (resultado.next()) {
-                    Funcion funcion = new Funcion();
-                    funcion.setIdFuncion(resultado.getString("id_funcion"));
-                    funcion.setIdSala(resultado.getString("id_sala"));
-                    funcion.setTituloPelicula(resultado.getString("titulo"));
-                    funcion.setDuracionMin(resultado.getInt("duracion_min"));
-                    funcion.setNombreSala(resultado.getString("nombre_sala"));
-                    funcion.setTipoSala(resultado.getString("tipo_sala"));
-                    funcion.setFecha(resultado.getDate("fecha"));
-                    funcion.setHora(resultado.getTime("hora"));
-                    funcion.setPrecioBase(resultado.getBigDecimal("precio_base"));
+                    Funcion funcion = mapearFuncion(resultado);
                     cartelera.add(funcion);
                 }
             }
@@ -45,6 +36,49 @@ public class FuncionRepository {
             throw new RuntimeException(e);
         }
         return cartelera;
+    }
+
+    public List<Funcion> obtenerCarteleraPorFecha(Date fecha) {
+        List<Funcion> cartelera = new ArrayList<>();
+        try (CallableStatement callSP = conexionDB.getConnection()
+                     .prepareCall("{call sp_obtener_cartelera_por_fecha(?)}")) {
+            callSP.setDate(1, fecha);
+            try (ResultSet resultado = callSP.executeQuery()) {
+                while (resultado.next()) {
+                    Funcion funcion = mapearFuncion(resultado);
+                    cartelera.add(funcion);
+                }
+            }
+            return cartelera;
+        } catch (SQLException e) {
+            System.out.println("Aviso: No se pudo llamar sp_obtener_cartelera_por_fecha (" + e.getMessage() + "). Filtrando en memoria...");
+            List<Funcion> todas = obtenerCartelera();
+            for (Funcion f : todas) {
+                if (f.getFecha() != null && f.getFecha().toString().equals(fecha.toString())) {
+                    cartelera.add(f);
+                }
+            }
+            return cartelera;
+        }
+    }
+
+    private Funcion mapearFuncion(ResultSet resultado) throws SQLException {
+        Funcion funcion = new Funcion();
+        funcion.setIdFuncion(resultado.getString("id_funcion"));
+        funcion.setIdSala(resultado.getString("id_sala"));
+        funcion.setTituloPelicula(resultado.getString("titulo"));
+        funcion.setDuracionMin(resultado.getInt("duracion_min"));
+        try { funcion.setGenero(resultado.getString("genero")); } catch (SQLException ignored) {}
+        try { funcion.setClasificacion(resultado.getString("clasificacion")); } catch (SQLException ignored) {}
+        try { funcion.setSinopsis(resultado.getString("sinopsis")); } catch (SQLException ignored) {}
+        try { funcion.setPosterUrl(resultado.getString("poster_url")); } catch (SQLException ignored) {}
+        try { funcion.setTrailerUrl(resultado.getString("trailer_url")); } catch (SQLException ignored) {}
+        funcion.setNombreSala(resultado.getString("nombre_sala"));
+        funcion.setTipoSala(resultado.getString("tipo_sala"));
+        funcion.setFecha(resultado.getDate("fecha"));
+        funcion.setHora(resultado.getTime("hora"));
+        funcion.setPrecioBase(resultado.getBigDecimal("precio_base"));
+        return funcion;
     }
 
     public void crear(String idPelicula, String idSala, Date fecha, Time hora, BigDecimal precioBase) {

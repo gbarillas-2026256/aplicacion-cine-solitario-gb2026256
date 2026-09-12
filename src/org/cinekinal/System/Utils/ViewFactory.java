@@ -45,7 +45,7 @@ public class ViewFactory {
                 case "mainmenu" -> scene = loadFileFXML("MainMenuView.fxml", 860, 560);
                 case "users" -> scene = loadFileFXML("ManageUsersView.fxml", 900, 600);
                 case "solicitudes" -> scene = loadFileFXML("SolicitudesView.fxml", 900, 600);
-                case "comprarboletos" -> scene = loadFileFXML("CompraBoletoView.fxml", 900, 640);
+                case "comprarboletos" -> scene = loadFileFXML("CompraBoletoView.fxml", 1040, 720);
                 default      -> scene = loadFileFXML("LoginView.fxml",0,0); 
             }
             SceneManager.getInstanciaSceneManager().changeScene(scene);

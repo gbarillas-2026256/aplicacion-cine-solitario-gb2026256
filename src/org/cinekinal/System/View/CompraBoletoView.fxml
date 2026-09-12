@@ -2,65 +2,166 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="640.0" prefWidth="900.0" stylesheets="@../styles/LoginStyles.css"
-            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.cinekinal.system.controller.CompraBoletoController">
-    <top>
-        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="panel-formulario">
-            <padding>
-                <Insets bottom="18.0" left="30.0" right="30.0" top="18.0" />
-            </padding>
-            <children>
-                <Label styleClass="eva-title" text="COMPRAR BOLETOS" HBox.hgrow="ALWAYS" />
-                <Button mnemonicParsing="false" onMouseClicked="#onVolver" styleClass="eva-button-ghost" text="VOLVER" />
-            </children>
-        </HBox>
-    </top>
-    <center>
-        <VBox spacing="14.0" styleClass="panel-formulario" BorderPane.alignment="CENTER">
-            <padding>
-                <Insets bottom="20.0" left="30.0" right="30.0" top="10.0" />
-            </padding>
-            <children>
-                <Label styleClass="eva-label" text="1. ELIGE UNA FUNCIÓN" />
-                <TableView fx:id="tablaCartelera" prefHeight="170.0">
-                    <columns>
-                        <TableColumn fx:id="colPelicula" prefWidth="240.0" text="PELÍCULA" />
-                        <TableColumn fx:id="colSala" prefWidth="140.0" text="SALA" />
-                        <TableColumn fx:id="colFecha" prefWidth="120.0" text="FECHA" />
-                        <TableColumn fx:id="colHora" prefWidth="100.0" text="HORA" />
-                        <TableColumn fx:id="colPrecio" prefWidth="100.0" text="PRECIO" />
-                    </columns>
-                </TableView>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1040.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.CompraBoletoController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" styleClass="eva-hazard-strip" />
+            <HBox alignment="CENTER_LEFT" prefHeight="54.0" spacing="12.0" styleClass="header">
+               <padding>
+                  <Insets bottom="8.0" left="20.0" right="20.0" top="8.0" />
+               </padding>
+               <children>
+                  <Label styleClass="header-titulo" text="NERV CINE · CARTELERA Y COMPRA DE BOLETOS" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onMouseClicked="#onVolver" styleClass="boton-volver" text="◄ VOLVER AL MENÚ" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="header">
+               <padding>
+                  <Insets bottom="8.0" left="20.0" right="20.0" top="6.0" />
+               </padding>
+               <children>
+                  <Label styleClass="eva-label" text="FILTRAR POR FECHA:" />
+                  <Button fx:id="btnHoy" mnemonicParsing="false" onMouseClicked="#onFiltrarHoy" styleClass="boton-volver" text="HOY" />
+                  <Button fx:id="btnManana" mnemonicParsing="false" onMouseClicked="#onFiltrarManana" styleClass="boton-volver" text="MAÑANA" />
+                  <Button fx:id="btnTodas" mnemonicParsing="false" onMouseClicked="#onFiltrarTodas" styleClass="boton-volver" text="TODAS" />
+                  <Region prefWidth="10.0" />
+                  <DatePicker fx:id="dpFecha" onAction="#onFechaCambiada" prefWidth="150.0" promptText="Elegir fecha..." styleClass="eva-field" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox spacing="12.0" styleClass="area-central" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="14.0" left="20.0" right="20.0" top="12.0" />
+         </padding>
+         <children>
+            <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+               <children>
+                  
+                  <!-- COLUMNA IZQUIERDA: Cartelera y Mapa de Asientos -->
+                  <VBox spacing="10.0" HBox.hgrow="ALWAYS" prefWidth="540.0">
+                     <children>
+                        <VBox spacing="6.0" styleClass="tarjeta-tabla" prefHeight="210.0">
+                           <padding>
+                              <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <Label styleClass="tarjeta-titulo" text="1. FUNCIONES DISPONIBLES (SELECCIONA UNA)" />
+                              <TableView fx:id="tablaCartelera" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                                 <columns>
+                                    <TableColumn fx:id="colPelicula" prefWidth="190.0" text="PELÍCULA" />
+                                    <TableColumn fx:id="colSala" prefWidth="100.0" text="SALA" />
+                                    <TableColumn fx:id="colFecha" prefWidth="90.0" text="FECHA" />
+                                    <TableColumn fx:id="colHora" prefWidth="75.0" text="HORA" />
+                                    <TableColumn fx:id="colPrecio" prefWidth="75.0" text="PRECIO" />
+                                 </columns>
+                              </TableView>
+                           </children>
+                        </VBox>
 
-                <Label styleClass="eva-label" text="2. ELIGE UN ASIENTO LIBRE" />
-                <ScrollPane fitToWidth="true" prefHeight="220.0" styleClass="panel-formulario">
-                    <content>
-                        <GridPane fx:id="gridAsientos" alignment="CENTER" hgap="6.0" vgap="6.0">
-                            <padding>
-                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                            </padding>
-                        </GridPane>
-                    </content>
-                </ScrollPane>
+                        <VBox spacing="6.0" styleClass="tarjeta-form" VBox.vgrow="ALWAYS">
+                           <padding>
+                              <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <Label styleClass="tarjeta-titulo" text="2. SELECCIÓN DE ASIENTO EN SALA" />
+                              <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                                 <content>
+                                    <GridPane fx:id="gridAsientos" alignment="CENTER" hgap="6.0" vgap="6.0">
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </GridPane>
+                                 </content>
+                              </ScrollPane>
+                              <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                 <children>
+                                    <Label fx:id="lblSeleccion" styleClass="tarjeta-titulo" text="Ningún asiento seleccionado" HBox.hgrow="ALWAYS" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Button fx:id="btnComprar" mnemonicParsing="false" onMouseClicked="#onComprar" styleClass="eva-button-primary" text="CONFIRMAR COMPRA" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="20.0">
-                    <children>
-                        <Label fx:id="lblSeleccion" styleClass="eva-subtitle" text="Ningún asiento seleccionado" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onMouseClicked="#onComprar" styleClass="eva-button-primary" text="COMPRAR" />
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
-    </center>
+                  <!-- COLUMNA DERECHA: Ficha de Película con Póster, Sinopsis y Tráiler -->
+                  <VBox spacing="10.0" styleClass="tarjeta-form" prefWidth="460.0">
+                     <padding>
+                        <Insets bottom="14.0" left="16.0" right="16.0" top="14.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="tarjeta-titulo" text="DETALLE DE LA PELÍCULA SELECCIONADA" />
+                        <HBox spacing="14.0">
+                           <children>
+                              <!-- Poster a la izquierda -->
+                              <VBox alignment="TOP_CENTER" minWidth="150.0" prefWidth="150.0" styleClass="tarjeta-tabla">
+                                 <padding>
+                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+                                 </padding>
+                                 <children>
+                                    <ImageView fx:id="imgPoster" fitHeight="210.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" />
+                                 </children>
+                              </VBox>
+
+                              <!-- Ficha técnica a la derecha del poster -->
+                              <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="lblTituloPelicula" styleClass="header-titulo" text="Selecciona una función" wrapText="true" />
+                                    <Label fx:id="lblGenero" styleClass="eva-label" text="Género: -" />
+                                    <Label fx:id="lblClasificacion" styleClass="eva-label" text="Clasificación: -" />
+                                    <Label fx:id="lblDuracion" styleClass="eva-label" text="Duración: -" />
+                                    <Label fx:id="lblSalaTipo" styleClass="eva-label" text="Sala: -" />
+                                    <Label fx:id="lblPrecioFicha" styleClass="tarjeta-titulo" text="Precio: -" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+
+                        <VBox spacing="4.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="tarjeta-titulo" text="SINOPSIS:" />
+                              <ScrollPane fitToWidth="true" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                                 <content>
+                                    <Label fx:id="lblSinopsis" styleClass="eva-label" text="Selecciona una película de la lista para ver su reseña, póster y tráiler." wrapText="true">
+                                       <padding>
+                                          <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                                       </padding>
+                                    </Label>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
+
+                        <!-- Botón para ver el trailer -->
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Button fx:id="btnTrailer" maxWidth="Infinity" mnemonicParsing="false" onMouseClicked="#onVerTrailer" styleClass="boton-logout" text="▶ VER TRÁILER EN YOUTUBE" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
 </BorderPane>

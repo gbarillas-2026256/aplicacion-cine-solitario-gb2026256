@@ -7,6 +7,8 @@ public class Pelicula {
     private String clasificacion;
     private int duracionMin;
     private String sinopsis;
+    private String posterUrl;
+    private String trailerUrl;
 
     public Pelicula() {
     }
@@ -58,4 +60,28 @@ public class Pelicula {
     public void setSinopsis(String sinopsis) {
         this.sinopsis = sinopsis;
     }
+
+    public String getPosterUrl() {
+        return posterUrl;
+    }
+
+    public void setPosterUrl(String posterUrl) {
+        this.posterUrl = posterUrl;
+    }
+
+    public String getTrailerUrl() {
+        return trailerUrl;
+    }
+
+    public void setTrailerUrl(String trailerUrl) {
+        this.trailerUrl = trailerUrl;
+    }
+
+    // English alias methods
+    public String getMovieId() { return idPelicula; }
+    public String getTitle() { return titulo; }
+    public String getGenre() { return genero; }
+    public String getClassification() { return clasificacion; }
+    public int getDurationMinutes() { return duracionMin; }
+    public String getSynopsis() { return sinopsis; }
 }

@@ -25,6 +25,8 @@ public class PeliculaRepository {
                     pelicula.setClasificacion(resultado.getString("clasificacion"));
                     pelicula.setDuracionMin(resultado.getInt("duracion_min"));
                     pelicula.setSinopsis(resultado.getString("sinopsis"));
+                    pelicula.setPosterUrl(resultado.getString("poster_url"));
+                    pelicula.setTrailerUrl(resultado.getString("trailer_url"));
                     peliculas.add(pelicula);
                 }
             }
@@ -35,19 +37,25 @@ public class PeliculaRepository {
         return peliculas;
     }
 
-    public void crear(String titulo, String genero, String clasificacion, int duracionMin, String sinopsis) {
+    public void crear(String titulo, String genero, String clasificacion, int duracionMin, String sinopsis, String posterUrl, String trailerUrl) {
         try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_crear_pelicula(?,?,?,?,?)}")) {
+                     .prepareCall("{call sp_crear_pelicula(?,?,?,?,?,?,?)}")) {
             callSP.setString(1, titulo);
             callSP.setString(2, genero);
             callSP.setString(3, clasificacion);
             callSP.setInt(4, duracionMin);
             callSP.setString(5, sinopsis);
+            callSP.setString(6, posterUrl);
+            callSP.setString(7, trailerUrl);
             callSP.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Error al crear pelicula: " + e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    public void crear(String titulo, String genero, String clasificacion, int duracionMin, String sinopsis) {
+        crear(titulo, genero, clasificacion, duracionMin, sinopsis, null, null);
     }
 
     public void desactivar(String idPelicula) {

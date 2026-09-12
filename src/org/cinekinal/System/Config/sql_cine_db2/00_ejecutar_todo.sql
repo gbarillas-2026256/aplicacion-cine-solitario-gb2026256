@@ -1,17 +1,19 @@
 -- ============================================================
 -- 00_ejecutar_todo.sql
 --
--- Este es el UNICO archivo que necesitas correr manualmente.
--- Manda a llamar a todos los demas, en el orden correcto, usando
--- SOURCE. Es seguro volver a correrlo cuantas veces quieras: el
--- primer archivo borra y recrea la base de datos desde cero.
+-- ATENCIÓN (¿Por qué SOURCE da error en MySQL Workbench?):
+-- "SOURCE" NO es una instrucción SQL estándar, sino un comando
+-- interno del cliente de consola (mysql.exe). Por eso MySQL Workbench
+-- marca la palabra SOURCE con una X roja de "error de sintaxis".
 --
--- Como correrlo:
---   - MySQL Workbench: abre este archivo y dale "Execute" (rayo).
---   - Consola mysql:   mysql -u root -p < 00_ejecutar_todo.sql
---                      (o, ya dentro de la consola: SOURCE 00_ejecutar_todo.sql;)
+-- CÓMO EJECUTAR EN MYSQL WORKBENCH:
+--   1. En vez de este archivo, abre: "cine_db_completo.sql"
+--      (contiene todo el código unificado en un solo archivo).
+--   2. Presiona el botón del RAYO (Execute).
 --
--- IMPORTANTE: los 8 archivos deben estar en la misma carpeta.
+-- CÓMO EJECUTAR EN CONSOLA / TERMINAL:
+--   mysql -u root -p < cine_db_completo.sql
+--   (o si estás dentro de la consola: SOURCE 00_ejecutar_todo.sql;)
 -- ============================================================
 
 SOURCE 01_tablas.sql;
