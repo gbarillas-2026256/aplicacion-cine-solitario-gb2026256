@@ -62,7 +62,6 @@ public class ViewFactory {
                 case "cambiarprecio" -> fxmlFile = "CambiarPrecioView.fxml";
                 case "reportes" -> fxmlFile = "ReportesView.fxml";
                 case "ganancias" -> fxmlFile = "GananciasView.fxml";
-                case "reportesganancias" -> fxmlFile = "ReportesGananciasView.fxml";
                 default -> { fxmlFile = "LoginView.fxml"; width = 820; height = 500; }
             }
 
@@ -135,9 +134,5 @@ public class ViewFactory {
 
     public void viewGanancias(){
         loadScene("ganancias");
-    }
-
-    public void viewReportesGanancias(){
-        loadScene("reportesganancias");
     }
 }

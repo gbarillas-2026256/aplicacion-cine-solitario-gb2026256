@@ -77,11 +77,4 @@ public class Pelicula {
         this.trailerUrl = trailerUrl;
     }
 
-    // English alias methods
-    public String getMovieId() { return idPelicula; }
-    public String getTitle() { return titulo; }
-    public String getGenre() { return genero; }
-    public String getClassification() { return clasificacion; }
-    public int getDurationMinutes() { return duracionMin; }
-    public String getSynopsis() { return sinopsis; }
 }

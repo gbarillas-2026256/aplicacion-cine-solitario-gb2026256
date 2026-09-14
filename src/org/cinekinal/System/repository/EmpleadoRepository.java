@@ -159,21 +159,5 @@ public class EmpleadoRepository {
         }
     }
 
-    // English aliases
-    public void edit(String employeeId, String firstName, String lastName, String email, int positionId) {
-        editar(employeeId, firstName, lastName, email, positionId);
-    }
-
-    public void report(String employeeId, String reporterId, String reportType, String description) {
-        reportar(employeeId, reporterId, reportType, description);
-    }
-
-    public void deactivate(String employeeId, String reason) {
-        desactivar(employeeId, reason);
-    }
-
-    public List<Empleado> getAll() {
-        return obtenerTodos();
-    }
 }
 

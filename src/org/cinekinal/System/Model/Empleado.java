@@ -113,15 +113,5 @@ public class Empleado {
         this.motivoBaja = motivoBaja;
     }
 
-    // English alias methods
-    public String getEmployeeId() { return idEmpleado; }
-    public String getFirstName() { return nombres; }
-    public String getLastName() { return apellidos; }
-    public String getEmail() { return correo; }
-    public String getUsername() { return usuario; }
-    public int getPositionId() { return idPuesto; }
-    public String getPositionName() { return nombrePuesto; }
-    public int getHierarchyLevel() { return nivelJerarquico; }
-    public String getDeactivationReason() { return motivoBaja; }
 }
 

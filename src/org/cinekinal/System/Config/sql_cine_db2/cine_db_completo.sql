@@ -38,6 +38,7 @@ create table if not exists Empleados (
     motivo_baja varchar(255) null,
     constraint pk_empleados primary key (id_empleado),
     constraint uq_empleados_usuario unique (usuario),
+    constraint uq_empleados_correo unique (correo),
     constraint fk_empleados_puesto foreign key (id_puesto) references Puestos(id_puesto)
 );
 

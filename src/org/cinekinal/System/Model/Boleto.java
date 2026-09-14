@@ -118,12 +118,4 @@ public class Boleto {
         return (fila != null ? fila : "") + (numero > 0 ? String.valueOf(numero) : "");
     }
 
-    // English aliases
-    public String getTicketId() { return idBoleto; }
-    public String getMovieTitle() { return tituloPelicula; }
-    public String getRoomName() { return nombreSala; }
-    public BigDecimal getFinalPrice() { return precioFinal; }
-    public Timestamp getPurchaseDate() { return fechaCompra; }
-    public String getCustomerName() { return getNombreCliente(); }
-    public boolean isUsed() { return usado; }
 }

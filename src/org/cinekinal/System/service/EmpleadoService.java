@@ -37,6 +37,9 @@ public class EmpleadoService {
                 if (mensaje != null && mensaje.contains("uq_empleados_usuario")) {
                     return EmpleadoRegistroStatus.USUARIO_YA_EXISTE;
                 }
+                if (mensaje != null && mensaje.contains("uq_empleados_correo")) {
+                    return EmpleadoRegistroStatus.CORREO_YA_EXISTE;
+                }
                 return EmpleadoRegistroStatus.ERROR_AL_CREAR;
             }
             return EmpleadoRegistroStatus.ERROR_AL_CREAR;
@@ -82,21 +85,5 @@ public class EmpleadoService {
         }
     }
 
-    // English aliases
-    public boolean edit(String employeeId, String firstName, String lastName, String email, int positionId) {
-        return editar(employeeId, firstName, lastName, email, positionId);
-    }
-
-    public boolean report(String employeeId, String reporterId, String reportType, String description) {
-        return reportar(employeeId, reporterId, reportType, description);
-    }
-
-    public boolean deactivate(String employeeId, String reason) {
-        return desactivar(employeeId, reason);
-    }
-
-    public List<Empleado> getAll() {
-        return obtenerTodos();
-    }
 }
 

@@ -142,15 +142,4 @@ public class Funcion {
         this.trailerUrl = trailerUrl;
     }
 
-    // English alias methods
-    public String getShowtimeId() { return idFuncion; }
-    public String getRoomId() { return idSala; }
-    public String getMovieTitle() { return tituloPelicula; }
-    public int getDurationMinutes() { return duracionMin; }
-    public String getRoomName() { return nombreSala; }
-    public String getRoomType() { return tipoSala; }
-    public Date getDate() { return fecha; }
-    public Time getTime() { return hora; }
-    public BigDecimal getBasePrice() { return precioBase; }
-    public String getSynopsis() { return sinopsis; }
 }
