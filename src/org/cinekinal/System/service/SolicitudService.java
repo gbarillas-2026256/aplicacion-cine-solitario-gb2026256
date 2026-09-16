@@ -36,7 +36,7 @@ public class SolicitudService {
      * - Si el empleado la ve pero necesita permiso -> crea una Solicitud
      *   pendiente (sin correr accionDirecta) y devuelve SOLICITADA.
      */
-    public ResultadoIntento intentar(Empleado empleado, Accion accion, Runnable accionDirecta) {
+    public ResultadoIntento intentar(Empleado empleado, Accion accion, String motivo, Runnable accionDirecta) {
         if (!permisoService.puedeVer(empleado, accion)) {
             return ResultadoIntento.NO_AUTORIZADO;
         }
@@ -46,7 +46,7 @@ public class SolicitudService {
             return ResultadoIntento.EJECUTADA;
         }
 
-        solicitudRepo.crear(empleado.getIdEmpleado(), accion.getDescripcion());
+        solicitudRepo.crear(empleado.getIdEmpleado(), accion.getDescripcion(), motivo);
         return ResultadoIntento.SOLICITADA;
     }
 

@@ -12,11 +12,12 @@ public class SolicitudRepository {
 
     private final ConexionDB conexionDB = ConexionDB.getInstanciaConexionDB();
 
-    public void crear(String idSolicitante, String accion) {
+    public void crear(String idSolicitante, String accion, String motivo) {
         try (CallableStatement callSP = conexionDB.getConnection()
                      .prepareCall("{call sp_crear_solicitud(?,?)}")) {
             callSP.setString(1, idSolicitante);
             callSP.setString(2, accion);
+            callSP.setString(3, motivo);
             callSP.execute();
         } catch (SQLException e) {
             System.out.println("Error al crear solicitud: " + e.getMessage());
@@ -46,6 +47,8 @@ public class SolicitudRepository {
                     Solicitud solicitud = new Solicitud();
                     solicitud.setIdSolicitud(resultado.getString("id_solicitud"));
                     solicitud.setAccion(resultado.getString("accion"));
+                    solicitud.setMotivo(resultado.getString("motivo"));
+                    solicitud.setEstado(resultado.getString("estado"));
                     solicitud.setFechaSolicitud(resultado.getTimestamp("fecha_solicitud"));
                     solicitud.setSolicitanteNombres(resultado.getString("solicitante_nombres"));
                     solicitud.setSolicitanteApellidos(resultado.getString("solicitante_apellidos"));

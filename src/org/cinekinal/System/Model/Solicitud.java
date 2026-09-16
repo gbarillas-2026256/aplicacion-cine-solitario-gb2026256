@@ -12,10 +12,14 @@ public class Solicitud {
 
     private String idSolicitud;
     private String accion;
+    private String motivo;
+    private String estado;
     private Timestamp fechaSolicitud;
+    private Timestamp fechaRespuesta;
     private String solicitanteNombres;
     private String solicitanteApellidos;
-
+    private String aprobadorNombres;
+    private String aprobadorApellidos;
     public Solicitud() {
     }
 
@@ -58,4 +62,46 @@ public class Solicitud {
     public void setSolicitanteApellidos(String solicitanteApellidos) {
         this.solicitanteApellidos = solicitanteApellidos;
     }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public Timestamp getFechaRespuesta() {
+        return fechaRespuesta;
+    }
+
+    public void setFechaRespuesta(Timestamp fechaRespuesta) {
+        this.fechaRespuesta = fechaRespuesta;
+    }
+
+    public String getAprobadorNombres() {
+        return aprobadorNombres;
+    }
+
+    public void setAprobadorNombres(String aprobadorNombres) {
+        this.aprobadorNombres = aprobadorNombres;
+    }
+
+    public String getAprobadorApellidos() {
+        return aprobadorApellidos;
+    }
+
+    public void setAprobadorApellidos(String aprobadorApellidos) {
+        this.aprobadorApellidos = aprobadorApellidos;
+    }
+    
+    
 }

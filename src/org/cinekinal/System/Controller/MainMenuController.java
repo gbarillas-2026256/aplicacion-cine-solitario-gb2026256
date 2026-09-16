@@ -2,11 +2,13 @@ package org.cinekinal.system.controller;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.cinekinal.system.model.Accion;
@@ -88,6 +90,12 @@ public class MainMenuController implements Initializable {
             btnSolicitudes.setOnAction(e -> new ViewFactory().viewSolicitudes());
             vboxSidebar.getChildren().add(btnSolicitudes);
         }
+
+        // Cualquier empleado puede consultar el estado de lo que el mismo
+        // ha solicitado -- para eso ya no hace falta "quedarse esperando".
+        Button btnMisSolicitudes = crearBotonSidebar("Mis solicitudes");
+        btnMisSolicitudes.setOnAction(e -> new ViewFactory().viewMisSolicitudes());
+        vboxSidebar.getChildren().add(btnMisSolicitudes);
     }
 
     private void construirMenuCliente() {
@@ -112,7 +120,22 @@ public class MainMenuController implements Initializable {
     }
 
     private void manejarAccionSensible(Empleado empleado, Accion accion, Runnable siEjecuta) {
-        ResultadoIntento resultado = solicitudService.intentar(empleado, accion, siEjecuta);
+        String motivo = "";
+
+        //Solo interrumpimos con el cuadro de motivo cuando de verdad va a
+        //generar una Solicitud. Si el empleado ya puede ejecutarlo directo,
+        //pedirle un motivo no tendria para que -- por eso se pregunta ANTES
+        //de llamar a intentar(...), usando el mismo PermisoService que ya
+        //existia pero que nadie llamaba todavia.
+        if (permisoService.necesitaSolicitud(empleado, accion)) {
+            Optional<String> motivoIngresado = pedirMotivo(accion);
+            if (motivoIngresado.isEmpty()) {
+                return; //el empleado cancelo el cuadro de texto
+            }
+            motivo = motivoIngresado.get();
+        }
+
+        ResultadoIntento resultado = solicitudService.intentar(empleado, accion, motivo, siEjecuta);
         switch (resultado) {
             case EJECUTADA -> {
                 // siEjecuta ya corrio y ya dio su propio feedback (alerta o navegacion)
@@ -120,11 +143,35 @@ public class MainMenuController implements Initializable {
             case SOLICITADA -> alertInfo.viewAlert("INFORMATION", "SOLICITUD ENVIADA",
                     "Pendiente de aprobación del Dueño",
                     "Tu nivel actual no permite ejecutar \"" + accion.getDescripcion()
-                    + "\" directamente. Se envió una solicitud para que el Dueño la apruebe.");
+                    + "\" directamente. Se envió tu solicitud con el motivo indicado -- puedes revisar "
+                    + "su estado más tarde en \"Mis solicitudes\".");
             case NO_AUTORIZADO -> alertInfo.viewAlert("ERROR", "SIN PERMISO",
                     "Acción no autorizada",
                     "No tienes permiso para realizar esta acción.");
         }
+    }
+
+    /**
+     * Pide una breve justificacion antes de mandar una Solicitud.
+     * Optional.empty() si el empleado le dio Cancelar o dejo el texto vacio.
+     */
+    private Optional<String> pedirMotivo(Accion accion) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("EXPLICA TU SOLICITUD");
+        dialog.setHeaderText("\"" + accion.getDescripcion() + "\" necesita aprobación del Dueño");
+        dialog.setContentText("¿Por qué necesitas realizar esta acción?");
+
+        Optional<String> respuesta = dialog.showAndWait();
+        if (respuesta.isEmpty()) {
+            return Optional.empty();
+        }
+        String motivo = respuesta.get().trim();
+        if (motivo.isEmpty()) {
+            alertInfo.viewAlert("WARNING", "MOTIVO REQUERIDO", "Explica el motivo",
+                    "Escribe una breve razón antes de enviar la solicitud.");
+            return Optional.empty();
+        }
+        return Optional.of(motivo);
     }
 
     private Button crearBotonSidebar(String texto) {

@@ -131,7 +131,7 @@ public class CambiarPrecioController implements Initializable {
             String accion = "CAMBIO DE PRECIO: " + funcionSeleccionada.getTituloPelicula()
                     + " (" + funcionSeleccionada.getFecha() + " " + funcionSeleccionada.getHora() + ")"
                     + " de Q" + funcionSeleccionada.getPrecioBase() + " a Q" + nuevoPrecio;
-            solicitudRepo.crear(emp.getIdEmpleado(), accion);
+            solicitudRepo.crear(emp.getIdEmpleado(), accion, motivo);
             alertInfo.viewAlert("INFORMATION", "SOLICITUD ENVIADA", "PENDIENTE DE APROBACIÓN",
                     "Tu solicitud para cambiar el precio a Q " + nuevoPrecio
                             + " ha sido enviada al Dueño para su revisión.");
