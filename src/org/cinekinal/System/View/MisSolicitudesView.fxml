@@ -12,14 +12,14 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="600.0" prefWidth="1080.0" stylesheets="@../styles/LoginStyles.css"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.cinekinal.system.controller.SolicitudesController">
+            fx:controller="org.cinekinal.system.controller.MisSolicitudesController">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="panel-formulario">
             <padding>
                 <Insets bottom="18.0" left="30.0" right="30.0" top="18.0" />
             </padding>
             <children>
-                <Label styleClass="eva-title" text="SOLICITUDES PENDIENTES" HBox.hgrow="ALWAYS" />
+                <Label styleClass="eva-title" text="MIS SOLICITUDES" HBox.hgrow="ALWAYS" />
                 <Button mnemonicParsing="false" onMouseClicked="#onRefrescar" styleClass="eva-button-ghost" text="REFRESCAR" />
                 <Button mnemonicParsing="false" onMouseClicked="#onVolver" styleClass="eva-button-ghost" text="VOLVER" />
             </children>
@@ -31,21 +31,16 @@
                 <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
             </padding>
             <children>
-                <Label styleClass="eva-subtitle" text="Acciones que un empleado intentó y necesitan tu aprobación." />
-                <TableView fx:id="tablaSolicitudes" prefHeight="360.0" VBox.vgrow="ALWAYS">
+                <Label styleClass="eva-subtitle" text="Historial de las acciones que has solicitado y su respuesta." />
+                <TableView fx:id="tablaMisSolicitudes" prefHeight="420.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colSolicitante" prefWidth="180.0" text="SOLICITANTE" />
                         <TableColumn fx:id="colAccion" prefWidth="260.0" text="ACCIÓN" />
-                        <TableColumn fx:id="colMotivo" prefWidth="350.0" text="MOTIVO" />
-                        <TableColumn fx:id="colFecha" prefWidth="180.0" text="FECHA" />
+                        <TableColumn fx:id="colMotivo" prefWidth="330.0" text="MOTIVO" />
+                        <TableColumn fx:id="colEstado" prefWidth="120.0" text="ESTADO" />
+                        <TableColumn fx:id="colFechaSolicitud" prefWidth="170.0" text="FECHA DE SOLICITUD" />
+                        <TableColumn fx:id="colRespondidoPor" prefWidth="180.0" text="RESPONDIDO POR" />
                     </columns>
                 </TableView>
-                <HBox alignment="CENTER_RIGHT" spacing="14.0">
-                    <children>
-                        <Button mnemonicParsing="false" onMouseClicked="#onRechazar" styleClass="eva-button-ghost" text="RECHAZAR" />
-                        <Button mnemonicParsing="false" onMouseClicked="#onAprobar" styleClass="eva-button-primary" text="APROBAR" />
-                    </children>
-                </HBox>
             </children>
         </VBox>
     </center>

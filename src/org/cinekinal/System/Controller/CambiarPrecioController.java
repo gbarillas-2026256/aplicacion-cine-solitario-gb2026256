@@ -2,6 +2,7 @@ package org.cinekinal.system.controller;
 
 import java.math.BigDecimal;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import org.cinekinal.system.model.Empleado;
 import org.cinekinal.system.model.Funcion;
 import org.cinekinal.system.repository.FuncionRepository;
@@ -127,15 +129,45 @@ public class CambiarPrecioController implements Initializable {
                 alertInfo.viewAlert("ERROR", "ERROR AL ACTUALIZAR", "FALLO", "No se pudo actualizar el precio en la base de datos.");
             }
         } else if (emp != null) {
-            // Gerente u otro: genera Solicitud formal
+            // Gerente u otro: pide el motivo y genera Solicitud formal
             String accion = "CAMBIO DE PRECIO: " + funcionSeleccionada.getTituloPelicula()
                     + " (" + funcionSeleccionada.getFecha() + " " + funcionSeleccionada.getHora() + ")"
                     + " de Q" + funcionSeleccionada.getPrecioBase() + " a Q" + nuevoPrecio;
+
+            Optional<String> motivoIngresado = pedirMotivo();
+            if (motivoIngresado.isEmpty()) {
+                return; // cancelo el cuadro de motivo
+            }
+            String motivo = motivoIngresado.get();
+
             solicitudRepo.crear(emp.getIdEmpleado(), accion, motivo);
             alertInfo.viewAlert("INFORMATION", "SOLICITUD ENVIADA", "PENDIENTE DE APROBACIÓN",
                     "Tu solicitud para cambiar el precio a Q " + nuevoPrecio
                             + " ha sido enviada al Dueño para su revisión.");
         }
+    }
+
+    /**
+     * Pide una breve justificacion antes de mandar la Solicitud de cambio
+     * de precio. Optional.empty() si cancelo o dejo el texto vacio.
+     */
+    private Optional<String> pedirMotivo() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("EXPLICA TU SOLICITUD");
+        dialog.setHeaderText("El cambio de precio necesita aprobación del Dueño");
+        dialog.setContentText("¿Por qué necesitas hacer este cambio?");
+
+        Optional<String> respuesta = dialog.showAndWait();
+        if (respuesta.isEmpty()) {
+            return Optional.empty();
+        }
+        String motivo = respuesta.get().trim();
+        if (motivo.isEmpty()) {
+            alertInfo.viewAlert("WARNING", "MOTIVO REQUERIDO", "Explica el motivo",
+                    "Escribe una breve razón antes de enviar la solicitud.");
+            return Optional.empty();
+        }
+        return Optional.of(motivo);
     }
 
     @FXML

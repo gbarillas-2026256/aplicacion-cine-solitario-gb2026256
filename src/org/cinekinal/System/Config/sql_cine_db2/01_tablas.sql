@@ -49,6 +49,7 @@ create table if not exists Solicitudes (
     id_solicitante varchar(36) not null,
     id_aprobador varchar(36) null,
     accion varchar(120) not null,
+    motivo varchar(255) not null,
     estado varchar(15) not null default 'PENDIENTE',
     fecha_solicitud datetime not null default current_timestamp,
     fecha_respuesta datetime null,

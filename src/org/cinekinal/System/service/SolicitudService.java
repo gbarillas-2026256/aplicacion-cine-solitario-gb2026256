@@ -61,4 +61,8 @@ public class SolicitudService {
     public List<Solicitud> obtenerPendientes() {
         return solicitudRepo.obtenerPendientes();
     }
+
+    public List<Solicitud> obtenerMisSolicitudes(Empleado empleado) {
+        return solicitudRepo.obtenerPorEmpleado(empleado.getIdEmpleado());
+    }
 }

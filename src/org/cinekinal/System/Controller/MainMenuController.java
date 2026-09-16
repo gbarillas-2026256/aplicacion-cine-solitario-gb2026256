@@ -75,7 +75,16 @@ public class MainMenuController implements Initializable {
         agregarBotonAccion(empleado, Accion.ADMINISTRAR_PELICULAS, () -> new ViewFactory().viewAdministrarPeliculas());
         agregarBotonAccion(empleado, Accion.VER_REPORTES, () -> new ViewFactory().viewReportes());
         agregarBotonAccion(empleado, Accion.VER_GANANCIAS, () -> new ViewFactory().viewGanancias());
-        agregarBotonAccion(empleado, Accion.CAMBIAR_PRECIO, () -> new ViewFactory().viewCambiarPrecio());
+        // CAMBIAR_PRECIO ya NO pasa por agregarBotonAccion/manejarAccionSensible:
+        // esa pantalla necesita saber CUAL funcion y CUANTO es el precio nuevo
+        // para armar un motivo detallado, asi que el permiso (directo vs
+        // solicitud) se decide DENTRO de CambiarPrecioController, no aqui.
+        // Aqui solo controlamos que puedan VER el boton.
+        if (permisoService.puedeVer(empleado, Accion.CAMBIAR_PRECIO)) {
+            Button btnCambiarPrecio = crearBotonSidebar(Accion.CAMBIAR_PRECIO.getDescripcion());
+            btnCambiarPrecio.setOnAction(e -> new ViewFactory().viewCambiarPrecio());
+            vboxSidebar.getChildren().add(btnCambiarPrecio);
+        }
         // "Dar de baja a un empleado" ya NO es un boton aparte: vive dentro
         // de "Gestion de empleados" (mas abajo), donde tiene sentido junto
         // con crear y editar empleados en un solo lugar.

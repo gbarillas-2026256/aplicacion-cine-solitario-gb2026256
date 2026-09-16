@@ -34,6 +34,8 @@ public class SolicitudesController implements Initializable {
     @FXML
     private TableColumn<Solicitud, String> colAccion;
     @FXML
+    private TableColumn<Solicitud, String> colMotivo;
+    @FXML
     private TableColumn<Solicitud, String> colFecha;
 
     private final SolicitudService solicitudService = new SolicitudService();
@@ -51,6 +53,7 @@ public class SolicitudesController implements Initializable {
         colSolicitante.setCellValueFactory(d ->
                 new SimpleStringProperty(d.getValue().getSolicitanteNombres() + " " + d.getValue().getSolicitanteApellidos()));
         colAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAccion()));
+        colMotivo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMotivo()));
         colFecha.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getFechaSolicitud())));
 
         cargarTabla();
@@ -93,6 +96,11 @@ public class SolicitudesController implements Initializable {
         solicitudService.rechazar(seleccionada, dueño);
         alertInfo.viewAlert("INFORMATION", "SOLICITUD RECHAZADA", "Listo",
                 "Se rechazó la solicitud de \"" + seleccionada.getAccion() + "\".");
+        cargarTabla();
+    }
+
+    @FXML
+    public void onRefrescar(MouseEvent event) {
         cargarTabla();
     }
 

@@ -49,6 +49,7 @@ create table if not exists Solicitudes (
     id_solicitante varchar(36) not null,
     id_aprobador varchar(36) null,
     accion varchar(120) not null,
+    motivo varchar(255) not null,
     estado varchar(15) not null default 'PENDIENTE',
     fecha_solicitud datetime not null default current_timestamp,
     fecha_respuesta datetime null,
@@ -305,10 +306,11 @@ Delimiter ;
 
 drop procedure if exists sp_crear_solicitud;
 Delimiter $$
-create procedure sp_crear_solicitud(in id_solicitante_p varchar(36), in accion_p varchar(120))
+create procedure sp_crear_solicitud(in id_solicitante_p varchar(36), in accion_p varchar(120),
+                                     in motivo_p varchar(255))
 begin
-    insert into Solicitudes(id_solicitud, id_solicitante, accion)
-        values(uuid(), id_solicitante_p, accion_p);
+    insert into Solicitudes(id_solicitud, id_solicitante, accion, motivo)
+        values(uuid(), id_solicitante_p, accion_p, motivo_p);
 end$$
 Delimiter ;
 
@@ -327,12 +329,25 @@ drop procedure if exists sp_obtener_solicitudes_pendientes;
 Delimiter $$
 create procedure sp_obtener_solicitudes_pendientes()
 begin
-    select s.id_solicitud, s.accion, s.fecha_solicitud,
+    select s.id_solicitud, s.accion, s.motivo, s.estado, s.fecha_solicitud,
            e.nombres as solicitante_nombres, e.apellidos as solicitante_apellidos
         from Solicitudes s
         inner join Empleados e on e.id_empleado = s.id_solicitante
         where s.estado = 'PENDIENTE'
         order by s.fecha_solicitud;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_obtener_solicitudes_por_empleado;
+Delimiter $$
+create procedure sp_obtener_solicitudes_por_empleado(in id_empleado_p varchar(36))
+begin
+    select s.id_solicitud, s.accion, s.motivo, s.estado, s.fecha_solicitud, s.fecha_respuesta,
+           a.nombres as aprobador_nombres, a.apellidos as aprobador_apellidos
+        from Solicitudes s
+        left join Empleados a on a.id_empleado = s.id_aprobador
+        where s.id_solicitante = id_empleado_p
+        order by s.fecha_solicitud desc;
 end$$
 Delimiter ;
 -- ============================================================
