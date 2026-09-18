@@ -1,6 +1,7 @@
 package org.cinekinal.system.controller;
 
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -8,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import org.cinekinal.system.model.Empleado;
 import org.cinekinal.system.model.Solicitud;
@@ -92,11 +94,41 @@ public class SolicitudesController implements Initializable {
         if (seleccionada == null) {
             return;
         }
+
+        Optional<String> motivoIngresado = pedirMotivoRechazo(seleccionada);
+        if (motivoIngresado.isEmpty()) {
+            return; // el Dueño cancelo el cuadro de texto
+        }
+
         Empleado dueño = Session.getEmpleadoActual();
-        solicitudService.rechazar(seleccionada, dueño);
+        solicitudService.rechazar(seleccionada, dueño, motivoIngresado.get());
         alertInfo.viewAlert("INFORMATION", "SOLICITUD RECHAZADA", "Listo",
                 "Se rechazó la solicitud de \"" + seleccionada.getAccion() + "\".");
         cargarTabla();
+    }
+
+    /**
+     * El rechazo SIEMPRE necesita una razon (a diferencia de aprobar, que
+     * no la pide): el Gerente la va a ver en su pantalla de Mensajes, asi
+     * que dejarla vacia lo dejaria sin saber por que le negaron la accion.
+     */
+    private Optional<String> pedirMotivoRechazo(Solicitud solicitud) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("MOTIVO DEL RECHAZO");
+        dialog.setHeaderText("Vas a rechazar \"" + solicitud.getAccion() + "\"");
+        dialog.setContentText("Explica por qué la rechazas (el empleado lo va a ver):");
+
+        Optional<String> respuesta = dialog.showAndWait();
+        if (respuesta.isEmpty()) {
+            return Optional.empty();
+        }
+        String motivo = respuesta.get().trim();
+        if (motivo.isEmpty()) {
+            alertInfo.viewAlert("WARNING", "MOTIVO REQUERIDO", "Explica el motivo",
+                    "Debes escribir una razón antes de rechazar la solicitud.");
+            return Optional.empty();
+        }
+        return Optional.of(motivo);
     }
 
     @FXML

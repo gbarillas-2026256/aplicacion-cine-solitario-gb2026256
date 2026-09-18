@@ -25,12 +25,13 @@ public class SolicitudRepository {
         }
     }
 
-    public void responder(String idSolicitud, String idAprobador, String estado) {
+    public void responder(String idSolicitud, String idAprobador, String estado, String motivoRespuesta) {
         try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_responder_solicitud(?,?,?)}")) {
+                     .prepareCall("{call sp_responder_solicitud(?,?,?,?)}")) {
             callSP.setString(1, idSolicitud);
             callSP.setString(2, idAprobador);
             callSP.setString(3, estado);
+            callSP.setString(4, motivoRespuesta);
             callSP.execute();
         } catch (SQLException e) {
             System.out.println("Error al responder solicitud: " + e.getMessage());
@@ -77,6 +78,7 @@ public class SolicitudRepository {
                     solicitud.setEstado(resultado.getString("estado"));
                     solicitud.setFechaSolicitud(resultado.getTimestamp("fecha_solicitud"));
                     solicitud.setFechaRespuesta(resultado.getTimestamp("fecha_respuesta"));
+                    solicitud.setMotivoRespuesta(resultado.getString("motivo_respuesta"));
                     solicitud.setAprobadorNombres(resultado.getString("aprobador_nombres"));
                     solicitud.setAprobadorApellidos(resultado.getString("aprobador_apellidos"));
                     solicitudes.add(solicitud);

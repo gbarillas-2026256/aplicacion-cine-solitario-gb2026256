@@ -35,6 +35,8 @@ public class MisSolicitudesController implements Initializable {
     @FXML
     private TableColumn<Solicitud, String> colEstado;
     @FXML
+    private TableColumn<Solicitud, String> colMotivoRespuesta;
+    @FXML
     private TableColumn<Solicitud, String> colFechaSolicitud;
     @FXML
     private TableColumn<Solicitud, String> colRespondidoPor;
@@ -47,6 +49,10 @@ public class MisSolicitudesController implements Initializable {
         colMotivo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMotivo()));
         colEstado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEstado()));
         colEstado.setCellFactory(columna -> celdaConColorDeEstado());
+        colMotivoRespuesta.setCellValueFactory(d -> {
+            String respuesta = d.getValue().getMotivoRespuesta();
+            return new SimpleStringProperty(respuesta == null ? "—" : respuesta);
+        });
         colFechaSolicitud.setCellValueFactory(d ->
                 new SimpleStringProperty(String.valueOf(d.getValue().getFechaSolicitud())));
         colRespondidoPor.setCellValueFactory(d -> {

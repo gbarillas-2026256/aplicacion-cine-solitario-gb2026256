@@ -53,6 +53,7 @@ create table if not exists Solicitudes (
     estado varchar(15) not null default 'PENDIENTE',
     fecha_solicitud datetime not null default current_timestamp,
     fecha_respuesta datetime null,
+    motivo_respuesta varchar(255) null,
     constraint pk_solicitudes primary key (id_solicitud),
     constraint fk_solicitudes_solicitante foreign key (id_solicitante) references Empleados(id_empleado),
     constraint fk_solicitudes_aprobador foreign key (id_aprobador) references Empleados(id_empleado)

@@ -13,6 +13,7 @@ public class Solicitud {
     private String idSolicitud;
     private String accion;
     private String motivo;
+    private String motivoRespuesta;
     private String estado;
     private Timestamp fechaSolicitud;
     private Timestamp fechaRespuesta;
@@ -69,6 +70,14 @@ public class Solicitud {
 
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    public String getMotivoRespuesta() {
+        return motivoRespuesta;
+    }
+
+    public void setMotivoRespuesta(String motivoRespuesta) {
+        this.motivoRespuesta = motivoRespuesta;
     }
 
     public String getEstado() {

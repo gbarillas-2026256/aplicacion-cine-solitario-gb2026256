@@ -101,10 +101,11 @@ Delimiter ;
 drop procedure if exists sp_responder_solicitud;
 Delimiter $$
 create procedure sp_responder_solicitud(in id_solicitud_p varchar(36), in id_aprobador_p varchar(36),
-                                         in estado_p varchar(15))
+                                         in estado_p varchar(15), in motivo_respuesta_p varchar(255))
 begin
     update Solicitudes
-        set id_aprobador = id_aprobador_p, estado = estado_p, fecha_respuesta = current_timestamp
+        set id_aprobador = id_aprobador_p, estado = estado_p, fecha_respuesta = current_timestamp,
+            motivo_respuesta = motivo_respuesta_p
         where id_solicitud = id_solicitud_p;
 end$$
 Delimiter ;
@@ -130,7 +131,7 @@ Delimiter $$
 create procedure sp_obtener_solicitudes_por_empleado(in id_empleado_p varchar(36))
 begin
     select s.id_solicitud, s.accion, s.motivo, s.estado, s.fecha_solicitud, s.fecha_respuesta,
-           a.nombres as aprobador_nombres, a.apellidos as aprobador_apellidos
+           s.motivo_respuesta, a.nombres as aprobador_nombres, a.apellidos as aprobador_apellidos
         from Solicitudes s
         left join Empleados a on a.id_empleado = s.id_aprobador
         where s.id_solicitante = id_empleado_p

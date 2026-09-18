@@ -56,6 +56,7 @@ public class ViewFactory {
                 case "users" -> fxmlFile = "ManageUsersView.fxml";
                 case "solicitudes" -> fxmlFile = "SolicitudesView.fxml";
                 case "missolicitudes" -> fxmlFile = "MisSolicitudesView.fxml";
+                case "mensajes" -> fxmlFile = "MensajesView.fxml";
                 case "comprarboletos" -> fxmlFile = "CompraBoletoView.fxml";
                 case "verificarentrada" -> fxmlFile = "VerificarEntradaView.fxml";
                 case "ventataquilla" -> fxmlFile = "VentaTaquillaView.fxml";
@@ -108,6 +109,10 @@ public class ViewFactory {
 
     public void viewMisSolicitudes(){
         loadScene("missolicitudes");
+    }
+
+    public void viewMensajes(){
+        loadScene("mensajes");
     }
 
     public void viewComprarBoletos(){

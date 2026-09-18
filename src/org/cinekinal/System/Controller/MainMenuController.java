@@ -105,6 +105,10 @@ public class MainMenuController implements Initializable {
         Button btnMisSolicitudes = crearBotonSidebar("Mis solicitudes");
         btnMisSolicitudes.setOnAction(e -> new ViewFactory().viewMisSolicitudes());
         vboxSidebar.getChildren().add(btnMisSolicitudes);
+
+        Button btnMensajes = crearBotonSidebar("Mensajes");
+        btnMensajes.setOnAction(e -> new ViewFactory().viewMensajes());
+        vboxSidebar.getChildren().add(btnMensajes);
     }
 
     private void construirMenuCliente() {

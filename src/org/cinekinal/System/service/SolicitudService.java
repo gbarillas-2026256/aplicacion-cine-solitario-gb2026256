@@ -51,11 +51,11 @@ public class SolicitudService {
     }
 
     public void aprobar(Solicitud solicitud, Empleado aprobador) {
-        solicitudRepo.responder(solicitud.getIdSolicitud(), aprobador.getIdEmpleado(), "APROBADA");
+        solicitudRepo.responder(solicitud.getIdSolicitud(), aprobador.getIdEmpleado(), "APROBADA", null);
     }
 
-    public void rechazar(Solicitud solicitud, Empleado aprobador) {
-        solicitudRepo.responder(solicitud.getIdSolicitud(), aprobador.getIdEmpleado(), "RECHAZADA");
+    public void rechazar(Solicitud solicitud, Empleado aprobador, String motivoRechazo) {
+        solicitudRepo.responder(solicitud.getIdSolicitud(), aprobador.getIdEmpleado(), "RECHAZADA", motivoRechazo);
     }
 
     public List<Solicitud> obtenerPendientes() {

@@ -120,11 +120,17 @@ public class CambiarPrecioController implements Initializable {
         Empleado emp = Session.getEmpleadoActual();
         if (emp != null && emp.getNivelJerarquico() == 1) {
             // Dueño: aplica directo
+            // Se guarda el titulo ANTES de refrescar la tabla: cargarTabla()
+            // reemplaza los items de tableFunciones, y eso hace que se pierda
+            // la seleccion actual -- lo cual dispara el listener de seleccion
+            // y deja funcionSeleccionada en null. Si se lee despues de
+            // cargarTabla(), truena con NullPointerException.
+            String tituloParaElMensaje = funcionSeleccionada.getTituloPelicula();
             boolean ok = funcionRepo.actualizarPrecioBase(funcionSeleccionada.getIdFuncion(), nuevoPrecio);
             if (ok) {
                 cargarTabla();
                 alertInfo.viewAlert("INFORMATION", "PRECIO ACTUALIZADO", "CAMBIO APLICADO",
-                        "El precio de \"" + funcionSeleccionada.getTituloPelicula() + "\" ha sido fijado en Q " + nuevoPrecio + ".");
+                        "El precio de \"" + tituloParaElMensaje + "\" ha sido fijado en Q " + nuevoPrecio + ".");
             } else {
                 alertInfo.viewAlert("ERROR", "ERROR AL ACTUALIZAR", "FALLO", "No se pudo actualizar el precio en la base de datos.");
             }
