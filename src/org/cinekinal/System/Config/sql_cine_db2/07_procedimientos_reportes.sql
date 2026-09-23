@@ -118,3 +118,110 @@ begin
         order by f.fecha, f.hora;
 end$$
 Delimiter ;
+
+-- ============================================================
+-- PROCEDIMIENTOS DE CORTE DE CAJA Y DULCERÍA
+-- ============================================================
+
+drop procedure if exists sp_corte_entradas_del_dia;
+Delimiter $$
+create procedure sp_corte_entradas_del_dia(in fecha_p date)
+begin
+    select count(*) as boletos_vendidos,
+           coalesce(sum(b.precio_final), 0) as total_entradas
+        from Boletos b
+        where date(b.fecha_compra) = fecha_p;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_corte_entradas_por_pelicula;
+Delimiter $$
+create procedure sp_corte_entradas_por_pelicula(in fecha_p date)
+begin
+    select p.titulo,
+           count(*) as boletos_vendidos,
+           coalesce(sum(b.precio_final), 0) as total
+        from Boletos b
+        inner join Funciones f on f.id_funcion = b.id_funcion
+        inner join Peliculas p on p.id_pelicula = f.id_pelicula
+        where date(b.fecha_compra) = fecha_p
+        group by p.id_pelicula, p.titulo
+        order by total desc;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_corte_crear;
+Delimiter $$
+create procedure sp_corte_crear(in id_empleado_p varchar(36), in fecha_corte_p date,
+                                 in total_entradas_p decimal(10,2), in boletos_vendidos_p int,
+                                 in observaciones_p varchar(300))
+begin
+    declare nuevo_id varchar(36);
+    set nuevo_id = uuid();
+
+    insert into CortesCaja(id_corte, id_empleado, fecha_corte, total_entradas,
+                           boletos_vendidos, total_dulceria, total_general, observaciones)
+        values(nuevo_id, id_empleado_p, fecha_corte_p, total_entradas_p,
+               boletos_vendidos_p, 0, total_entradas_p, observaciones_p);
+
+    select nuevo_id as id_corte;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_corte_agregar_detalle;
+Delimiter $$
+create procedure sp_corte_agregar_detalle(in id_corte_p varchar(36), in categoria_p varchar(30),
+                                           in descripcion_p varchar(120), in cantidad_p int,
+                                           in precio_unitario_p decimal(8,2))
+begin
+    insert into CorteDetalles(id_detalle, id_corte, categoria, descripcion,
+                              cantidad, precio_unitario, subtotal)
+        values(uuid(), id_corte_p, categoria_p, descripcion_p, cantidad_p,
+               precio_unitario_p, cantidad_p * precio_unitario_p);
+
+    update CortesCaja c
+        set c.total_dulceria = (select coalesce(sum(d.subtotal), 0)
+                                    from CorteDetalles d where d.id_corte = id_corte_p),
+            c.total_general = c.total_entradas + (select coalesce(sum(d.subtotal), 0)
+                                    from CorteDetalles d where d.id_corte = id_corte_p)
+        where c.id_corte = id_corte_p;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_corte_obtener_por_fecha;
+Delimiter $$
+create procedure sp_corte_obtener_por_fecha(in fecha_inicio_p date, in fecha_fin_p date)
+begin
+    select c.id_corte, c.fecha_corte, c.total_entradas, c.boletos_vendidos,
+           c.total_dulceria, c.total_general, c.observaciones, c.fecha_registro,
+           e.nombres as empleado_nombres, e.apellidos as empleado_apellidos,
+           p.nombre_puesto as empleado_puesto
+        from CortesCaja c
+        inner join Empleados e on e.id_empleado = c.id_empleado
+        inner join Puestos p on p.id_puesto = e.id_puesto
+        where c.fecha_corte between fecha_inicio_p and fecha_fin_p
+        order by c.fecha_corte desc, c.fecha_registro desc;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_corte_obtener_detalles;
+Delimiter $$
+create procedure sp_corte_obtener_detalles(in id_corte_p varchar(36))
+begin
+    select categoria, descripcion, cantidad, precio_unitario, subtotal
+        from CorteDetalles
+        where id_corte = id_corte_p
+        order by categoria, descripcion;
+end$$
+Delimiter ;
+
+drop procedure if exists sp_corte_existe;
+Delimiter $$
+create procedure sp_corte_existe(in id_empleado_p varchar(36), in fecha_corte_p date)
+begin
+    select count(*) as ya_existe
+        from CortesCaja
+        where id_empleado = id_empleado_p and fecha_corte = fecha_corte_p;
+end$$
+Delimiter ;
+

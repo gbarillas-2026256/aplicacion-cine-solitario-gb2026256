@@ -1,16 +1,159 @@
-@import "EvaIdentityStyles.css";
+/*
+ * ManageUsersStyles.css
+ * -----------------------------------------------------------------
+ * Tokens de identidad visual compartidos por las pantallas administrativas,
+ * cartelera y compra de boletos. Paleta del escudo de Fundación Kinal:
+ *   - Navy profundo   (#070B1F) -> fondo de toda la app.
+ *   - Azul eléctrico  (#2F6BDB) -> acento futurista, focos y selecciones.
+ *   - Naranja         (#F49900) -> acción principal ("Comprar", "Crear").
+ *   - Oro/oliva       (#B8A839) -> títulos y encabezados.
+ *   - Rojo            (#E5484D) -> acciones destructivas o asientos ocupados.
+ * -----------------------------------------------------------------
+ */
 
 .root {
-    -fx-background-color: -eva-black;
+    -kinal-navy-deep:   #070B1F;
+    -kinal-navy:        #10173A;
+    -kinal-navy-light:  #1B2350;
+    -kinal-line:        #2A3568;
+
+    -kinal-blue:        #2F6BDB;
+    -kinal-blue-deep:   #1E4FAE;
+    -kinal-blue-glow:   rgba(47,107,219,0.45);
+
+    -kinal-orange:      #F49900;
+    -kinal-orange-deep: #C97A00;
+    -kinal-orange-glow: rgba(244,153,0,0.45);
+
+    -kinal-gold:        #B8A839;
+    -kinal-gold-deep:   #8C8025;
+
+    -kinal-green:       #34D399;
+    -kinal-green-deep:  #0F9D66;
+
+    -kinal-red:         #E5484D;
+    -kinal-red-deep:    #9C1D22;
+
+    -kinal-cyan:        #4FD8EA;
+    -kinal-cyan-deep:   #12777F;
+
+    -kinal-ink:         #EAF0FF;
+    -kinal-muted:       #8C96C2;
+
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -fx-background-color: -kinal-navy-deep;
 }
 
+/* Franja superior de marca */
+.eva-hazard-strip {
+    -fx-background-color: linear-gradient(to right, -kinal-blue-deep, -kinal-blue, -kinal-orange);
+}
+
+.eva-title {
+    -fx-text-fill: -kinal-ink;
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-letter-spacing: 1px;
+}
+
+.eva-subtitle {
+    -fx-text-fill: -kinal-muted;
+    -fx-font-size: 11.5px;
+    -fx-letter-spacing: 0.5px;
+}
+
+.eva-label {
+    -fx-text-fill: -kinal-gold;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1.1px;
+}
+
+.eva-field {
+    -fx-background-color: -kinal-navy-deep;
+    -fx-text-fill: -kinal-ink;
+    -fx-prompt-text-fill: -kinal-muted;
+    -fx-border-color: -kinal-line;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 12;
+    -fx-font-size: 12px;
+}
+
+.eva-field:focused {
+    -fx-border-color: -kinal-blue;
+    -fx-effect: dropshadow(gaussian, -kinal-blue-glow, 12, 0, 0, 0);
+}
+
+/* Botón primario naranja (Comprar, Guardar) */
+.eva-button-primary {
+    -fx-background-color: -kinal-orange;
+    -fx-text-fill: #070B1F;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-letter-spacing: 0.8px;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 9 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, -kinal-orange-glow, 12, 0, 0, 2);
+}
+.eva-button-primary:hover {
+    -fx-background-color: derive(-kinal-orange, 15%);
+    -fx-text-fill: white;
+}
+.eva-button-primary:pressed {
+    -fx-background-color: -kinal-orange-deep;
+    -fx-effect: none;
+}
+
+/* Botón fantasma azul */
+.eva-button-ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: -kinal-blue;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.6px;
+    -fx-border-color: -kinal-blue;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.eva-button-ghost:hover {
+    -fx-background-color: -kinal-blue;
+    -fx-text-fill: white;
+}
+
+/* Botón peligro rojo */
+.eva-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: -kinal-red;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.6px;
+    -fx-border-color: -kinal-red;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+}
+.eva-button-danger:hover {
+    -fx-background-color: -kinal-red;
+    -fx-text-fill: white;
+}
+
+/* Header */
 .header {
-    -fx-background-color: -eva-panel;
-    -fx-border-color: -eva-orange;
+    -fx-background-color: -kinal-navy;
+    -fx-border-color: -kinal-blue;
     -fx-border-width: 0 0 2 0;
 }
 .header-titulo {
-    -fx-text-fill: -eva-orange;
+    -fx-text-fill: -kinal-gold;
     -fx-font-weight: bold;
     -fx-font-size: 15px;
     -fx-letter-spacing: 1.5px;
@@ -18,36 +161,36 @@
 
 .boton-volver {
     -fx-background-color: transparent;
-    -fx-text-fill: -eva-ink;
-    -fx-border-color: -eva-line;
+    -fx-text-fill: -kinal-ink;
+    -fx-border-color: -kinal-line;
     -fx-border-width: 1.2;
-    -fx-background-radius: 2;
-    -fx-border-radius: 2;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
     -fx-padding: 7 14;
     -fx-cursor: hand;
 }
 .boton-volver:hover {
-    -fx-background-color: -eva-orange;
-    -fx-text-fill: -eva-black-deep;
-    -fx-border-color: -eva-orange;
+    -fx-background-color: -kinal-blue;
+    -fx-text-fill: white;
+    -fx-border-color: -kinal-blue;
 }
 
 .area-central {
-    -fx-background-color: -eva-black-deep;
+    -fx-background-color: -kinal-navy-deep;
 }
 
 .tarjeta-form, .tarjeta-tabla {
-    -fx-background-color: -eva-panel;
-    -fx-border-color: -eva-line;
+    -fx-background-color: -kinal-navy-light;
+    -fx-border-color: -kinal-line;
     -fx-border-width: 1.2;
-    -fx-background-radius: 2;
-    -fx-border-radius: 2;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
 }
 
 .tarjeta-titulo {
-    -fx-text-fill: -eva-orange;
+    -fx-text-fill: -kinal-gold;
     -fx-font-size: 12.5px;
     -fx-font-weight: bold;
     -fx-letter-spacing: 1.4px;
@@ -55,11 +198,11 @@
 
 .boton-logout {
     -fx-background-color: transparent;
-    -fx-text-fill: -eva-red;
-    -fx-border-color: -eva-red;
+    -fx-text-fill: -kinal-red;
+    -fx-border-color: -kinal-red;
     -fx-border-width: 1.4;
-    -fx-background-radius: 2;
-    -fx-border-radius: 2;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
     -fx-letter-spacing: 1px;
@@ -67,62 +210,124 @@
     -fx-cursor: hand;
 }
 .boton-logout:hover {
-    -fx-background-color: -eva-red;
-    -fx-text-fill: -eva-ink;
+    -fx-background-color: -kinal-red;
+    -fx-text-fill: -kinal-ink;
+}
+
+/* ---------- ScrollPane (Elimina el fondo blanco por defecto) ---------- */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: -kinal-line;
+    -fx-border-width: 1;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical,
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: -kinal-navy-deep;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb,
+.scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: -kinal-line;
+    -fx-background-radius: 4px;
+}
+
+/* ---------- Asientos de Sala ---------- */
+.eva-seat {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-min-width: 40px;
+    -fx-min-height: 32px;
+    -fx-pref-width: 40px;
+    -fx-pref-height: 32px;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+.eva-seat-libre {
+    -fx-background-color: -kinal-navy;
+    -fx-text-fill: -kinal-green;
+    -fx-border-color: -kinal-green-deep;
+    -fx-border-width: 1.2;
+}
+.eva-seat-libre:hover {
+    -fx-background-color: -kinal-green-deep;
+    -fx-text-fill: white;
+}
+.eva-seat-ocupado {
+    -fx-background-color: -kinal-red-deep;
+    -fx-text-fill: #8E8E93;
+    -fx-border-color: -kinal-red;
+    -fx-border-width: 1;
+    -fx-opacity: 0.55;
+    -fx-cursor: default;
+}
+.eva-seat-seleccionado {
+    -fx-background-color: -kinal-orange;
+    -fx-text-fill: #070B1F;
+    -fx-border-color: #FFFFFF;
+    -fx-border-width: 1.6;
 }
 
 /* ---------- Tabla ---------- */
-
 .tabla-usuarios {
-    -fx-background-color: -eva-black-deep;
-    -fx-border-color: -eva-line;
+    -fx-background-color: -kinal-navy-deep;
+    -fx-border-color: -kinal-line;
     -fx-border-width: 1;
 }
 .tabla-usuarios .column-header-background {
-    -fx-background-color: -eva-black-deep;
+    -fx-background-color: -kinal-navy-deep;
 }
 .tabla-usuarios .column-header, .tabla-usuarios .filler {
-    -fx-background-color: -eva-panel-light;
-    -fx-border-color: transparent -eva-line transparent transparent;
+    -fx-background-color: -kinal-navy-light;
+    -fx-border-color: transparent -kinal-line transparent transparent;
 }
 .tabla-usuarios .column-header .label {
-    -fx-text-fill: -eva-orange;
+    -fx-text-fill: -kinal-gold;
     -fx-font-weight: bold;
     -fx-font-size: 11px;
     -fx-letter-spacing: 1px;
 }
 .tabla-usuarios .table-row-cell {
-    -fx-background-color: -eva-black-deep;
-    -fx-text-fill: -eva-ink;
-    -fx-border-color: transparent transparent -eva-line transparent;
+    -fx-background-color: -kinal-navy-deep;
+    -fx-text-fill: -kinal-ink;
+    -fx-border-color: transparent transparent -kinal-line transparent;
 }
 .tabla-usuarios .table-row-cell:odd {
-    -fx-background-color: -eva-panel;
+    -fx-background-color: -kinal-navy;
 }
 .tabla-usuarios .table-row-cell:selected {
-    -fx-background-color: -eva-orange-deep;
+    -fx-background-color: -kinal-blue-deep;
 }
 .tabla-usuarios .table-cell {
-    -fx-text-fill: -eva-ink;
+    -fx-text-fill: -kinal-ink;
     -fx-font-size: 12px;
     -fx-alignment: CENTER_LEFT;
 }
 .tabla-usuarios .table-row-cell:selected .table-cell {
-    -fx-text-fill: -eva-ink;
+    -fx-text-fill: -kinal-ink;
 }
 
 .status-hint {
-    -fx-text-fill: -eva-muted;
+    -fx-text-fill: -kinal-muted;
     -fx-font-size: 12px;
 }
 
 .boton-gestionar {
     -fx-background-color: transparent;
-    -fx-text-fill: -eva-orange;
-    -fx-border-color: -eva-orange;
+    -fx-text-fill: -kinal-orange;
+    -fx-border-color: -kinal-orange;
     -fx-border-width: 1.4;
-    -fx-background-radius: 2;
-    -fx-border-radius: 2;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-letter-spacing: 1.2px;
@@ -130,8 +335,8 @@
     -fx-cursor: hand;
 }
 .boton-gestionar:hover {
-    -fx-background-color: -eva-orange;
-    -fx-text-fill: -eva-black-deep;
+    -fx-background-color: -kinal-orange;
+    -fx-text-fill: -kinal-navy-deep;
 }
 .boton-gestionar:disabled {
     -fx-opacity: 0.4;
@@ -139,11 +344,144 @@
 }
 
 .dialog-eva {
-    -fx-background-color: -eva-panel;
+    -fx-background-color: -kinal-navy-light;
 }
 .dialog-eva > .dialog-pane {
-    -fx-background-color: -eva-panel;
+    -fx-background-color: -kinal-navy-light;
 }
 .dialog-eva .header-panel {
-    -fx-background-color: -eva-panel-light;
+    -fx-background-color: -kinal-navy-light;
 }
+
+/* ================================================================= */
+/* ESTILOS PARA GRÁFICAS FINANCIERAS (PIECHART Y BARCHART)           */
+/* ================================================================= */
+
+.chart {
+    -fx-background-color: -kinal-navy;
+    -fx-padding: 10px;
+    -fx-background-radius: 8;
+    -fx-border-color: -kinal-line;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+.chart-title {
+    -fx-text-fill: -kinal-ink;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.8px;
+}
+
+.chart-plot-background {
+    -fx-background-color: -kinal-navy-deep;
+}
+
+.chart-vertical-grid-lines,
+.chart-horizontal-grid-lines {
+    -fx-stroke: rgba(42, 53, 104, 0.45);
+}
+
+.chart-legend {
+    -fx-background-color: -kinal-navy-deep;
+    -fx-border-color: -kinal-line;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 6px;
+}
+
+.chart-legend-item {
+    -fx-text-fill: -kinal-ink;
+    -fx-font-size: 11px;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 3px;
+}
+
+/* Ejes de BarChart */
+.axis {
+    -fx-tick-label-fill: -kinal-muted;
+    -fx-tick-label-font-size: 10px;
+}
+
+.axis:left, .axis:bottom {
+    -fx-border-color: -kinal-line;
+}
+
+.axis-label {
+    -fx-text-fill: -kinal-gold;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.axis-tick-mark {
+    -fx-stroke: -kinal-line;
+}
+
+/* Colores para sectores de PieChart */
+.default-color0.chart-pie { -fx-pie-color: #2F6BDB; }
+.default-color1.chart-pie { -fx-pie-color: #F49900; }
+.default-color2.chart-pie { -fx-pie-color: #34D399; }
+.default-color3.chart-pie { -fx-pie-color: #4FD8EA; }
+.default-color4.chart-pie { -fx-pie-color: #B8A839; }
+.default-color5.chart-pie { -fx-pie-color: #E5484D; }
+
+.chart-pie-label {
+    -fx-fill: -kinal-ink;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: -kinal-gold;
+}
+
+/* Colores para barras de BarChart */
+.default-color0.chart-bar {
+    -fx-bar-fill: linear-gradient(to top, #1E4FAE, #2F6BDB);
+    -fx-background-radius: 4 4 0 0;
+}
+.default-color1.chart-bar {
+    -fx-bar-fill: linear-gradient(to top, #C97A00, #F49900);
+    -fx-background-radius: 4 4 0 0;
+}
+.default-color2.chart-bar {
+    -fx-bar-fill: linear-gradient(to top, #0F9D66, #34D399);
+    -fx-background-radius: 4 4 0 0;
+}
+
+/* ================================================================= */
+/* ESTILOS PARA PANEL DE AUDITORÍA DE REPORTES E INCIDENCIAS         */
+/* ================================================================= */
+
+.panel-incidencia {
+    -fx-background-color: -kinal-navy;
+    -fx-border-color: -kinal-line;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 12 16;
+}
+
+.panel-incidencia-mensaje {
+    -fx-background-color: #070B1F;
+    -fx-border-color: #F49900;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 10 12;
+}
+
+.badge-turno {
+    -fx-background-color: #10173A;
+    -fx-border-color: #2F6BDB;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 4 8;
+    -fx-text-fill: #4FD8EA;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+

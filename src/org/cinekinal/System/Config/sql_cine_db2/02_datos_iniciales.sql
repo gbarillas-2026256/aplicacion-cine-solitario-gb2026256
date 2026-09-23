@@ -40,7 +40,7 @@ set @id_peli3 = uuid();
 insert into Peliculas(id_pelicula, titulo, genero, clasificacion, duracion_min, sinopsis, poster_url, trailer_url, activa) values
     (@id_peli1, 'Evangelion: 3.0+1.0 Thrice Upon a Time', 'Ciencia Ficción / Anime', 'PG-13', 155, 
      'Shinji Ikari se encuentra a la deriva después de perder la voluntad de vivir tras el Casi Tercer Impacto. Los supervivientes luchan en la última resistencia para salvar al mundo del Proyecto de Instrumentalización Humana.',
-     'https://m.media-amazon.com/images/M/MV5BMjA5OTc3NjYtOWY2MC00MmI1LWExZGItMDYwNmNjMTljOTNhXkEyXkFqcGc@._V1_.jpg',
+     'https://upload.wikimedia.org/wikipedia/en/3/36/Evangelion_3.0%2B1.0_Poster.png',
      'https://www.youtube.com/watch?v=10ict3GCxGY', true),
     (@id_peli2, 'Interstellar', 'Ciencia Ficción / Aventura', 'PG-13', 169,
      'Un grupo de exploradores espaciales viaja a través de un agujero de gusano cerca de Saturno en un intento desesperado por encontrar un nuevo hogar habitable para la humanidad.',
@@ -48,7 +48,7 @@ insert into Peliculas(id_pelicula, titulo, genero, clasificacion, duracion_min, 
      'https://www.youtube.com/watch?v=zSWdZVtXT7E', true),
     (@id_peli3, 'Spider-Man: Across the Spider-Verse', 'Animación / Acción', 'PG', 140,
      'Miles Morales es catapultado a través del Multiverso, donde se encuentra con una sociedad de Spider-People encargada de proteger su propia existencia.',
-     'https://m.media-amazon.com/images/M/MV5BNThiZjA3MjItZGY5Ni00ZmJhLWEwN2EtOTBlYTA3CGExOTU2XkEyXkFqcGc@._V1_.jpg',
+     'https://upload.wikimedia.org/wikipedia/pt/b/b4/Spider-Man-_Across_the_Spider-Verse_poster.jpg',
      'https://www.youtube.com/watch?v=cqGjhVJWtEg', true);
 
 -- Funciones programadas para HOY

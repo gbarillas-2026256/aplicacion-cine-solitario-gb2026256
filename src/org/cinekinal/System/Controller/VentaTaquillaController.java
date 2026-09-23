@@ -287,6 +287,7 @@ public class VentaTaquillaController implements Initializable {
         }
 
         int exitosos = 0;
+        List<String> fallidos = new ArrayList<>();
         BigDecimal precioFinal = funcionSeleccionada.getPrecioBase();
         if (cliente.isEsVip()) {
             precioFinal = precioFinal.multiply(new BigDecimal("0.85")).setScale(2, java.math.RoundingMode.HALF_UP);
@@ -302,16 +303,32 @@ public class VentaTaquillaController implements Initializable {
 
             if (status == BoletoCompraStatus.COMPRA_EXITOSA) {
                 exitosos++;
+            } else {
+                fallidos.add(asiento.getFila() + asiento.getNumero());
             }
         }
 
         if (exitosos > 0) {
+            //El total se calcula con los boletos que SI se emitieron, no con
+            //los seleccionados: si alguno fallo, cobrar el total original
+            //seria cobrarle al cliente un boleto que nunca se emitio.
+            BigDecimal totalCobrado = precioFinal.multiply(BigDecimal.valueOf(exitosos));
+
+            StringBuilder mensaje = new StringBuilder();
+            mensaje.append("Se emitieron ").append(exitosos).append(" boleto(s) para \"")
+                    .append(funcionSeleccionada.getTituloPelicula()).append("\".\n")
+                    .append("Cliente: ").append(cliente.getNombreCompleto()).append("\n")
+                    .append("Sala: ").append(funcionSeleccionada.getNombreSala()).append("\n")
+                    .append(String.format("Total cobrado: Q %.2f", totalCobrado));
+
+            if (!fallidos.isEmpty()) {
+                mensaje.append("\n\nOJO: no se pudieron emitir las butacas ")
+                        .append(String.join(", ", fallidos))
+                        .append(" (alguien más las compró primero). NO las cobres.");
+            }
+
             alertInfo.viewAlert("INFORMATION", "VENTA COMPLETADA",
-                    "BOLETOS EMITIDOS CON ÉXITO",
-                    "Se emitieron " + exitosos + " boleto(s) para \"" + funcionSeleccionada.getTituloPelicula() + "\".\n"
-                            + "Cliente: " + cliente.getNombreCompleto() + "\n"
-                            + "Sala: " + funcionSeleccionada.getNombreSala() + "\n"
-                            + "Total cobrado: " + lblTotalPagar.getText());
+                    "BOLETOS EMITIDOS CON ÉXITO", mensaje.toString());
             asientosSeleccionados.clear();
             seleccionarFuncion(funcionSeleccionada);
         } else {

@@ -1,46 +1,49 @@
-@import "EvaIdentityStyles.css";
+@import "CineKinalStyles.css";
 
 .root {
-    -fx-background-color: -eva-black;
+    -fx-background-color: -kinal-navy-deep;
 }
 
 .panel-formulario {
-    -fx-background-color: -eva-black;
+    -fx-background-color: -kinal-navy;
 }
 
 .avatar-login {
-    -fx-effect: dropshadow(gaussian, -eva-orange-glow, 18, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, -kinal-blue-glow, 18, 0, 0, 0);
 }
 
 .link-register {
-    -fx-text-fill: -eva-muted;
+    -fx-text-fill: -kinal-muted;
     -fx-font-size: 11.5px;
     -fx-border-color: transparent;
 }
 .link-register:hover {
-    -fx-text-fill: -eva-orange;
+    -fx-text-fill: -kinal-blue;
 }
 .link-register:visited {
-    -fx-text-fill: -eva-muted;
+    -fx-text-fill: -kinal-muted;
 }
 
-/* ---------- Panel decorativo (Shinji) ---------- */
+/* ---------- Panel decorativo ----------
+   Antes era un degradado rojo/naranja/morado estilo Evangelion. Ahora
+   es un degradado navy -> azul electrico, el mismo lenguaje futurista
+   pero con la paleta real de Fundacion Kinal. */
 
 .panel-decorativo {
-    -fx-background-color: linear-gradient(to bottom right, -eva-red, -eva-orange 42%, -eva-purple-deep 100%);
-    -fx-border-color: -eva-orange;
+    -fx-background-color: linear-gradient(to bottom right, -kinal-navy-deep, -kinal-navy 45%, -kinal-blue-deep 100%);
+    -fx-border-color: -kinal-blue;
     -fx-border-width: 0 0 0 2;
 }
 
 .panel-decorativo-titulo {
-    -fx-text-fill: -eva-ink;
+    -fx-text-fill: -kinal-ink;
     -fx-font-size: 15px;
-    -fx-font-style: italic;
     -fx-font-weight: bold;
+    -fx-letter-spacing: 0.6px;
 }
 
 .panel-decorativo-texto {
-    -fx-text-fill: rgba(236,237,233,0.75);
+    -fx-text-fill: rgba(234,240,255,0.75);
     -fx-font-size: 11px;
     -fx-text-alignment: center;
     -fx-line-spacing: 2px;

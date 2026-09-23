@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
@@ -23,7 +27,7 @@
                   <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
                </padding>
                <children>
-                  <Label styleClass="header-titulo" text="NERV CINE · ESTADÍSTICAS FINANCIERAS Y GANANCIAS" />
+                  <Label styleClass="header-titulo" text="CINE KINAL · ESTADÍSTICAS FINANCIERAS Y GANANCIAS" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
                </children>
@@ -64,7 +68,47 @@
             <!-- PESTAÑAS FINANCIERAS -->
             <TabPane styleClass="tabla-usuarios" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
               <tabs>
-                <!-- PESTAÑA 1: INGRESOS POR DÍA -->
+                <!-- PESTAÑA 1: ANÁLISIS Y GRÁFICAS FINANCIERAS -->
+                <Tab text="  📊 ANÁLISIS Y GRÁFICAS FINANCIERAS  ">
+                  <content>
+                    <VBox spacing="10.0" style="-fx-background-color: #050506; -fx-padding: 12;">
+                       <children>
+                          <HBox alignment="CENTER_LEFT" spacing="12.0">
+                             <children>
+                                <Label styleClass="tarjeta-titulo" text="MÉTRICAS COMPARATIVAS EN TIEMPO REAL" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#onActualizarGraficas" styleClass="eva-button-ghost" text="🔄 ACTUALIZAR GRÁFICAS" />
+                             </children>
+                          </HBox>
+                          <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+                             <children>
+                                <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                   <children>
+                                      <Label styleClass="eva-label" text="DISTRIBUCIÓN DE INGRESOS (BOLETOS VS DULCERÍA)" />
+                                      <PieChart fx:id="chartDistribucion" legendSide="BOTTOM" VBox.vgrow="ALWAYS" />
+                                   </children>
+                                </VBox>
+                                <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                   <children>
+                                      <Label styleClass="eva-label" text="TOP RECAUDACIÓN POR PELÍCULA (Q)" />
+                                      <BarChart fx:id="chartPeliculas" legendVisible="false" VBox.vgrow="ALWAYS">
+                                         <xAxis>
+                                            <CategoryAxis fx:id="axisPeliculaX" label="Película" tickLabelRotation="-25.0" />
+                                         </xAxis>
+                                         <yAxis>
+                                            <NumberAxis fx:id="axisPeliculaY" label="Ingresos (Q)" />
+                                         </yAxis>
+                                      </BarChart>
+                                   </children>
+                                </VBox>
+                             </children>
+                          </HBox>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 2: INGRESOS POR DÍA -->
                 <Tab text="  INGRESOS POR RANGO DE FECHAS  ">
                   <content>
                     <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
@@ -105,6 +149,49 @@
                                 <TableColumn fx:id="colPeliculaIngresos" prefWidth="260.0" text="TOTAL RECAUDADO (Q)" />
                              </columns>
                           </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+                <!-- PESTAÑA 3: CORTES DE CAJA ENVIADOS POR LOS EMPLEADOS -->
+                <Tab text="  CORTES DE CAJA  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <HBox alignment="CENTER_LEFT" spacing="12.0">
+                             <children>
+                                <Label styleClass="eva-label" text="DESDE:" />
+                                <DatePicker fx:id="dpCorteInicio" maxWidth="150.0" styleClass="eva-field" />
+                                <Label styleClass="eva-label" text="HASTA:" />
+                                <DatePicker fx:id="dpCorteFin" maxWidth="150.0" styleClass="eva-field" />
+                                <Button mnemonicParsing="false" onAction="#onFiltrarCortes" styleClass="eva-button-ghost" text="🔄 ACTUALIZAR" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label fx:id="lblTotalCortes" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 13px;" text="Total Cortes: Q 0.00" />
+                             </children>
+                          </HBox>
+                          <Label styleClass="tarjeta-titulo" text="CIERRES DE CAJA REPORTADOS POR EL PERSONAL" />
+                          <TableView fx:id="tableCortes" prefHeight="230.0" styleClass="tabla-usuarios">
+                             <columns>
+                                <TableColumn fx:id="colCorteFecha" prefWidth="110.0" text="FECHA" />
+                                <TableColumn fx:id="colCorteEmpleado" prefWidth="200.0" text="EMPLEADO" />
+                                <TableColumn fx:id="colCortePuesto" prefWidth="110.0" text="PUESTO" />
+                                <TableColumn fx:id="colCorteBoletos" prefWidth="90.0" text="BOLETOS" />
+                                <TableColumn fx:id="colCorteEntradas" prefWidth="130.0" text="ENTRADAS (Q)" />
+                                <TableColumn fx:id="colCorteDulceria" prefWidth="130.0" text="DULCERÍA (Q)" />
+                                <TableColumn fx:id="colCorteTotal" prefWidth="130.0" text="TOTAL DÍA (Q)" />
+                             </columns>
+                          </TableView>
+                          <Label styleClass="tarjeta-titulo" text="DESGLOSE DE DULCERÍA DEL CORTE SELECCIONADO" />
+                          <TableView fx:id="tableCorteDetalles" prefHeight="160.0" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colDetCategoria" prefWidth="160.0" text="CATEGORÍA" />
+                                <TableColumn fx:id="colDetDescripcion" prefWidth="380.0" text="DESCRIPCIÓN" />
+                                <TableColumn fx:id="colDetCantidad" prefWidth="100.0" text="CANT." />
+                                <TableColumn fx:id="colDetPrecio" prefWidth="130.0" text="P. UNIT. (Q)" />
+                                <TableColumn fx:id="colDetSubtotal" prefWidth="130.0" text="SUBTOTAL (Q)" />
+                             </columns>
+                          </TableView>
+                          <Label fx:id="lblObservacionesCorte" styleClass="eva-subtitle" text="Observaciones: —" wrapText="true" />
                        </children>
                     </VBox>
                   </content>

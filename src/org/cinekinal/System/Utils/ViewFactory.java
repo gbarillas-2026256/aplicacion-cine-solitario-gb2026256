@@ -65,6 +65,8 @@ public class ViewFactory {
                 case "cambiarprecio" -> fxmlFile = "CambiarPrecioView.fxml";
                 case "reportes" -> fxmlFile = "ReportesView.fxml";
                 case "ganancias" -> fxmlFile = "GananciasView.fxml";
+                case "cortecaja" -> fxmlFile = "CorteCajaView.fxml";
+                case "misboletos" -> fxmlFile = "MisBoletosView.fxml";
                 default -> { fxmlFile = "LoginView.fxml"; width = 820; height = 500; }
             }
 
@@ -72,6 +74,10 @@ public class ViewFactory {
             SceneManager.getInstanciaSceneManager().changeRoot(root, width, height, !esDialogo);
         } catch (RuntimeException e) {
             System.out.println("Error al cargar la vista '" + nameFile + "': " + e.getMessage());
+            e.printStackTrace();
+            new AlertInformation().viewAlert("ERROR", "NO SE PUDO ABRIR LA VISTA",
+                    "Error al cargar \"" + nameFile + "\"",
+                    String.valueOf(e.getCause() != null ? e.getCause() : e));
         }
     }
     
@@ -145,5 +151,13 @@ public class ViewFactory {
 
     public void viewGanancias(){
         loadScene("ganancias");
+    }
+
+    public void viewCorteCaja(){
+        loadScene("cortecaja");
+    }
+
+    public void viewMisBoletos(){
+        loadScene("misboletos");
     }
 }

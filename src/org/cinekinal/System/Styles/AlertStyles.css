@@ -1,0 +1,54 @@
+@import "CineKinalStyles.css";
+
+.dialog-pane {
+    -fx-background-color: -kinal-navy;
+    -fx-border-width: 2;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -kinal-navy-deep;
+}
+.dialog-pane .header-panel .label {
+    -fx-text-fill: -kinal-ink;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+.dialog-pane .content.label {
+    -fx-text-fill: -kinal-ink;
+    -fx-font-size: 12.5px;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: -kinal-orange;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 7 22;
+    -fx-cursor: hand;
+}
+.dialog-pane .button-bar .button:hover {
+    -fx-background-color: derive(-kinal-orange, 12%);
+}
+
+.kinal-alert-error {
+    -fx-border-color: -kinal-red;
+}
+.kinal-alert-error .header-panel {
+    -fx-background-color: -kinal-red-deep;
+}
+
+.kinal-alert-warning {
+    -fx-border-color: -kinal-orange;
+}
+.kinal-alert-warning .header-panel {
+    -fx-background-color: -kinal-orange-deep;
+}
+
+.kinal-alert-info {
+    -fx-border-color: -kinal-blue;
+}
+.kinal-alert-info .header-panel {
+    -fx-background-color: -kinal-blue-deep;
+}

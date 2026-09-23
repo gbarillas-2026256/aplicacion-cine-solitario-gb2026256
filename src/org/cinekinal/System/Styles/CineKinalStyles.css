@@ -1,0 +1,242 @@
+/*
+ * CineKinalStyles.css
+ * -----------------------------------------------------------------
+ * Tokens de identidad visual compartidos por TODAS las pantallas.
+ * Paleta extraida del escudo real de Fundacion Kinal (kinal.org.gt):
+ *   - Navy profundo   -> el azul del escudo, fondo de toda la app.
+ *   - Azul electrico  -> acento futurista (focos, bordes activos).
+ *   - Naranja         -> el color de la llama del escudo, y el mismo
+ *                        rol que el naranja de Cinepolis: botones de
+ *                        accion principal ("Comprar", "Ver horarios").
+ *   - Oro/oliva       -> acento secundario, el color de la montaña.
+ * -----------------------------------------------------------------
+ */
+
+.root {
+    -kinal-navy-deep:   #070B1F;
+    -kinal-navy:        #10173A;
+    -kinal-navy-light:  #1B2350;
+    -kinal-line:        #2A3568;
+
+    -kinal-blue:        #2F6BDB;
+    -kinal-blue-deep:   #1E4FAE;
+    -kinal-blue-glow:   rgba(47,107,219,0.45);
+
+    -kinal-orange:      #F49900;
+    -kinal-orange-deep: #C97A00;
+    -kinal-orange-glow: rgba(244,153,0,0.45);
+
+    -kinal-gold:        #B8A839;
+    -kinal-gold-deep:   #8C8025;
+
+    -kinal-green:       #34D399;
+    -kinal-green-deep:  #0F9D66;
+
+    -kinal-red:         #E5484D;
+    -kinal-red-deep:    #9C1D22;
+
+    -kinal-cyan:        #4FD8EA;
+    -kinal-cyan-deep:   #12777F;
+
+    -kinal-ink:         #EAF0FF;
+    -kinal-muted:       #8C96C2;
+
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Franja de marca: un degradado azul->naranja, en vez de las rayas de
+   peligro -- da el toque futurista sin perder formalidad. */
+.eva-hazard-strip {
+    -fx-background-color: linear-gradient(to right, -kinal-blue-deep, -kinal-blue, -kinal-orange);
+}
+
+.eva-title {
+    -fx-text-fill: -kinal-ink;
+    -fx-font-weight: bold;
+    -fx-font-size: 26px;
+    -fx-letter-spacing: 1px;
+}
+
+.eva-subtitle {
+    -fx-text-fill: -kinal-muted;
+    -fx-font-size: 11.5px;
+    -fx-letter-spacing: 0.5px;
+}
+
+.eva-label {
+    -fx-text-fill: -kinal-gold;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1.2px;
+}
+
+.eva-field {
+    -fx-background-color: -kinal-navy-deep;
+    -fx-text-fill: -kinal-ink;
+    -fx-prompt-text-fill: -kinal-muted;
+    -fx-border-color: -kinal-line;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 10 12;
+    -fx-font-size: 13px;
+}
+
+.eva-field:focused {
+    -fx-border-color: -kinal-blue;
+    -fx-effect: dropshadow(gaussian, -kinal-blue-glow, 12, 0, 0, 0);
+}
+
+.eva-button-primary {
+    -fx-background-color: -kinal-orange;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13.5px;
+    -fx-letter-spacing: 0.8px;
+    -fx-background-radius: 6;
+    -fx-padding: 11 22;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, -kinal-orange-glow, 14, 0, 0, 4);
+}
+.eva-button-primary:hover {
+    -fx-background-color: derive(-kinal-orange, 12%);
+}
+.eva-button-primary:pressed {
+    -fx-background-color: -kinal-orange-deep;
+    -fx-effect: none;
+}
+
+.eva-button-ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: -kinal-blue;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.6px;
+    -fx-border-color: -kinal-blue;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 9 20;
+    -fx-cursor: hand;
+}
+.eva-button-ghost:hover {
+    -fx-background-color: -kinal-blue;
+    -fx-text-fill: white;
+}
+
+.eva-error-text {
+    -fx-text-fill: -kinal-red;
+    -fx-font-size: 11px;
+    -fx-wrap-text: true;
+}
+
+/* ---------------------------------------------------------------
+ * MainMenu (sidebar), Solicitudes (boton rechazar) y CompraBoleto
+ * (mapa de asientos).
+ * --------------------------------------------------------------- */
+
+.eva-sidebar {
+    -fx-background-color: -kinal-navy;
+    -fx-border-color: -kinal-line;
+    -fx-border-width: 0 1.4 0 0;
+}
+
+.eva-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: -kinal-red;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.6px;
+    -fx-border-color: -kinal-red;
+    -fx-border-width: 1.4;
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-padding: 9 20;
+    -fx-cursor: hand;
+}
+.eva-button-danger:hover {
+    -fx-background-color: -kinal-red;
+    -fx-text-fill: white;
+}
+
+.eva-seat {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-min-width: 38px;
+    -fx-min-height: 32px;
+    -fx-cursor: hand;
+}
+.eva-seat-libre {
+    -fx-background-color: -kinal-navy-light;
+    -fx-text-fill: -kinal-green;
+    -fx-border-color: -kinal-green-deep;
+    -fx-border-width: 1;
+}
+.eva-seat-ocupado {
+    -fx-background-color: -kinal-red-deep;
+    -fx-text-fill: -kinal-muted;
+    -fx-border-color: -kinal-red;
+    -fx-border-width: 1;
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}
+.eva-seat-seleccionado {
+    -fx-background-color: -kinal-orange;
+    -fx-text-fill: white;
+    -fx-border-color: -kinal-orange-deep;
+    -fx-border-width: 1.4;
+}
+
+/* ---------------------------------------------------------------
+ * Tarjetas de pelicula estilo Cinepolis (grid de carteleras)
+ * --------------------------------------------------------------- */
+
+.kinal-movie-card {
+    -fx-background-color: -kinal-navy;
+    -fx-background-radius: 10;
+    -fx-border-color: -kinal-line;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-cursor: hand;
+}
+.kinal-movie-card:hover {
+    -fx-border-color: -kinal-blue;
+    -fx-effect: dropshadow(gaussian, -kinal-blue-glow, 16, 0, 0, 6);
+}
+.kinal-movie-poster {
+    -fx-background-color: linear-gradient(to bottom right, -kinal-navy-light, -kinal-navy-deep);
+    -fx-background-radius: 10 10 0 0;
+}
+.kinal-movie-title {
+    -fx-text-fill: -kinal-ink;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+}
+.kinal-movie-meta {
+    -fx-text-fill: -kinal-muted;
+    -fx-font-size: 10.5px;
+}
+.kinal-pill {
+    -fx-background-color: -kinal-navy-light;
+    -fx-text-fill: -kinal-ink;
+    -fx-background-radius: 20;
+    -fx-padding: 8 16;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.kinal-pill:hover {
+    -fx-background-color: -kinal-blue-deep;
+}
+.kinal-pill-selected {
+    -fx-background-color: -kinal-orange;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-padding: 8 16;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}

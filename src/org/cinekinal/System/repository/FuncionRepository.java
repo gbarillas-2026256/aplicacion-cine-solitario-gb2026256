@@ -62,6 +62,20 @@ public class FuncionRepository {
         }
     }
 
+    public List<Funcion> buscarPorTitulo(String query) {
+        List<Funcion> resultados = new ArrayList<>();
+        if (query == null || query.trim().isEmpty()) {
+            return obtenerCartelera();
+        }
+        String filtro = query.trim().toLowerCase();
+        for (Funcion f : obtenerCartelera()) {
+            if (f.getTituloPelicula() != null && f.getTituloPelicula().toLowerCase().contains(filtro)) {
+                resultados.add(f);
+            }
+        }
+        return resultados;
+    }
+
     private Funcion mapearFuncion(ResultSet resultado) throws SQLException {
         Funcion funcion = new Funcion();
         funcion.setIdFuncion(resultado.getString("id_funcion"));

@@ -12,10 +12,12 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.cinekinal.system.model.Accion;
+import org.cinekinal.system.model.Boleto;
 import org.cinekinal.system.model.Cliente;
 import org.cinekinal.system.model.Empleado;
 import org.cinekinal.system.model.Funcion;
 import org.cinekinal.system.model.ResultadoIntento;
+import org.cinekinal.system.repository.BoletoRepository;
 import org.cinekinal.system.repository.FuncionRepository;
 import org.cinekinal.system.service.PermisoService;
 import org.cinekinal.system.service.SolicitudService;
@@ -48,6 +50,7 @@ public class MainMenuController implements Initializable {
     private final PermisoService permisoService = new PermisoService();
     private final SolicitudService solicitudService = new SolicitudService();
     private final FuncionRepository funcionRepo = new FuncionRepository();
+    private final BoletoRepository boletoRepo = new BoletoRepository();
     private final AlertInformation alertInfo = new AlertInformation();
 
     @Override
@@ -71,6 +74,10 @@ public class MainMenuController implements Initializable {
         agregarBotonAccion(empleado, Accion.VER_CARTELERA, () -> new ViewFactory().viewComprarBoletos());
         agregarBotonAccion(empleado, Accion.VERIFICAR_ENTRADA, () -> new ViewFactory().viewVerificarEntrada());
         agregarBotonAccion(empleado, Accion.REGISTRAR_VENTA, () -> new ViewFactory().viewRegistrarVenta());
+        // El corte de caja NO lo hace el Dueño; es labor operativa de los empleados al cerrar su turno:
+        if (empleado.getNivelJerarquico() > 1) {
+            agregarBotonAccion(empleado, Accion.CORTE_CAJA, () -> new ViewFactory().viewCorteCaja());
+        }
         agregarBotonAccion(empleado, Accion.ADMINISTRAR_FUNCIONES_SALAS, () -> new ViewFactory().viewAdministrarFuncionesSalas());
         agregarBotonAccion(empleado, Accion.ADMINISTRAR_PELICULAS, () -> new ViewFactory().viewAdministrarPeliculas());
         agregarBotonAccion(empleado, Accion.VER_REPORTES, () -> new ViewFactory().viewReportes());
@@ -115,6 +122,21 @@ public class MainMenuController implements Initializable {
         Button btnComprar = crearBotonSidebar("Comprar boletos");
         btnComprar.setOnAction(e -> new ViewFactory().viewComprarBoletos());
         vboxSidebar.getChildren().add(btnComprar);
+
+        Cliente cliente = Session.getClienteActual();
+        if (cliente != null) {
+            try {
+                List<Boleto> boletos = boletoRepo.obtenerPorCliente(cliente.getIdCliente());
+                if (!boletos.isEmpty()) {
+                    String textoBoton = boletos.size() == 1 ? "🎟️ Ver mi Boleto" : "🎟️ Mis Boletos (" + boletos.size() + ")";
+                    Button btnMisBoletos = crearBotonSidebar(textoBoton);
+                    btnMisBoletos.setOnAction(e -> new ViewFactory().viewMisBoletos());
+                    vboxSidebar.getChildren().add(btnMisBoletos);
+                }
+            } catch (Exception e) {
+                System.out.println("Aviso al consultar boletos del cliente: " + e.getMessage());
+            }
+        }
     }
 
     /**

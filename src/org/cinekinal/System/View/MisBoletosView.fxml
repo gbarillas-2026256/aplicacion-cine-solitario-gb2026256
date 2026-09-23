@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="720.0" prefWidth="1040.0" stylesheets="@../styles/ManageUsersStyles.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.cinekinal.system.controller.MisBoletosController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" styleClass="eva-hazard-strip" />
+            <HBox alignment="CENTER_LEFT" prefHeight="54.0" spacing="12.0" styleClass="header">
+               <padding>
+                  <Insets bottom="8.0" left="20.0" right="20.0" top="8.0" />
+               </padding>
+               <children>
+                  <Label styleClass="header-titulo" text="CINE KINAL · MIS BOLETOS DIGITALES (ACCESO A SALA)" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onMouseClicked="#onVolver" styleClass="boton-volver" text="◄ VOLVER AL MENÚ" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox spacing="12.0" styleClass="area-central" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="14.0" left="20.0" right="20.0" top="12.0" />
+         </padding>
+         <children>
+            <HBox spacing="14.0" VBox.vgrow="ALWAYS">
+               <children>
+                  <!-- COLUMNA IZQUIERDA: Tabla de Boletos del Cliente -->
+                  <VBox prefWidth="480.0" spacing="10.0" styleClass="tarjeta-tabla">
+                     <padding>
+                        <Insets bottom="12.0" left="14.0" right="14.0" top="12.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="tarjeta-titulo" text="TUS BOLETOS COMPRADOS (SELECCIONA UNO)" />
+                        <TableView fx:id="tablaBoletos" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                           <columns>
+                              <TableColumn fx:id="colPelicula" prefWidth="135.0" text="PELÍCULA" />
+                              <TableColumn fx:id="colSala" prefWidth="75.0" text="SALA" />
+                              <TableColumn fx:id="colFecha" prefWidth="75.0" text="FECHA" />
+                              <TableColumn fx:id="colHora" prefWidth="65.0" text="HORA" />
+                              <TableColumn fx:id="colAsiento" prefWidth="50.0" text="ASIENTO" />
+                              <TableColumn fx:id="colEstado" prefWidth="80.0" text="ESTADO" />
+                           </columns>
+                        </TableView>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Button mnemonicParsing="false" onMouseClicked="#onActualizar" styleClass="boton-volver" text="🔄 ACTUALIZAR ESTADO" />
+                              <Region HBox.hgrow="ALWAYS" />
+                              <Button mnemonicParsing="false" onMouseClicked="#onComprarMas" styleClass="eva-button-primary" text="+ COMPRAR OTRO BOLETO" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+
+                  <!-- COLUMNA DERECHA: Pase Digital con QR para Acceso -->
+                  <VBox fx:id="panelDetalle" alignment="TOP_CENTER" prefWidth="500.0" spacing="10.0" styleClass="tarjeta-form" HBox.hgrow="ALWAYS">
+                     <padding>
+                        <Insets bottom="14.0" left="18.0" right="18.0" top="14.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="tarjeta-titulo" text="PASE DE ACCESO / TICKET DIGITAL" />
+                        <Label fx:id="lblEstadoAcceso" alignment="CENTER" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 6 14; -fx-background-radius: 4; -fx-background-color: #0F9D66; -fx-text-fill: #FFFFFF;" text="🟢 VÁLIDO PARA INGRESAR" />
+                        
+                        <VBox alignment="CENTER" maxWidth="210.0" style="-fx-background-color: #FFFFFF; -fx-padding: 6; -fx-background-radius: 8;">
+                           <children>
+                              <ImageView fx:id="imgQR" fitHeight="195.0" fitWidth="195.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </VBox>
+
+                        <VBox spacing="4.0" style="-fx-background-color: #10173A; -fx-padding: 10 14; -fx-border-color: #2F6BDB; -fx-border-width: 1.2; -fx-border-radius: 6;" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="lblTituloPelicula" style="-fx-text-fill: #F49900; -fx-font-weight: bold; -fx-font-size: 14px;" text="Película" wrapText="true" />
+                              <Label fx:id="lblSalaHorario" styleClass="eva-label" text="Sala · Fecha y Hora" />
+                              <Label fx:id="lblAsiento" style="-fx-text-fill: #34D399; -fx-font-weight: bold; -fx-font-size: 13px;" text="Asiento: -" />
+                              <Label fx:id="lblCliente" styleClass="eva-label" text="Titular: -" />
+                              <Label fx:id="lblPrecio" styleClass="eva-label" text="Total pagado: -" />
+                              <Label fx:id="lblFechaCompra" styleClass="status-hint" text="Comprado el: -" />
+                              <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                 <children>
+                                    <Label fx:id="lblIdBoleto" style="-fx-text-fill: #8C96C2; -fx-font-size: 10px;" text="UUID: -" HBox.hgrow="ALWAYS" wrapText="true" />
+                                    <Button fx:id="btnCopiarId" mnemonicParsing="false" onMouseClicked="#onCopiarId" styleClass="boton-volver" text="📋 COPIAR ID" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+
+                        <Label styleClass="status-hint" text="ℹ️ Presenta este código QR o proporciona el UUID al personal del cine en la entrada de la sala. El recepcionista lo verificará para autorizar y registrar tu ingreso a la función." wrapText="true" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

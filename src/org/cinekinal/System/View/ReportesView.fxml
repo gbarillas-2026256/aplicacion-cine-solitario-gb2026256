@@ -2,11 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -22,7 +25,7 @@
                   <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
                </padding>
                <children>
-                  <Label styleClass="header-titulo" text="NERV CINE · REPORTES OPERATIVOS Y OCUPACIÓN DE SALAS" />
+                  <Label styleClass="header-titulo" text="CINE KINAL · REPORTES OPERATIVOS Y OCUPACIÓN DE SALAS" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
                </children>
@@ -94,6 +97,85 @@
                                 <TableColumn fx:id="colAsistenciaBoletos" prefWidth="320.0" text="TOTAL DE ASISTENTES / ENTRADAS" />
                              </columns>
                           </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 3: REPORTES DE TURNO E INCIDENCIAS DE CAJA -->
+                <Tab text="  📋 REPORTES DE TURNO E INCIDENCIAS DE CAJA  ">
+                  <content>
+                    <VBox spacing="10.0" style="-fx-background-color: #050506; -fx-padding: 12;">
+                       <children>
+                          <!-- Barra de filtros -->
+                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                             <children>
+                                <Label styleClass="eva-label" text="DESDE:" />
+                                <DatePicker fx:id="dpTurnoInicio" maxWidth="140.0" styleClass="eva-field" />
+                                <Label styleClass="eva-label" text="HASTA:" />
+                                <DatePicker fx:id="dpTurnoFin" maxWidth="140.0" styleClass="eva-field" />
+                                <Button mnemonicParsing="false" onAction="#onFiltrarTurnos" styleClass="eva-button-ghost" text="🔄 FILTRAR" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label styleClass="eva-label" text="BUSCAR:" />
+                                <TextField fx:id="txtBuscarTurno" prefWidth="280.0" promptText="Buscar empleado o texto del suceso..." styleClass="eva-field" />
+                             </children>
+                          </HBox>
+                          
+                          <!-- Tabla de Cortes / Reportes de Turno -->
+                          <Label styleClass="tarjeta-titulo" text="CIERRES DE TURNO Y MENSAJES DE INCIDENCIA REGISTRADOS POR EL PERSONAL" />
+                          <TableView fx:id="tableTurnos" prefHeight="170.0" styleClass="tabla-usuarios">
+                             <columns>
+                                <TableColumn fx:id="colTurnoFecha" prefWidth="95.0" text="FECHA" />
+                                <TableColumn fx:id="colTurnoRegistro" prefWidth="140.0" text="HORA REGISTRO" />
+                                <TableColumn fx:id="colTurnoEmpleado" prefWidth="180.0" text="EMPLEADO RESPONSABLE" />
+                                <TableColumn fx:id="colTurnoPuesto" prefWidth="105.0" text="PUESTO" />
+                                <TableColumn fx:id="colTurnoBoletos" prefWidth="75.0" text="BOLETOS" />
+                                <TableColumn fx:id="colTurnoTotal" prefWidth="110.0" text="TOTAL DÍA (Q)" />
+                                <TableColumn fx:id="colTurnoMensajeResumen" prefWidth="290.0" text="MENSAJE / SUCESO REPORTADO" />
+                             </columns>
+                          </TableView>
+
+                          <!-- Panel de Detalle del Turno Seleccionado -->
+                          <HBox spacing="12.0" VBox.vgrow="ALWAYS">
+                             <children>
+                                <!-- Columna Izquierda: Mensaje Completo del Turno -->
+                                <VBox spacing="6.0" styleClass="panel-incidencia" HBox.hgrow="ALWAYS">
+                                   <children>
+                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                         <children>
+                                            <Label styleClass="eva-label" text="📝 MENSAJE Y SUCESOS DEL TURNO SELECCIONADO" />
+                                            <Region HBox.hgrow="ALWAYS" />
+                                            <Label fx:id="lblTurnoResponsableBadge" styleClass="badge-turno" text="Empleado: —" />
+                                         </children>
+                                      </HBox>
+                                      <TextArea fx:id="txtTurnoMensajeCompleto" editable="false" prefHeight="110.0" promptText="Selecciona un turno de la tabla superior para inspeccionar el mensaje completo del empleado, incidencias con clientes o reportes de sala..." styleClass="eva-field" wrapText="true" VBox.vgrow="ALWAYS" />
+                                      <HBox spacing="14.0">
+                                         <children>
+                                            <Label fx:id="lblTurnoEntradas" style="-fx-text-fill: #39FF6A; -fx-font-weight: bold; -fx-font-size: 11px;" text="Entradas: Q 0.00" />
+                                            <Label fx:id="lblTurnoDulceria" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 11px;" text="Dulcería: Q 0.00" />
+                                            <Label fx:id="lblTurnoTotalGeneral" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 11px;" text="Total Turno: Q 0.00" />
+                                         </children>
+                                      </HBox>
+                                   </children>
+                                </VBox>
+
+                                <!-- Columna Derecha: Conteo y Desglose de Productos (combos, palomitas, etc.) -->
+                                <VBox spacing="6.0" styleClass="panel-incidencia" HBox.hgrow="ALWAYS">
+                                   <children>
+                                      <Label styleClass="eva-label" text="🍿 CUENTA DE DULCERÍA (COMBOS, PALOMITAS, BEBIDAS)" />
+                                      <TableView fx:id="tableTurnoDetalles" prefHeight="110.0" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                                         <columns>
+                                            <TableColumn fx:id="colDetCategoria" prefWidth="110.0" text="CATEGORÍA" />
+                                            <TableColumn fx:id="colDetDescripcion" prefWidth="170.0" text="DESCRIPCIÓN" />
+                                            <TableColumn fx:id="colDetCantidad" prefWidth="60.0" text="CANT." />
+                                            <TableColumn fx:id="colDetPrecio" prefWidth="80.0" text="P. UNIT." />
+                                            <TableColumn fx:id="colDetSubtotal" prefWidth="80.0" text="SUBTOTAL" />
+                                         </columns>
+                                      </TableView>
+                                   </children>
+                                </VBox>
+                             </children>
+                          </HBox>
                        </children>
                     </VBox>
                   </content>

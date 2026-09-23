@@ -57,6 +57,21 @@ public class VerificarEntradaController implements Initializable {
             return;
         }
 
+        // Si se escaneó el contenido completo del QR, extraer automáticamente el UUID
+        if (idBoleto.contains("ID Boleto:")) {
+            idBoleto = idBoleto.substring(idBoleto.indexOf("ID Boleto:") + "ID Boleto:".length()).trim();
+            if (idBoleto.contains("\n")) {
+                idBoleto = idBoleto.substring(0, idBoleto.indexOf("\n")).trim();
+            }
+            txtIdBoleto.setText(idBoleto);
+        } else if (idBoleto.contains("Boleto:")) {
+            idBoleto = idBoleto.substring(idBoleto.indexOf("Boleto:") + "Boleto:".length()).trim();
+            if (idBoleto.contains("\n")) {
+                idBoleto = idBoleto.substring(0, idBoleto.indexOf("\n")).trim();
+            }
+            txtIdBoleto.setText(idBoleto);
+        }
+
         boletoActual = boletoRepo.buscarBoletoPorId(idBoleto);
         if (boletoActual == null) {
             limpiarDetalles();

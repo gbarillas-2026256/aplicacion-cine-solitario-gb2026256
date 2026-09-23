@@ -151,3 +151,36 @@ create table if not exists Boletos (
 -- Indices extra para las consultas mas frecuentes de la app
 create index idx_boletos_cliente on Boletos(id_cliente);
 create index idx_funciones_fecha on Funciones(fecha);
+
+-- ============================================================
+-- CORTES DE CAJA DEL DIA Y DETALLES DE DULCERIA
+-- ============================================================
+create table if not exists CortesCaja (
+    id_corte varchar(36) not null,
+    id_empleado varchar(36) not null,
+    fecha_corte date not null,
+    total_entradas decimal(10,2) not null default 0,
+    boletos_vendidos int not null default 0,
+    total_dulceria decimal(10,2) not null default 0,
+    total_general decimal(10,2) not null default 0,
+    observaciones varchar(300) null,
+    fecha_registro datetime not null default current_timestamp,
+    constraint pk_cortes_caja primary key (id_corte),
+    constraint fk_cortes_empleado foreign key (id_empleado) references Empleados(id_empleado),
+    constraint uq_corte_empleado_fecha unique (id_empleado, fecha_corte)
+);
+
+create table if not exists CorteDetalles (
+    id_detalle varchar(36) not null,
+    id_corte varchar(36) not null,
+    categoria varchar(30) not null,
+    descripcion varchar(120) not null,
+    cantidad int not null,
+    precio_unitario decimal(8,2) not null,
+    subtotal decimal(10,2) not null,
+    constraint pk_corte_detalles primary key (id_detalle),
+    constraint fk_detalles_corte foreign key (id_corte) references CortesCaja(id_corte) on delete cascade
+);
+
+create index idx_cortes_fecha on CortesCaja(fecha_corte);
+

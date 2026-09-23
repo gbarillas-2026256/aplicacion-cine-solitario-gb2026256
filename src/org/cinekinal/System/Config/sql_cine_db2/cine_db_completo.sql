@@ -148,6 +148,50 @@ create table if not exists Boletos (
     constraint uq_boletos_asiento_funcion unique (id_funcion, id_asiento)
 );
 
+-- ============================================================
+-- CORTE DE CAJA
+-- Un CorteCaja es el cierre del dia que hace un empleado: agrupa
+-- lo vendido en taquilla (que el sistema ya conoce por la tabla
+-- Boletos) mas las lineas de dulceria que el empleado captura a
+-- mano (combos, palomeras, comestibles), y guarda el total.
+-- ============================================================
+
+create table if not exists CortesCaja (
+    id_corte varchar(36) not null,
+    id_empleado varchar(36) not null,
+    fecha_corte date not null,
+    -- Las entradas NO se capturan: se calculan de la tabla Boletos al
+    -- momento del corte y se congelan aqui, para que el reporte
+    -- historico no cambie si despues se vende algo mas.
+    total_entradas decimal(10,2) not null default 0,
+    boletos_vendidos int not null default 0,
+    total_dulceria decimal(10,2) not null default 0,
+    total_general decimal(10,2) not null default 0,
+    observaciones varchar(300) null,
+    fecha_registro datetime not null default current_timestamp,
+    constraint pk_cortes_caja primary key (id_corte),
+    constraint fk_cortes_empleado foreign key (id_empleado) references Empleados(id_empleado),
+    -- Un empleado no puede cerrar dos veces el mismo dia
+    constraint uq_corte_empleado_fecha unique (id_empleado, fecha_corte)
+);
+
+-- Cada linea de dulceria del corte (combos, palomeras especiales,
+-- comestibles por aparte). Se guardan por separado para que el
+-- reporte del Dueño pueda desglosarlas por categoria.
+create table if not exists CorteDetalles (
+    id_detalle varchar(36) not null,
+    id_corte varchar(36) not null,
+    categoria varchar(30) not null,
+    descripcion varchar(120) not null,
+    cantidad int not null,
+    precio_unitario decimal(8,2) not null,
+    subtotal decimal(10,2) not null,
+    constraint pk_corte_detalles primary key (id_detalle),
+    constraint fk_detalles_corte foreign key (id_corte) references CortesCaja(id_corte) on delete cascade
+);
+
+create index idx_cortes_fecha on CortesCaja(fecha_corte);
+
 -- Indices extra para las consultas mas frecuentes de la app
 create index idx_boletos_cliente on Boletos(id_cliente);
 create index idx_funciones_fecha on Funciones(fecha);
@@ -193,7 +237,7 @@ set @id_peli3 = uuid();
 insert into Peliculas(id_pelicula, titulo, genero, clasificacion, duracion_min, sinopsis, poster_url, trailer_url, activa) values
     (@id_peli1, 'Evangelion: 3.0+1.0 Thrice Upon a Time', 'Ciencia Ficción / Anime', 'PG-13', 155, 
      'Shinji Ikari se encuentra a la deriva después de perder la voluntad de vivir tras el Casi Tercer Impacto. Los supervivientes luchan en la última resistencia para salvar al mundo del Proyecto de Instrumentalización Humana.',
-     'https://m.media-amazon.com/images/M/MV5BMjA5OTc3NjYtOWY2MC00MmI1LWExZGItMDYwNmNjMTljOTNhXkEyXkFqcGc@._V1_.jpg',
+     'https://upload.wikimedia.org/wikipedia/en/3/36/Evangelion_3.0%2B1.0_Poster.png',
      'https://www.youtube.com/watch?v=10ict3GCxGY', true),
     (@id_peli2, 'Interstellar', 'Ciencia Ficción / Aventura', 'PG-13', 169,
      'Un grupo de exploradores espaciales viaja a través de un agujero de gusano cerca de Saturno en un intento desesperado por encontrar un nuevo hogar habitable para la humanidad.',
@@ -201,7 +245,7 @@ insert into Peliculas(id_pelicula, titulo, genero, clasificacion, duracion_min, 
      'https://www.youtube.com/watch?v=zSWdZVtXT7E', true),
     (@id_peli3, 'Spider-Man: Across the Spider-Verse', 'Animación / Acción', 'PG', 140,
      'Miles Morales es catapultado a través del Multiverso, donde se encuentra con una sociedad de Spider-People encargada de proteger su propia existencia.',
-     'https://m.media-amazon.com/images/M/MV5BNThiZjA3MjItZGY5Ni00ZmJhLWEwN2EtOTBlYTA3CGExOTU2XkEyXkFqcGc@._V1_.jpg',
+     'https://upload.wikimedia.org/wikipedia/pt/b/b4/Spider-Man-_Across_the_Spider-Verse_poster.jpg',
      'https://www.youtube.com/watch?v=cqGjhVJWtEg', true);
 
 -- Funciones programadas para HOY
@@ -708,3 +752,129 @@ begin
         order by f.fecha, f.hora;
 end$$
 Delimiter ;
+
+
+
+-- Lo vendido en TAQUILLA en una fecha, calculado de la tabla Boletos.
+-- Sirve para precargar el corte antes de guardarlo (el empleado no
+-- tiene que sumar las entradas a mano).
+drop procedure if exists sp_corte_entradas_del_dia;
+Delimiter $$
+create procedure sp_corte_entradas_del_dia(in fecha_p date)
+begin
+    select count(*) as boletos_vendidos,
+           coalesce(sum(b.precio_final), 0) as total_entradas
+        from Boletos b
+        where date(b.fecha_compra) = fecha_p;
+end$$
+Delimiter ;
+
+-- Desglose de entradas por pelicula de esa fecha, para mostrarlo en el
+-- corte y en el reporte del Dueño.
+drop procedure if exists sp_corte_entradas_por_pelicula;
+Delimiter $$
+create procedure sp_corte_entradas_por_pelicula(in fecha_p date)
+begin
+    select p.titulo,
+           count(*) as boletos_vendidos,
+           coalesce(sum(b.precio_final), 0) as total
+        from Boletos b
+        inner join Funciones f on f.id_funcion = b.id_funcion
+        inner join Peliculas p on p.id_pelicula = f.id_pelicula
+        where date(b.fecha_compra) = fecha_p
+        group by p.id_pelicula, p.titulo
+        order by total desc;
+end$$
+Delimiter ;
+
+-- Crea la cabecera del corte y devuelve su id, para luego irle
+-- agregando las lineas de dulceria con sp_corte_agregar_detalle.
+drop procedure if exists sp_corte_crear;
+Delimiter $$
+create procedure sp_corte_crear(in id_empleado_p varchar(36), in fecha_corte_p date,
+                                 in total_entradas_p decimal(10,2), in boletos_vendidos_p int,
+                                 in observaciones_p varchar(300))
+begin
+    declare nuevo_id varchar(36);
+    set nuevo_id = uuid();
+
+    insert into CortesCaja(id_corte, id_empleado, fecha_corte, total_entradas,
+                           boletos_vendidos, total_dulceria, total_general, observaciones)
+        values(nuevo_id, id_empleado_p, fecha_corte_p, total_entradas_p,
+               boletos_vendidos_p, 0, total_entradas_p, observaciones_p);
+
+    select nuevo_id as id_corte;
+end$$
+Delimiter ;
+
+-- Agrega una linea de dulceria y recalcula los totales del corte.
+-- El recalculo se hace aqui (no en Java) para que el total guardado
+-- SIEMPRE coincida con la suma de sus detalles.
+drop procedure if exists sp_corte_agregar_detalle;
+Delimiter $$
+create procedure sp_corte_agregar_detalle(in id_corte_p varchar(36), in categoria_p varchar(30),
+                                           in descripcion_p varchar(120), in cantidad_p int,
+                                           in precio_unitario_p decimal(8,2))
+begin
+    insert into CorteDetalles(id_detalle, id_corte, categoria, descripcion,
+                              cantidad, precio_unitario, subtotal)
+        values(uuid(), id_corte_p, categoria_p, descripcion_p, cantidad_p,
+               precio_unitario_p, cantidad_p * precio_unitario_p);
+
+    update CortesCaja c
+        set c.total_dulceria = (select coalesce(sum(d.subtotal), 0)
+                                    from CorteDetalles d where d.id_corte = id_corte_p),
+            c.total_general = c.total_entradas + (select coalesce(sum(d.subtotal), 0)
+                                    from CorteDetalles d where d.id_corte = id_corte_p)
+        where c.id_corte = id_corte_p;
+end$$
+Delimiter ;
+
+-- Lista de cortes (para el Dueño), con el nombre del empleado que lo hizo.
+drop procedure if exists sp_corte_obtener_por_fecha;
+Delimiter $$
+create procedure sp_corte_obtener_por_fecha(in fecha_inicio_p date, in fecha_fin_p date)
+begin
+    select c.id_corte, c.fecha_corte, c.total_entradas, c.boletos_vendidos,
+           c.total_dulceria, c.total_general, c.observaciones, c.fecha_registro,
+           e.nombres as empleado_nombres, e.apellidos as empleado_apellidos,
+           p.nombre_puesto as empleado_puesto
+        from CortesCaja c
+        inner join Empleados e on e.id_empleado = c.id_empleado
+        inner join Puestos p on p.id_puesto = e.id_puesto
+        where c.fecha_corte between fecha_inicio_p and fecha_fin_p
+        order by c.fecha_corte desc, c.fecha_registro desc;
+end$$
+Delimiter ;
+
+-- Detalle de dulceria de UN corte, agrupado por categoria.
+drop procedure if exists sp_corte_obtener_detalles;
+Delimiter $$
+create procedure sp_corte_obtener_detalles(in id_corte_p varchar(36))
+begin
+    select categoria, descripcion, cantidad, precio_unitario, subtotal
+        from CorteDetalles
+        where id_corte = id_corte_p
+        order by categoria, descripcion;
+end$$
+Delimiter ;
+
+-- Ya existe un corte de este empleado para esa fecha? (evita el error
+-- de uq_corte_empleado_fecha antes de intentar guardar)
+drop procedure if exists sp_corte_existe;
+Delimiter $$
+create procedure sp_corte_existe(in id_empleado_p varchar(36), in fecha_corte_p date)
+begin
+    select count(*) as ya_existe
+        from CortesCaja
+        where id_empleado = id_empleado_p and fecha_corte = fecha_corte_p;
+end$$
+Delimiter ;
+
+-- ============================================================
+-- Verificacion rapida: debe devolver 39 filas (los 39 procedimientos)
+-- Si ves menos, algo no se ejecuto y sabes justo donde revisar.
+-- ============================================================
+select routine_name from information_schema.routines
+    where routine_schema = 'cine_db_gb2026256_in4av'
+    order by routine_name;

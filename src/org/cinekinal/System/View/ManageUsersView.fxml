@@ -20,7 +20,7 @@
                   <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
                </padding>
                <children>
-                  <Label styleClass="header-titulo" text="NERV CINE · GESTIÓN DE PERSONAL Y SUBORDINADOS" />
+                  <Label styleClass="header-titulo" text="CINE KINAL · GESTIÓN DE PERSONAL Y SUBORDINADOS" />
                   <Region HBox.hgrow="ALWAYS" />
                   <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
                </children>

@@ -53,6 +53,43 @@ public class BoletoRepository {
         }
     }
 
+    public Boleto obtenerUltimoBoletoComprado(String idFuncion, String idAsiento) {
+        String sql = "SELECT b.id_boleto, p.titulo, s.nombre_sala, f.fecha, f.hora, "
+                + "a.fila, a.numero, b.precio_final, b.fecha_compra, "
+                + "CONCAT(c.nombres, ' ', c.apellidos) AS nombre_cliente "
+                + "FROM Boletos b "
+                + "INNER JOIN Funciones f ON f.id_funcion = b.id_funcion "
+                + "INNER JOIN Peliculas p ON p.id_pelicula = f.id_pelicula "
+                + "INNER JOIN Salas s ON s.id_sala = f.id_sala "
+                + "INNER JOIN Asientos a ON a.id_asiento = b.id_asiento "
+                + "LEFT JOIN Clientes c ON c.id_cliente = b.id_cliente "
+                + "WHERE b.id_funcion = ? AND b.id_asiento = ?";
+        try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(sql)) {
+            ps.setString(1, idFuncion);
+            ps.setString(2, idAsiento);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Boleto boleto = new Boleto();
+                    boleto.setIdBoleto(rs.getString("id_boleto"));
+                    boleto.setTituloPelicula(rs.getString("titulo"));
+                    boleto.setNombreSala(rs.getString("nombre_sala"));
+                    boleto.setFecha(rs.getDate("fecha"));
+                    boleto.setHora(rs.getTime("hora"));
+                    boleto.setFila(rs.getString("fila"));
+                    boleto.setNumero(rs.getInt("numero"));
+                    boleto.setPrecioFinal(rs.getBigDecimal("precio_final"));
+                    boleto.setFechaCompra(rs.getTimestamp("fecha_compra"));
+                    String cliente = rs.getString("nombre_cliente");
+                    boleto.setNombreCliente(cliente != null && !cliente.trim().isEmpty() ? cliente : "Cliente");
+                    return boleto;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener boleto recién comprado: " + e.getMessage());
+        }
+        return null;
+    }
+
     public List<Boleto> obtenerPorCliente(String idCliente) {
         List<Boleto> boletos = new ArrayList<>();
         try (CallableStatement callSP = conexionDB.getConnection()
@@ -70,6 +107,11 @@ public class BoletoRepository {
                     boleto.setNumero(resultado.getInt("numero"));
                     boleto.setPrecioFinal(resultado.getBigDecimal("precio_final"));
                     boleto.setFechaCompra(resultado.getTimestamp("fecha_compra"));
+                    boleto.setUsado(estaBoletoIngresado(boleto.getIdBoleto()));
+                    if (org.cinekinal.system.utils.Session.esCliente() && org.cinekinal.system.utils.Session.getClienteActual() != null) {
+                        org.cinekinal.system.model.Cliente c = org.cinekinal.system.utils.Session.getClienteActual();
+                        boleto.setNombreCliente(c.getNombres() + " " + c.getApellidos());
+                    }
                     boletos.add(boleto);
                 }
             }

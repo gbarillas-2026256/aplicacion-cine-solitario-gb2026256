@@ -33,7 +33,8 @@ public enum Accion {
     DAR_BAJA_EMPLEADO("Dar de baja a un empleado", 2, 1),
     VER_CARTELERA("Ver cartelera", 4, 4),
     VERIFICAR_ENTRADA("Verificar boleto de entrada", 4, 4),
-    REGISTRAR_VENTA("Registrar venta o entrada", 4, 4);
+    REGISTRAR_VENTA("Registrar venta o entrada", 4, 4),
+    CORTE_CAJA("Hacer corte de caja del dia", 4, 4);
 
     private final String descripcion;
     private final int nivelVisible;

@@ -16,11 +16,11 @@ public class BoletoService {
             boletoRepo.comprar(idFuncion, idCliente, idAsiento, precioFinal);
             return BoletoCompraStatus.COMPRA_EXITOSA;
         } catch (RuntimeException e) {
-            e.printStackTrace();
             // uq_boletos_asiento_funcion: alguien mas compro ese asiento primero
             if (e.getCause() instanceof SQLIntegrityConstraintViolationException) {
                 return BoletoCompraStatus.ASIENTO_YA_VENDIDO;
             }
+            System.out.println("Error al comprar boleto: " + e.getMessage());
             return BoletoCompraStatus.ERROR_AL_COMPRAR;
         }
     }
