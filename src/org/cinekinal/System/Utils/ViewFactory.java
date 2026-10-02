@@ -57,16 +57,16 @@ public class ViewFactory {
                 case "solicitudes" -> fxmlFile = "SolicitudesView.fxml";
                 case "missolicitudes" -> fxmlFile = "MisSolicitudesView.fxml";
                 case "mensajes" -> fxmlFile = "MensajesView.fxml";
-                case "comprarboletos" -> fxmlFile = "CompraBoletoView.fxml";
-                case "verificarentrada" -> fxmlFile = "VerificarEntradaView.fxml";
-                case "ventataquilla" -> fxmlFile = "VentaTaquillaView.fxml";
-                case "administrarpeliculas" -> fxmlFile = "AdministrarPeliculasView.fxml";
-                case "administrarfuncionessalas" -> fxmlFile = "AdministrarFuncionesSalasView.fxml";
-                case "cambiarprecio" -> fxmlFile = "CambiarPrecioView.fxml";
+                case "comprarboletos", "buytickets" -> fxmlFile = "BuyTicketView.fxml";
+                case "verificarentrada", "verifyentry" -> fxmlFile = "VerifyEntryView.fxml";
+                case "ventataquilla", "boxofficesale" -> fxmlFile = "BoxOfficeSaleView.fxml";
+                case "administrarpeliculas", "managemovies" -> fxmlFile = "ManageMoviesView.fxml";
+                case "administrarfuncionessalas", "manageshowtimestheaters" -> fxmlFile = "ManageShowtimesTheatersView.fxml";
+                case "cambiarprecio", "changeprice" -> fxmlFile = "ChangePriceView.fxml";
                 case "reportes" -> fxmlFile = "ReportesView.fxml";
                 case "ganancias" -> fxmlFile = "GananciasView.fxml";
                 case "cortecaja" -> fxmlFile = "CorteCajaView.fxml";
-                case "misboletos" -> fxmlFile = "MisBoletosView.fxml";
+                case "misboletos", "mytickets" -> fxmlFile = "MyTicketsView.fxml";
                 default -> { fxmlFile = "LoginView.fxml"; width = 820; height = 500; }
             }
 

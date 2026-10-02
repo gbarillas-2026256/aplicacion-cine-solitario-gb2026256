@@ -52,12 +52,12 @@ public class ManageUsersController implements Initializable {
     @FXML
     private TableColumn<Employee, String> colEmail;
     @FXML
-    private TableColumn<Employee, String> colPuesto;
+    private TableColumn<Employee, String> colPosition;
 
     @FXML
     private Label lblStatus;
     @FXML
-    private Button btnGestionarEmpleado;
+    private Button btnManageEmployee;
 
     private final EmployeeService employeeService = new EmployeeService();
     private final Validations validate = new Validations();
@@ -76,14 +76,14 @@ public class ManageUsersController implements Initializable {
         colUser.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUsername()));
         colFullName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFullName()));
         colEmail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
-        colPuesto.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPositionName()));
+        colPosition.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPositionName()));
 
         tableUsers.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
-                btnGestionarEmpleado.setDisable(true);
+                btnManageEmployee.setDisable(true);
                 lblStatus.setText("Ningún empleado seleccionado. Haz clic en una fila para seleccionarlo.");
             } else {
-                btnGestionarEmpleado.setDisable(false);
+                btnManageEmployee.setDisable(false);
                 lblStatus.setText("Seleccionado: " + newVal.getFullName()
                         + " (" + newVal.getPositionName() + ") · Haz clic en GESTIONAR para ver acciones.");
             }
@@ -95,14 +95,14 @@ public class ManageUsersController implements Initializable {
     private void cargarTabla() {
         List<Employee> lista = employeeService.getAll();
         tableUsers.setItems(FXCollections.observableArrayList(lista));
-        btnGestionarEmpleado.setDisable(true);
+        btnManageEmployee.setDisable(true);
         lblStatus.setText("Total de empleados activos: " + lista.size());
     }
 
     @FXML
     public void onTableClicked(MouseEvent event) {
         if (event.getClickCount() == 2 && tableUsers.getSelectionModel().getSelectedItem() != null) {
-            onGestionarEmpleado(null);
+            onManageEmployee(null);
         }
     }
 
@@ -110,7 +110,7 @@ public class ManageUsersController implements Initializable {
     // MODAL 1: AGREGAR EMPLEADO
     // =========================================================================
     @FXML
-    public void onAgregarEmpleado(ActionEvent event) {
+    public void onAddEmployee(ActionEvent event) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("ALTA DE EMPLEADO");
         dialog.setHeaderText("Registro de Nuevo Colaborador / Subordinado");
@@ -229,7 +229,7 @@ public class ManageUsersController implements Initializable {
     // MODAL 2: GESTIONAR EMPLEADO SELECCIONADO (Acciones: Editar / Reportar / Dar de baja)
     // =========================================================================
     @FXML
-    public void onGestionarEmpleado(ActionEvent event) {
+    public void onManageEmployee(ActionEvent event) {
         Employee seleccionado = tableUsers.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
             alertInfo.viewAlert("WARNING", "SIN SELECCIÓN",
@@ -532,4 +532,7 @@ public class ManageUsersController implements Initializable {
         } catch (Exception ignored) {
         }
     }
+
+    public void onAgregarEmpleado(ActionEvent event) { onAddEmployee(event); }
+    public void onGestionarEmpleado(ActionEvent event) { onManageEmployee(event); }
 }

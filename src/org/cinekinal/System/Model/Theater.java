@@ -1,59 +1,76 @@
 package org.cinekinal.system.model;
 
 /**
- * Theater / auditorium model.
+ * Theater entity representing an auditorium or screening hall.
  */
-public class Theater extends Sala {
+public class Theater {
+    private String idTheater;
+    private String theaterName;
+    private String theaterType;
+    private int rows;
+    private int columns;
 
     public Theater() {
-        super();
     }
 
-    public Theater(String idTheater, String name, String type, int rows, int columns) {
-        super(idTheater, name, type, rows, columns);
+    public Theater(String idTheater, String theaterName, String theaterType, int rows, int columns) {
+        this.idTheater = idTheater;
+        this.theaterName = theaterName;
+        this.theaterType = theaterType;
+        this.rows = rows;
+        this.columns = columns;
     }
 
     public String getIdTheater() {
-        return getIdSala();
+        return idTheater;
     }
 
     public void setIdTheater(String idTheater) {
-        setIdSala(idTheater);
+        this.idTheater = idTheater;
     }
 
-    public String getName() {
-        return getNombreSala();
+    public String getTheaterName() {
+        return theaterName;
     }
 
-    public void setName(String name) {
-        setNombreSala(name);
+    public void setTheaterName(String theaterName) {
+        this.theaterName = theaterName;
     }
 
-    public String getType() {
-        return getTipoSala();
+    public String getName() { return theaterName; }
+    public void setName(String name) { this.theaterName = name; }
+
+    public String getTheaterType() {
+        return theaterType;
     }
 
-    public void setType(String type) {
-        setTipoSala(type);
+    public void setTheaterType(String theaterType) {
+        this.theaterType = theaterType;
     }
+
+    public String getType() { return theaterType; }
+    public void setType(String type) { this.theaterType = type; }
 
     public int getRows() {
-        return getFilas();
+        return rows;
     }
 
     public void setRows(int rows) {
-        setFilas(rows);
+        this.rows = rows;
     }
 
     public int getColumns() {
-        return getColumnas();
+        return columns;
     }
 
     public void setColumns(int columns) {
-        setColumnas(columns);
+        this.columns = columns;
     }
 
-    public int getCapacity() {
-        return getFilas() * getColumnas();
-    }
+    // Compatibility
+    public String getIdSala() { return idTheater; }
+    public String getNombreSala() { return theaterName; }
+    public String getTipoSala() { return theaterType; }
+    public int getFilas() { return rows; }
+    public int getColumnas() { return columns; }
 }

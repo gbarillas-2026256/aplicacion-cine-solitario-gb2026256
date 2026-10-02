@@ -2,7 +2,6 @@ package org.cinekinal.system.service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
-import org.cinekinal.system.model.EmpleadoRegistroStatus;
 import org.cinekinal.system.model.Employee;
 import org.cinekinal.system.model.EmployeeRegistrationStatus;
 import org.cinekinal.system.repository.EmployeeRepository;
@@ -87,14 +86,8 @@ public class EmployeeService {
     }
 
     // Compatibility aliases
-    public EmpleadoRegistroStatus registrar(String n, String a, String c, String u, String p, int pos) {
-        EmployeeRegistrationStatus res = register(n, a, c, u, p, pos);
-        return switch (res) {
-            case EMPLOYEE_CREATED -> EmpleadoRegistroStatus.EMPLEADO_CREADO;
-            case USERNAME_ALREADY_EXISTS -> EmpleadoRegistroStatus.USUARIO_YA_EXISTE;
-            case EMAIL_ALREADY_EXISTS -> EmpleadoRegistroStatus.CORREO_YA_EXISTE;
-            default -> EmpleadoRegistroStatus.ERROR_AL_CREAR;
-        };
+    public EmployeeRegistrationStatus registrar(String n, String a, String c, String u, String p, int pos) {
+        return register(n, a, c, u, p, pos);
     }
     public List<Employee> obtenerTodos() { return getAll(); }
     public boolean editar(String id, String n, String a, String c, int p) { return edit(id, n, a, c, p); }

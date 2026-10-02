@@ -48,7 +48,7 @@
                            </children>
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#onAgregarEmpleado" styleClass="eva-button-primary" text="+ AGREGAR EMPLEADO">
+                        <Button mnemonicParsing="false" onAction="#onAddEmployee" styleClass="eva-button-primary" text="+ AGREGAR EMPLEADO">
                            <padding>
                               <Insets bottom="9.0" left="18.0" right="18.0" top="9.0" />
                            </padding>
@@ -60,14 +60,14 @@
                         <TableColumn fx:id="colUser" prefWidth="140.0" text="USUARIO" />
                         <TableColumn fx:id="colFullName" prefWidth="280.0" text="NOMBRE COMPLETO" />
                         <TableColumn fx:id="colEmail" prefWidth="280.0" text="CORREO ELECTRÓNICO" />
-                        <TableColumn fx:id="colPuesto" prefWidth="180.0" text="PUESTO / ROL" />
+                        <TableColumn fx:id="colPosition" prefWidth="180.0" text="PUESTO / ROL" />
                      </columns>
                   </TableView>
                   <HBox alignment="CENTER_RIGHT" spacing="12.0">
                      <children>
                         <Label fx:id="lblStatus" styleClass="status-hint" text="Ningún empleado seleccionado. Haz clic en una fila para seleccionarlo." />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button fx:id="btnGestionarEmpleado" disable="true" mnemonicParsing="false" onAction="#onGestionarEmpleado" styleClass="boton-gestionar" text="⚙ GESTIONAR EMPLEADO" />
+                        <Button fx:id="btnManageEmployee" disable="true" mnemonicParsing="false" onAction="#onManageEmployee" styleClass="boton-gestionar" text="⚙ GESTIONAR EMPLEADO" />
                      </children>
                   </HBox>
                </children>

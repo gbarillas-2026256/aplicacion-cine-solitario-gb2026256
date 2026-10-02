@@ -3,109 +3,143 @@ package org.cinekinal.system.model;
 import java.sql.Timestamp;
 
 /**
- * Action approval request model.
+ * Request entity representing an action approval request.
  */
-public class Request extends Solicitud {
+public class Request {
+    private String idRequest;
+    private String action;
+    private String reason;
+    private String responseReason;
+    private String status;
+    private Timestamp requestDate;
+    private Timestamp responseDate;
+    private String requesterFirstName;
+    private String requesterLastName;
+    private String approverFirstName;
+    private String approverLastName;
 
     public Request() {
-        super();
     }
 
     public String getIdRequest() {
-        return getIdSolicitud();
+        return idRequest;
     }
 
     public void setIdRequest(String idRequest) {
-        setIdSolicitud(idRequest);
+        this.idRequest = idRequest;
     }
 
     public String getAction() {
-        return getAccion();
+        return action;
     }
 
     public void setAction(String action) {
-        setAccion(action);
+        this.action = action;
     }
 
     public String getReason() {
-        return getMotivo();
+        return reason;
     }
 
     public void setReason(String reason) {
-        setMotivo(reason);
+        this.reason = reason;
     }
 
     public String getResponseReason() {
-        return getMotivoRespuesta();
+        return responseReason;
     }
 
     public void setResponseReason(String responseReason) {
-        setMotivoRespuesta(responseReason);
+        this.responseReason = responseReason;
     }
 
     public String getStatus() {
-        return getEstado();
+        return status;
     }
 
     public void setStatus(String status) {
-        setEstado(status);
+        this.status = status;
     }
 
     public Timestamp getRequestDate() {
-        return getFechaSolicitud();
+        return requestDate;
     }
 
     public void setRequestDate(Timestamp requestDate) {
-        setFechaSolicitud(requestDate);
+        this.requestDate = requestDate;
     }
 
     public Timestamp getResponseDate() {
-        return getFechaRespuesta();
+        return responseDate;
     }
 
     public void setResponseDate(Timestamp responseDate) {
-        setFechaRespuesta(responseDate);
+        this.responseDate = responseDate;
     }
 
     public String getRequesterFirstName() {
-        return getSolicitanteNombres();
+        return requesterFirstName;
     }
 
     public void setRequesterFirstName(String requesterFirstName) {
-        setSolicitanteNombres(requesterFirstName);
+        this.requesterFirstName = requesterFirstName;
     }
 
     public String getRequesterLastName() {
-        return getSolicitanteApellidos();
+        return requesterLastName;
     }
 
     public void setRequesterLastName(String requesterLastName) {
-        setSolicitanteApellidos(requesterLastName);
+        this.requesterLastName = requesterLastName;
     }
 
     public String getApproverFirstName() {
-        return getAprobadorNombres();
+        return approverFirstName;
     }
 
     public void setApproverFirstName(String approverFirstName) {
-        setAprobadorNombres(approverFirstName);
+        this.approverFirstName = approverFirstName;
     }
 
     public String getApproverLastName() {
-        return getAprobadorApellidos();
+        return approverLastName;
     }
 
     public void setApproverLastName(String approverLastName) {
-        setAprobadorApellidos(approverLastName);
+        this.approverLastName = approverLastName;
     }
 
     public String getRequesterFullName() {
-        return (getSolicitanteNombres() != null ? getSolicitanteNombres() : "") + " "
-                + (getSolicitanteApellidos() != null ? getSolicitanteApellidos() : "").trim();
+        return (requesterFirstName != null ? requesterFirstName : "") + " "
+                + (requesterLastName != null ? requesterLastName : "").trim();
     }
 
     public String getApproverFullName() {
-        return (getAprobadorNombres() != null ? getAprobadorNombres() : "") + " "
-                + (getAprobadorApellidos() != null ? getAprobadorApellidos() : "").trim();
+        return (approverFirstName != null ? approverFirstName : "") + " "
+                + (approverLastName != null ? approverLastName : "").trim();
     }
+
+    // Compatibility
+    public String getIdSolicitud() { return idRequest; }
+    public void setIdSolicitud(String id) { this.idRequest = id; }
+    public String getAccion() { return action; }
+    public void setAccion(String a) { this.action = a; }
+    public String getMotivo() { return reason; }
+    public void setMotivo(String m) { this.reason = m; }
+    public String getMotivoRespuesta() { return responseReason; }
+    public void setMotivoRespuesta(String m) { this.responseReason = m; }
+    public String getEstado() { return status; }
+    public void setEstado(String e) { this.status = e; }
+    public Timestamp getFechaSolicitud() { return requestDate; }
+    public void setFechaSolicitud(Timestamp f) { this.requestDate = f; }
+    public Timestamp getFechaRespuesta() { return responseDate; }
+    public void setFechaRespuesta(Timestamp f) { this.responseDate = f; }
+    public String getSolicitanteNombres() { return requesterFirstName; }
+    public void setSolicitanteNombres(String s) { this.requesterFirstName = s; }
+    public String getSolicitanteApellidos() { return requesterLastName; }
+    public void setSolicitanteApellidos(String s) { this.requesterLastName = s; }
+    public String getAprobadorNombres() { return approverFirstName; }
+    public void setAprobadorNombres(String a) { this.approverFirstName = a; }
+    public String getAprobadorApellidos() { return approverLastName; }
+    public void setAprobadorApellidos(String a) { this.approverLastName = a; }
 }

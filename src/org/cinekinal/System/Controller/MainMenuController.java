@@ -32,9 +32,9 @@ import org.cinekinal.system.utils.ViewFactory;
 public class MainMenuController implements Initializable {
 
     @FXML
-    private Label lblBienvenida;
+    private Label lblWelcome;
     @FXML
-    private Label lblTipoCuenta;
+    private Label lblAccountType;
     @FXML
     private VBox vboxSidebar;
 
@@ -50,13 +50,13 @@ public class MainMenuController implements Initializable {
 
         if (Session.isEmployee()) {
             Employee employee = Session.getCurrentEmployee();
-            lblBienvenida.setText("Bienvenido, " + employee.getFirstName());
-            lblTipoCuenta.setText("Empleado · " + employee.getPositionName());
+            lblWelcome.setText("Bienvenido, " + employee.getFirstName());
+            lblAccountType.setText("Empleado · " + employee.getPositionName());
             buildEmployeeMenu(employee);
         } else if (Session.isCustomer()) {
             Customer customer = Session.getCurrentCustomer();
-            lblBienvenida.setText("Bienvenido, " + customer.getFirstName());
-            lblTipoCuenta.setText(customer.isVip() ? "Cliente VIP" : "Cliente");
+            lblWelcome.setText("Bienvenido, " + customer.getFirstName());
+            lblAccountType.setText(customer.isVip() ? "Cliente VIP" : "Cliente");
             buildCustomerMenu();
         }
     }
@@ -184,8 +184,12 @@ public class MainMenuController implements Initializable {
     }
 
     @FXML
-    public void onCerrarSesion(MouseEvent event) {
+    public void onLogout(MouseEvent event) {
         Session.logout();
         new ViewFactory().viewLogin();
+    }
+
+    public void onCerrarSesion(MouseEvent event) {
+        onLogout(event);
     }
 }

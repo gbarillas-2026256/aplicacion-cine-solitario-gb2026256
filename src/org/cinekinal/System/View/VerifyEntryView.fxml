@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="950.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.VerificarEntradaController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="950.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.VerifyEntryController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -45,8 +45,8 @@
                   <Label styleClass="eva-subtitle" text="Ingresa el identificador único (UUID) o código del boleto presentado por el cliente." />
                   <HBox alignment="CENTER_LEFT" spacing="12.0">
                      <children>
-                        <TextField fx:id="txtIdBoleto" maxWidth="Infinity" promptText="Pega o escribe el ID del boleto..." styleClass="eva-field" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#onBuscarBoleto" styleClass="eva-button-primary" text="🔍 VERIFICAR BOLETO">
+                        <TextField fx:id="txtTicketId" maxWidth="Infinity" promptText="Pega o escribe el ID del boleto..." styleClass="eva-field" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#onSearchTicket" styleClass="eva-button-primary" text="🔍 VERIFICAR BOLETO">
                            <padding>
                               <Insets bottom="10.0" left="22.0" right="22.0" top="10.0" />
                            </padding>
@@ -56,7 +56,7 @@
                </children>
             </VBox>
 
-            <VBox fx:id="vboxResultado" spacing="16.0" styleClass="tarjeta-tabla" VBox.vgrow="ALWAYS">
+            <VBox fx:id="vboxResult" spacing="16.0" styleClass="tarjeta-tabla" VBox.vgrow="ALWAYS">
                <padding>
                   <Insets bottom="20.0" left="24.0" right="24.0" top="20.0" />
                </padding>
@@ -65,7 +65,7 @@
                      <children>
                         <Label styleClass="tarjeta-titulo" text="DETALLES DEL BOLETO Y ACCESO" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lblEstadoAcceso" style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 6 14; -fx-background-radius: 2; -fx-background-color: #202226; -fx-text-fill: #9AA095;" text="ESPERANDO BOLETO" />
+                        <Label fx:id="lblAccessStatus" style="-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 6 14; -fx-background-radius: 2; -fx-background-color: #202226; -fx-text-fill: #9AA095;" text="ESPERANDO BOLETO" />
                      </children>
                   </HBox>
 
@@ -84,28 +84,28 @@
                     </rowConstraints>
                      <children>
                         <Label styleClass="eva-label" text="PELÍCULA:" />
-                        <Label fx:id="lblPelicula" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 14px;" text="—" GridPane.columnIndex="1" />
+                        <Label fx:id="lblMovie" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 14px;" text="—" GridPane.columnIndex="1" />
 
                         <Label styleClass="eva-label" text="SALA DE PROYECCIÓN:" GridPane.columnIndex="2" />
-                        <Label fx:id="lblSala" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="3" />
+                        <Label fx:id="lblTheater" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="3" />
 
                         <Label styleClass="eva-label" text="FECHA DE FUNCIÓN:" GridPane.rowIndex="1" />
-                        <Label fx:id="lblFecha" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="lblDate" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                         <Label styleClass="eva-label" text="HORA DE FUNCIÓN:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label fx:id="lblHora" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label fx:id="lblTime" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="3" GridPane.rowIndex="1" />
 
                         <Label styleClass="eva-label" text="ASIENTO ASIGNADO:" GridPane.rowIndex="2" />
-                        <Label fx:id="lblAsiento" style="-fx-text-fill: #39FF6A; -fx-font-weight: bold; -fx-font-size: 15px;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="lblSeat" style="-fx-text-fill: #39FF6A; -fx-font-weight: bold; -fx-font-size: 15px;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                         <Label styleClass="eva-label" text="PRECIO PAGADO:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Label fx:id="lblPrecio" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 14px;" text="—" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <Label fx:id="lblPrice" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 14px;" text="—" GridPane.columnIndex="3" GridPane.rowIndex="2" />
 
                         <Label styleClass="eva-label" text="CLIENTE:" GridPane.rowIndex="3" />
-                        <Label fx:id="lblCliente" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="lblCustomer" style="-fx-text-fill: #ECEDE9; -fx-font-size: 13px;" text="—" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                         <Label styleClass="eva-label" text="FECHA DE COMPRA:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <Label fx:id="lblFechaCompra" style="-fx-text-fill: #9AA095; -fx-font-size: 12px;" text="—" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <Label fx:id="lblPurchaseDate" style="-fx-text-fill: #9AA095; -fx-font-size: 12px;" text="—" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
 
@@ -113,7 +113,7 @@
 
                   <HBox alignment="CENTER_RIGHT" spacing="12.0">
                      <children>
-                        <Button fx:id="btnValidarIngreso" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onValidarIngreso" style="-fx-background-color: #39FF6A; -fx-text-fill: #050506; -fx-font-weight: bold; -fx-font-size: 13.5px; -fx-padding: 12 24; -fx-cursor: hand;" text="✓ PERMITIR Y MARCAR ACCESO" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnValidateEntry" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onValidateEntry" style="-fx-background-color: #39FF6A; -fx-text-fill: #050506; -fx-font-weight: bold; -fx-font-size: 13.5px; -fx-padding: 12 24; -fx-cursor: hand;" text="✓ PERMITIR Y MARCAR ACCESO" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                </children>

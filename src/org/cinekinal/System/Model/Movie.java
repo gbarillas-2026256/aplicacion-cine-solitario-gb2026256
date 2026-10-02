@@ -1,80 +1,101 @@
 package org.cinekinal.system.model;
 
 /**
- * Movie model.
+ * Movie entity representing a film in the catalog.
  */
-public class Movie extends Pelicula {
+public class Movie {
+    private String idMovie;
+    private String title;
+    private String genre;
+    private String rating;
+    private int durationMin;
+    private String synopsis;
+    private String posterUrl;
+    private String trailerUrl;
 
     public Movie() {
-        super();
     }
 
     public Movie(String idMovie, String title, String genre, String rating, int durationMin,
                  String synopsis, String posterUrl, String trailerUrl) {
-        super(idMovie, title, genre, rating, durationMin, synopsis, posterUrl, trailerUrl);
+        this.idMovie = idMovie;
+        this.title = title;
+        this.genre = genre;
+        this.rating = rating;
+        this.durationMin = durationMin;
+        this.synopsis = synopsis;
+        this.posterUrl = posterUrl;
+        this.trailerUrl = trailerUrl;
     }
 
     public String getIdMovie() {
-        return getIdPelicula();
+        return idMovie;
     }
 
     public void setIdMovie(String idMovie) {
-        setIdPelicula(idMovie);
+        this.idMovie = idMovie;
     }
 
     public String getTitle() {
-        return getTitulo();
+        return title;
     }
 
     public void setTitle(String title) {
-        setTitulo(title);
+        this.title = title;
     }
 
     public String getGenre() {
-        return getGenero();
+        return genre;
     }
 
     public void setGenre(String genre) {
-        setGenero(genre);
+        this.genre = genre;
     }
 
     public String getRating() {
-        return getClasificacion();
+        return rating;
     }
 
     public void setRating(String rating) {
-        setClasificacion(rating);
+        this.rating = rating;
     }
 
     public int getDurationMin() {
-        return getDuracionMin();
+        return durationMin;
     }
 
     public void setDurationMin(int durationMin) {
-        super.setDuracionMin(durationMin);
+        this.durationMin = durationMin;
     }
 
     public String getSynopsis() {
-        return getSinopsis();
+        return synopsis;
     }
 
     public void setSynopsis(String synopsis) {
-        setSinopsis(synopsis);
+        this.synopsis = synopsis;
     }
 
     public String getPosterUrl() {
-        return super.getPosterUrl();
+        return posterUrl;
     }
 
     public void setPosterUrl(String posterUrl) {
-        super.setPosterUrl(posterUrl);
+        this.posterUrl = posterUrl;
     }
 
     public String getTrailerUrl() {
-        return super.getTrailerUrl();
+        return trailerUrl;
     }
 
     public void setTrailerUrl(String trailerUrl) {
-        super.setTrailerUrl(trailerUrl);
+        this.trailerUrl = trailerUrl;
     }
+
+    // Compatibility getters for TableView properties if needed
+    public String getIdPelicula() { return idMovie; }
+    public String getTitulo() { return title; }
+    public String getGenero() { return genre; }
+    public String getClasificacion() { return rating; }
+    public String getSinopsis() { return synopsis; }
 }

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="980.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.CambiarPrecioController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="980.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ChangePriceController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -43,13 +43,13 @@
                <children>
                   <Label styleClass="tarjeta-titulo" text="FUNCIONES Y PRECIOS VIGENTES" />
                   <Label styleClass="eva-subtitle" text="Selecciona una función de la lista para actualizar o solicitar ajuste a su precio base." />
-                  <TableView fx:id="tableFunciones" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="tableShowtimes" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
                      <columns>
-                        <TableColumn fx:id="colPelicula" prefWidth="250.0" text="PELÍCULA" />
-                        <TableColumn fx:id="colSala" prefWidth="150.0" text="SALA" />
-                        <TableColumn fx:id="colFecha" prefWidth="110.0" text="FECHA" />
-                        <TableColumn fx:id="colHora" prefWidth="90.0" text="HORA" />
-                        <TableColumn fx:id="colPrecioActual" prefWidth="120.0" text="PRECIO ACTUAL" />
+                        <TableColumn fx:id="colMovie" prefWidth="250.0" text="PELÍCULA" />
+                        <TableColumn fx:id="colTheater" prefWidth="150.0" text="SALA" />
+                        <TableColumn fx:id="colDate" prefWidth="110.0" text="FECHA" />
+                        <TableColumn fx:id="colTime" prefWidth="90.0" text="HORA" />
+                        <TableColumn fx:id="colCurrentPrice" prefWidth="120.0" text="PRECIO ACTUAL" />
                      </columns>
                   </TableView>
                </children>
@@ -65,24 +65,24 @@
 
                   <VBox spacing="6.0" style="-fx-background-color: #202226; -fx-padding: 12; -fx-border-color: #33352E; -fx-border-width: 1;">
                      <children>
-                        <Label fx:id="lblPeliculaSel" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 13px;" text="Película: —" wrapText="true" />
-                        <Label fx:id="lblHorarioSel" style="-fx-text-fill: #ECEDE9; -fx-font-size: 12px;" text="Horario: —" />
-                        <Label fx:id="lblPrecioBaseSel" style="-fx-text-fill: #FFD500; -fx-font-size: 13px; -fx-font-weight: bold;" text="Precio actual: —" />
+                        <Label fx:id="lblSelectedMovie" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 13px;" text="Película: —" wrapText="true" />
+                        <Label fx:id="lblSelectedSchedule" style="-fx-text-fill: #ECEDE9; -fx-font-size: 12px;" text="Horario: —" />
+                        <Label fx:id="lblSelectedCurrentPrice" style="-fx-text-fill: #FFD500; -fx-font-size: 13px; -fx-font-weight: bold;" text="Precio actual: —" />
                      </children>
                   </VBox>
 
                   <VBox spacing="4.0">
                      <children>
                         <Label styleClass="eva-label" text="NUEVO PRECIO BASE (Q):" />
-                        <TextField fx:id="txtNuevoPrecio" promptText="Ej. 35.00" styleClass="eva-field" />
+                        <TextField fx:id="txtNewPrice" promptText="Ej. 35.00" styleClass="eva-field" />
                      </children>
                   </VBox>
 
-                  <Label fx:id="lblNotaPermiso" style="-fx-text-fill: #9AA095; -fx-font-size: 11px;" text="Si eres Gerente, el cambio enviará una solicitud al Dueño. Si eres Dueño, se aplicará al instante." wrapText="true" />
+                  <Label fx:id="lblPermissionNote" style="-fx-text-fill: #9AA095; -fx-font-size: 11px;" text="Si eres Gerente, el cambio enviará una solicitud al Dueño. Si eres Dueño, se aplicará al instante." wrapText="true" />
 
                   <Region VBox.vgrow="ALWAYS" />
 
-                  <Button fx:id="btnAplicarPrecio" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onAplicarPrecio" styleClass="eva-button-primary" text="ACTUALIZAR PRECIO">
+                  <Button fx:id="btnApplyPrice" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onApplyPrice" styleClass="eva-button-primary" text="ACTUALIZAR PRECIO">
                      <padding>
                         <Insets bottom="12.0" top="12.0" />
                      </padding>

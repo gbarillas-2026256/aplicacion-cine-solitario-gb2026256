@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.AdministrarPeliculasController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ManageMoviesController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -50,7 +50,7 @@
                            </children>
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" onAction="#onAgregarPelicula" styleClass="eva-button-primary" text="+ AGREGAR PELÍCULA">
+                        <Button mnemonicParsing="false" onAction="#onAddMovie" styleClass="eva-button-primary" text="+ AGREGAR PELÍCULA">
                            <padding>
                               <Insets bottom="9.0" left="18.0" right="18.0" top="9.0" />
                            </padding>
@@ -58,19 +58,19 @@
                      </children>
                   </HBox>
 
-                  <TableView fx:id="tablePeliculas" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="tableMovies" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
                      <columns>
-                        <TableColumn fx:id="colTitulo" prefWidth="280.0" text="TÍTULO" />
-                        <TableColumn fx:id="colGenero" prefWidth="180.0" text="GÉNERO" />
-                        <TableColumn fx:id="colClasificacion" prefWidth="90.0" text="CLASIF." />
-                        <TableColumn fx:id="colDuracion" prefWidth="110.0" text="DURACIÓN" />
+                        <TableColumn fx:id="colTitle" prefWidth="280.0" text="TÍTULO" />
+                        <TableColumn fx:id="colGenre" prefWidth="180.0" text="GÉNERO" />
+                        <TableColumn fx:id="colRating" prefWidth="90.0" text="CLASIF." />
+                        <TableColumn fx:id="colDuration" prefWidth="110.0" text="DURACIÓN" />
                      </columns>
                   </TableView>
 
                   <HBox alignment="CENTER_RIGHT" spacing="12.0">
                      <children>
-                        <Button fx:id="btnEditar" disable="true" mnemonicParsing="false" onAction="#onEditarPelicula" styleClass="boton-gestionar" text="✏️ EDITAR PELÍCULA" />
-                        <Button fx:id="btnDesactivar" disable="true" mnemonicParsing="false" onAction="#onDesactivarPelicula" styleClass="boton-logout" text="❌ DESACTIVAR" />
+                        <Button fx:id="btnEdit" disable="true" mnemonicParsing="false" onAction="#onEditMovie" styleClass="boton-gestionar" text="✏️ EDITAR PELÍCULA" />
+                        <Button fx:id="btnDeactivate" disable="true" mnemonicParsing="false" onAction="#onDeactivateMovie" styleClass="boton-logout" text="❌ DESACTIVAR" />
                      </children>
                   </HBox>
                </children>
@@ -90,11 +90,11 @@
                      </children>
                   </VBox>
 
-                  <Label fx:id="lblTituloDetalle" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 14px;" text="Selecciona una película" wrapText="true" />
-                  <Label fx:id="lblMetaDetalle" style="-fx-text-fill: #39FF6A; -fx-font-size: 11.5px;" text="Género · Duración" />
-                  <Label fx:id="lblSinopsisDetalle" style="-fx-text-fill: #ECEDE9; -fx-font-size: 11.5px;" text="Sinopsis..." wrapText="true" VBox.vgrow="ALWAYS" />
+                  <Label fx:id="lblDetailTitle" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 14px;" text="Selecciona una película" wrapText="true" />
+                  <Label fx:id="lblDetailMeta" style="-fx-text-fill: #39FF6A; -fx-font-size: 11.5px;" text="Género · Duración" />
+                  <Label fx:id="lblDetailSynopsis" style="-fx-text-fill: #ECEDE9; -fx-font-size: 11.5px;" text="Sinopsis..." wrapText="true" VBox.vgrow="ALWAYS" />
 
-                  <Button fx:id="btnVerTrailer" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onVerTrailer" styleClass="eva-button-ghost" text="▶ VER TRÁILER (YOUTUBE)">
+                  <Button fx:id="btnWatchTrailer" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onWatchTrailer" styleClass="eva-button-ghost" text="▶ VER TRÁILER (YOUTUBE)">
                      <padding>
                         <Insets bottom="9.0" top="9.0" />
                      </padding>

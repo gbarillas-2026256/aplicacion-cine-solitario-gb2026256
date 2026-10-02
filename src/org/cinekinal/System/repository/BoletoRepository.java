@@ -45,9 +45,9 @@ public class BoletoRepository {
         return Db.list("{call sp_obtener_boletos_por_cliente(?)}", rs -> {
             Boleto boleto = mapear(rs, null);
             boleto.setUsado(estaBoletoIngresado(boleto.getIdBoleto()));
-            if (Session.esCliente() && Session.getClienteActual() != null) {
-                var c = Session.getClienteActual();
-                boleto.setNombreCliente(c.getNombres() + " " + c.getApellidos());
+            if (Session.isCustomer() && Session.getCurrentCustomer() != null) {
+                var c = Session.getCurrentCustomer();
+                boleto.setNombreCliente(c.getFirstName() + " " + c.getLastName());
             }
             return boleto;
         }, idCliente);

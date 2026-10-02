@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.AdministrarFuncionesSalasController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ManageShowtimesTheatersController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -52,7 +52,7 @@
                                    </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button mnemonicParsing="false" onAction="#onProgramarFuncion" styleClass="eva-button-primary" text="+ PROGRAMAR FUNCIÓN">
+                                <Button mnemonicParsing="false" onAction="#onAddShowtime" styleClass="eva-button-primary" text="+ PROGRAMAR FUNCIÓN">
                                    <padding>
                                       <Insets bottom="9.0" left="18.0" right="18.0" top="9.0" />
                                    </padding>
@@ -60,13 +60,13 @@
                              </children>
                           </HBox>
 
-                          <TableView fx:id="tableFunciones" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                          <TableView fx:id="tableShowtimes" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
                              <columns>
-                                <TableColumn fx:id="colFuncionPelicula" prefWidth="300.0" text="PELÍCULA" />
-                                <TableColumn fx:id="colFuncionSala" prefWidth="200.0" text="SALA" />
-                                <TableColumn fx:id="colFuncionFecha" prefWidth="130.0" text="FECHA" />
-                                <TableColumn fx:id="colFuncionHora" prefWidth="120.0" text="HORA" />
-                                <TableColumn fx:id="colFuncionPrecio" prefWidth="130.0" text="PRECIO BASE" />
+                                <TableColumn fx:id="colShowtimeMovie" prefWidth="300.0" text="PELÍCULA" />
+                                <TableColumn fx:id="colShowtimeTheater" prefWidth="200.0" text="SALA" />
+                                <TableColumn fx:id="colShowtimeDate" prefWidth="130.0" text="FECHA" />
+                                <TableColumn fx:id="colShowtimeTime" prefWidth="120.0" text="HORA" />
+                                <TableColumn fx:id="colShowtimePrice" prefWidth="130.0" text="PRECIO BASE" />
                              </columns>
                           </TableView>
                        </children>
@@ -88,7 +88,7 @@
                                    </children>
                                 </VBox>
                                 <Region HBox.hgrow="ALWAYS" />
-                                <Button mnemonicParsing="false" onAction="#onCrearSala" styleClass="eva-button-primary" text="+ CREAR NUEVA SALA">
+                                <Button mnemonicParsing="false" onAction="#onAddTheater" styleClass="eva-button-primary" text="+ CREAR NUEVA SALA">
                                    <padding>
                                       <Insets bottom="9.0" left="18.0" right="18.0" top="9.0" />
                                    </padding>
@@ -96,13 +96,13 @@
                              </children>
                           </HBox>
 
-                          <TableView fx:id="tableSalas" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                          <TableView fx:id="tableTheaters" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
                              <columns>
-                                <TableColumn fx:id="colSalaNombre" prefWidth="280.0" text="NOMBRE DE SALA" />
-                                <TableColumn fx:id="colSalaTipo" prefWidth="160.0" text="TIPO DE SALA" />
-                                <TableColumn fx:id="colSalaFilas" prefWidth="120.0" text="FILAS" />
-                                <TableColumn fx:id="colSalaColumnas" prefWidth="120.0" text="COLUMNAS" />
-                                <TableColumn fx:id="colSalaCapacidad" prefWidth="160.0" text="CAPACIDAD TOTAL" />
+                                <TableColumn fx:id="colTheaterName" prefWidth="280.0" text="NOMBRE DE SALA" />
+                                <TableColumn fx:id="colTheaterType" prefWidth="160.0" text="TIPO DE SALA" />
+                                <TableColumn fx:id="colTheaterRows" prefWidth="120.0" text="FILAS" />
+                                <TableColumn fx:id="colTheaterColumns" prefWidth="120.0" text="COLUMNAS" />
+                                <TableColumn fx:id="colTheaterCapacity" prefWidth="160.0" text="CAPACIDAD TOTAL" />
                              </columns>
                           </TableView>
                        </children>

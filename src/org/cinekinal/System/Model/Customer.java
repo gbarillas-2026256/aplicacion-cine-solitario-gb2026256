@@ -1,76 +1,97 @@
 package org.cinekinal.system.model;
 
 /**
- * Customer model.
+ * Customer entity representing a registered theater client.
  */
-public class Customer extends Cliente {
+public class Customer {
+    private String idCustomer;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String username;
+    private String password;
+    private boolean vip;
 
     public Customer() {
-        super();
     }
 
     public Customer(String idCustomer, String firstName, String lastName, String email,
-                    String username, String password, boolean isVip) {
-        super(idCustomer, firstName, lastName, email, username, password, isVip);
+                    String username, String password, boolean vip) {
+        this.idCustomer = idCustomer;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.vip = vip;
     }
 
     public String getIdCustomer() {
-        return getIdCliente();
+        return idCustomer;
     }
 
     public void setIdCustomer(String idCustomer) {
-        setIdCliente(idCustomer);
+        this.idCustomer = idCustomer;
     }
 
     public String getFirstName() {
-        return getNombres();
+        return firstName;
     }
 
     public void setFirstName(String firstName) {
-        setNombres(firstName);
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return getApellidos();
+        return lastName;
     }
 
     public void setLastName(String lastName) {
-        setApellidos(lastName);
+        this.lastName = lastName;
     }
 
     public String getEmail() {
-        return getCorreo();
+        return email;
     }
 
     public void setEmail(String email) {
-        setCorreo(email);
+        this.email = email;
     }
 
     public String getUsername() {
-        return getUsuario();
+        return username;
     }
 
     public void setUsername(String username) {
-        setUsuario(username);
+        this.username = username;
     }
 
     public String getPassword() {
-        return super.getPassword();
+        return password;
     }
 
     public void setPassword(String password) {
-        super.setPassword(password);
+        this.password = password;
     }
 
     public boolean isVip() {
-        return isEsVip();
+        return vip;
     }
 
     public void setVip(boolean vip) {
-        setEsVip(vip);
+        this.vip = vip;
     }
 
     public String getFullName() {
-        return getNombreCompleto();
+        return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "").trim();
     }
+
+    // Compatibility getters
+    public String getIdCliente() { return idCustomer; }
+    public String getNombres() { return firstName; }
+    public String getApellidos() { return lastName; }
+    public String getCorreo() { return email; }
+    public String getUsuario() { return username; }
+    public boolean isEsVip() { return vip; }
+    public String getNombreCompleto() { return getFullName(); }
 }

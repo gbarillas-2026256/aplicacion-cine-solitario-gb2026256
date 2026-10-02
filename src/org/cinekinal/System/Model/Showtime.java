@@ -5,123 +5,176 @@ import java.sql.Date;
 import java.sql.Time;
 
 /**
- * Showtime projection model with resolved movie and theater details.
+ * Showtime entity representing a movie screening schedule.
  */
-public class Showtime extends Funcion {
+public class Showtime {
+    private String idShowtime;
+    private String theaterId;
+    private String movieTitle;
+    private int durationMin;
+    private String theaterName;
+    private String theaterType;
+    private Date showDate;
+    private Time showTime;
+    private BigDecimal basePrice;
+    private String genre;
+    private String rating;
+    private String synopsis;
+    private String posterUrl;
+    private String trailerUrl;
+    private String movieId;
 
     public Showtime() {
-        super();
     }
 
     public String getIdShowtime() {
-        return getIdFuncion();
+        return idShowtime;
     }
 
     public void setIdShowtime(String idShowtime) {
-        setIdFuncion(idShowtime);
+        this.idShowtime = idShowtime;
     }
 
-    public String getIdTheater() {
-        return getIdSala();
+    public String getTheaterId() {
+        return theaterId;
     }
 
-    public void setIdTheater(String idTheater) {
-        setIdSala(idTheater);
+    public void setTheaterId(String theaterId) {
+        this.theaterId = theaterId;
     }
+
+    public String getIdTheater() { return theaterId; }
+    public void setIdTheater(String id) { this.theaterId = id; }
 
     public String getMovieTitle() {
-        return getTituloPelicula();
+        return movieTitle;
     }
 
     public void setMovieTitle(String movieTitle) {
-        setTituloPelicula(movieTitle);
+        this.movieTitle = movieTitle;
     }
 
     public int getDurationMin() {
-        return getDuracionMin();
+        return durationMin;
     }
 
     public void setDurationMin(int durationMin) {
-        setDuracionMin(durationMin);
+        this.durationMin = durationMin;
     }
 
     public String getTheaterName() {
-        return getNombreSala();
+        return theaterName;
     }
 
     public void setTheaterName(String theaterName) {
-        setNombreSala(theaterName);
+        this.theaterName = theaterName;
     }
 
     public String getTheaterType() {
-        return getTipoSala();
+        return theaterType;
     }
 
     public void setTheaterType(String theaterType) {
-        setTipoSala(theaterType);
+        this.theaterType = theaterType;
     }
 
-    public Date getDate() {
-        return getFecha();
+    public Date getShowDate() {
+        return showDate;
     }
 
-    public void setDate(Date date) {
-        setFecha(date);
+    public void setShowDate(Date showDate) {
+        this.showDate = showDate;
     }
 
-    public Time getTime() {
-        return getHora();
+    public Date getDate() { return showDate; }
+    public void setDate(Date date) { this.showDate = date; }
+
+    public Time getShowTime() {
+        return showTime;
     }
 
-    public void setTime(Time time) {
-        setHora(time);
+    public void setShowTime(Time showTime) {
+        this.showTime = showTime;
     }
+
+    public Time getTime() { return showTime; }
+    public void setTime(Time time) { this.showTime = time; }
 
     public BigDecimal getBasePrice() {
-        return getPrecioBase();
+        return basePrice;
     }
 
     public void setBasePrice(BigDecimal basePrice) {
-        setPrecioBase(basePrice);
+        this.basePrice = basePrice;
     }
 
     public String getGenre() {
-        return getGenero();
+        return genre;
     }
 
     public void setGenre(String genre) {
-        setGenero(genre);
+        this.genre = genre;
     }
 
     public String getRating() {
-        return getClasificacion();
+        return rating;
     }
 
     public void setRating(String rating) {
-        setClasificacion(rating);
+        this.rating = rating;
     }
 
     public String getSynopsis() {
-        return getSinopsis();
+        return synopsis;
     }
 
     public void setSynopsis(String synopsis) {
-        setSinopsis(synopsis);
+        this.synopsis = synopsis;
     }
 
     public String getPosterUrl() {
-        return super.getPosterUrl();
+        return posterUrl;
     }
 
     public void setPosterUrl(String posterUrl) {
-        super.setPosterUrl(posterUrl);
+        this.posterUrl = posterUrl;
     }
 
     public String getTrailerUrl() {
-        return super.getTrailerUrl();
+        return trailerUrl;
     }
 
     public void setTrailerUrl(String trailerUrl) {
-        super.setTrailerUrl(trailerUrl);
+        this.trailerUrl = trailerUrl;
     }
+
+    public String getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
+    }
+
+    // Compatibility
+    public String getIdFuncion() { return idShowtime; }
+    public void setIdFuncion(String id) { this.idShowtime = id; }
+    public String getIdSala() { return theaterId; }
+    public void setIdSala(String id) { this.theaterId = id; }
+    public String getTituloPelicula() { return movieTitle; }
+    public void setTituloPelicula(String t) { this.movieTitle = t; }
+    public String getNombreSala() { return theaterName; }
+    public void setNombreSala(String n) { this.theaterName = n; }
+    public String getTipoSala() { return theaterType; }
+    public void setTipoSala(String t) { this.theaterType = t; }
+    public Date getFecha() { return showDate; }
+    public void setFecha(Date f) { this.showDate = f; }
+    public Time getHora() { return showTime; }
+    public void setHora(Time h) { this.showTime = h; }
+    public String getGenero() { return genre; }
+    public void setGenero(String g) { this.genre = g; }
+    public String getClasificacion() { return rating; }
+    public void setClasificacion(String c) { this.rating = c; }
+    public String getSinopsis() { return synopsis; }
+    public void setSinopsis(String s) { this.synopsis = s; }
 }

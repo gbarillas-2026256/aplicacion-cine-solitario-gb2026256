@@ -19,11 +19,11 @@
             <children>
                 <VBox spacing="2.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label fx:id="lblBienvenida" styleClass="eva-title" text="Bienvenido" />
-                        <Label fx:id="lblTipoCuenta" styleClass="eva-subtitle" text="-" />
+                        <Label fx:id="lblWelcome" styleClass="eva-title" text="Bienvenido" />
+                        <Label fx:id="lblAccountType" styleClass="eva-subtitle" text="-" />
                     </children>
                 </VBox>
-                <Button mnemonicParsing="false" onMouseClicked="#onCerrarSesion" styleClass="eva-button-ghost" text="CERRAR SESIÓN" />
+                <Button mnemonicParsing="false" onMouseClicked="#onLogout" styleClass="eva-button-ghost" text="CERRAR SESIÓN" />
             </children>
         </HBox>
     </top>

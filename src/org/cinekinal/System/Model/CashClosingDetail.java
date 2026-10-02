@@ -3,63 +3,100 @@ package org.cinekinal.system.model;
 import java.math.BigDecimal;
 
 /**
- * Line item within a cash closing.
+ * CashClosingDetail entity representing a concession line item in a cash closing.
  */
-public class CashClosingDetail extends CorteDetalle {
+public class CashClosingDetail {
+    private String idDetail;
+    private String closingId;
+    private String category;
+    private String description;
+    private int quantity;
+    private BigDecimal unitPrice;
+    private BigDecimal subtotal;
 
     public CashClosingDetail() {
-        super();
     }
 
     public CashClosingDetail(String category, String description, int quantity, BigDecimal unitPrice) {
-        super(category, description, quantity, unitPrice);
+        this.category = category;
+        this.description = description;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
     }
 
     public String getIdDetail() {
-        return getIdDetalle();
+        return idDetail;
     }
 
     public void setIdDetail(String idDetail) {
-        setIdDetalle(idDetail);
+        this.idDetail = idDetail;
+    }
+
+    public String getClosingId() {
+        return closingId;
+    }
+
+    public void setClosingId(String closingId) {
+        this.closingId = closingId;
     }
 
     public String getCategory() {
-        return getCategoria();
+        return category;
     }
 
     public void setCategory(String category) {
-        setCategoria(category);
+        this.category = category;
     }
 
     public String getDescription() {
-        return getDescripcion();
+        return description;
     }
 
     public void setDescription(String description) {
-        setDescripcion(description);
+        this.description = description;
     }
 
     public int getQuantity() {
-        return getCantidad();
+        return quantity;
     }
 
     public void setQuantity(int quantity) {
-        setCantidad(quantity);
+        this.quantity = quantity;
     }
 
     public BigDecimal getUnitPrice() {
-        return getPrecioUnitario();
+        return unitPrice;
     }
 
     public void setUnitPrice(BigDecimal unitPrice) {
-        setPrecioUnitario(unitPrice);
+        this.unitPrice = unitPrice;
     }
 
     public BigDecimal getSubtotal() {
-        return super.getSubtotal();
+        if (subtotal != null) {
+            return subtotal;
+        }
+        if (unitPrice == null) {
+            return BigDecimal.ZERO;
+        }
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 
     public void setSubtotal(BigDecimal subtotal) {
-        super.setSubtotal(subtotal);
+        this.subtotal = subtotal;
     }
+
+    // Compatibility
+    public String getIdDetalle() { return idDetail; }
+    public void setIdDetalle(String id) { this.idDetail = id; }
+    public String getIdCorte() { return closingId; }
+    public void setIdCorte(String id) { this.closingId = id; }
+    public String getCategoria() { return category; }
+    public void setCategoria(String c) { this.category = c; }
+    public String getDescripcion() { return description; }
+    public void setDescripcion(String d) { this.description = d; }
+    public int getCantidad() { return quantity; }
+    public void setCantidad(int q) { this.quantity = q; }
+    public BigDecimal getPrecioUnitario() { return unitPrice; }
+    public void setPrecioUnitario(BigDecimal p) { this.unitPrice = p; }
 }

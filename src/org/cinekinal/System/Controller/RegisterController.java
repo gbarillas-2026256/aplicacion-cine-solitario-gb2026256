@@ -37,12 +37,14 @@ public class RegisterController implements Initializable {
     }
 
     @FXML
-    public void onCancelarRegistro(MouseEvent event) {
+    public void onCancel(MouseEvent event) {
         new ViewFactory().viewLogin();
     }
 
+    public void onCancelarRegistro(MouseEvent event) { onCancel(event); }
+
     @FXML
-    public void onRegistrarCliente(MouseEvent event) {
+    public void onRegisterCustomer(MouseEvent event) {
         String username = txtUser.getText().trim();
         String firstName = txtName.getText().trim();
         String lastName = txtLastName.getText().trim();

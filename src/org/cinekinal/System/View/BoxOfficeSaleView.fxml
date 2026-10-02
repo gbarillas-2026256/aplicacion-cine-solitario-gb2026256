@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.VentaTaquillaController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.BoxOfficeSaleController">
    <top>
       <VBox BorderPane.alignment="CENTER">
          <children>
@@ -45,12 +45,12 @@
                   <Label styleClass="tarjeta-titulo" text="FUNCIONES DISPONIBLES" />
                   <HBox spacing="6.0">
                      <children>
-                        <Button fx:id="btnHoy" mnemonicParsing="false" onAction="#onFiltrarHoy" styleClass="boton-filtro-activo" text="HOY" />
-                        <Button fx:id="btnManana" mnemonicParsing="false" onAction="#onFiltrarManana" styleClass="boton-filtro" text="MAÑANA" />
-                        <Button fx:id="btnTodas" mnemonicParsing="false" onAction="#onFiltrarTodas" styleClass="boton-filtro" text="TODAS" />
+                        <Button fx:id="btnToday" mnemonicParsing="false" onAction="#onFilterToday" styleClass="boton-filtro-activo" text="HOY" />
+                        <Button fx:id="btnTomorrow" mnemonicParsing="false" onAction="#onFilterTomorrow" styleClass="boton-filtro" text="MAÑANA" />
+                        <Button fx:id="btnAll" mnemonicParsing="false" onAction="#onFilterAll" styleClass="boton-filtro" text="TODAS" />
                      </children>
                   </HBox>
-                  <ListView fx:id="listFunciones" styleClass="lista-funciones" VBox.vgrow="ALWAYS" />
+                  <ListView fx:id="listShowtimes" styleClass="lista-funciones" VBox.vgrow="ALWAYS" />
                </children>
             </VBox>
 
@@ -65,7 +65,7 @@
                         <VBox spacing="2.0">
                            <children>
                               <Label styleClass="tarjeta-titulo" text="SELECCIÓN DE BUTACAS EN SALA" />
-                              <Label fx:id="lblSalaSeleccionada" styleClass="subtitulo-sala" text="Selecciona una función de la lista para ver la sala" />
+                              <Label fx:id="lblSelectedTheater" styleClass="subtitulo-sala" text="Selecciona una función de la lista para ver la sala" />
                            </children>
                         </VBox>
                         <Region HBox.hgrow="ALWAYS" />
@@ -102,7 +102,7 @@
 
                   <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="scroll-asientos" VBox.vgrow="ALWAYS">
                      <content>
-                        <GridPane fx:id="gridAsientos" alignment="CENTER" hgap="6.0" vgap="6.0">
+                        <GridPane fx:id="gridSeats" alignment="CENTER" hgap="6.0" vgap="6.0">
                            <padding>
                               <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                            </padding>
@@ -123,15 +123,15 @@
                   <VBox spacing="4.0">
                      <children>
                         <Label styleClass="eva-label" text="CLIENTE:" />
-                        <ComboBox fx:id="cmbCliente" maxWidth="Infinity" styleClass="eva-field" />
+                        <ComboBox fx:id="cmbCustomer" maxWidth="Infinity" styleClass="eva-field" />
                      </children>
                   </VBox>
 
                   <VBox spacing="6.0" style="-fx-background-color: #202226; -fx-padding: 10; -fx-border-color: #33352E; -fx-border-width: 1;">
                      <children>
-                        <Label fx:id="lblPeliculaResumen" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 13px;" text="Película: —" />
-                        <Label fx:id="lblHorarioResumen" style="-fx-text-fill: #ECEDE9; -fx-font-size: 11.5px;" text="Horario: —" />
-                        <Label fx:id="lblAsientosResumen" style="-fx-text-fill: #39FF6A; -fx-font-weight: bold; -fx-font-size: 12px;" text="Butacas: Ninguna" />
+                        <Label fx:id="lblMovieSummary" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 13px;" text="Película: —" />
+                        <Label fx:id="lblScheduleSummary" style="-fx-text-fill: #ECEDE9; -fx-font-size: 11.5px;" text="Horario: —" />
+                        <Label fx:id="lblSeatsSummary" style="-fx-text-fill: #39FF6A; -fx-font-weight: bold; -fx-font-size: 12px;" text="Butacas: Ninguna" />
                      </children>
                   </VBox>
 
@@ -141,7 +141,7 @@
                            <children>
                               <Label styleClass="eva-label" text="TOTAL A PAGAR:" />
                               <Region HBox.hgrow="ALWAYS" />
-                              <Label fx:id="lblTotalPagar" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 18px;" text="Q 0.00" />
+                              <Label fx:id="lblTotalPayment" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 18px;" text="Q 0.00" />
                            </children>
                         </HBox>
                      </children>
@@ -149,7 +149,7 @@
 
                   <Region VBox.vgrow="ALWAYS" />
 
-                  <Button fx:id="btnCobrar" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCobrar" styleClass="eva-button-primary" text="💳 EMITIR Y COBRAR">
+                  <Button fx:id="btnCharge" disable="true" maxWidth="Infinity" mnemonicParsing="false" onAction="#onCharge" styleClass="eva-button-primary" text="💳 EMITIR Y COBRAR">
                      <padding>
                         <Insets bottom="12.0" top="12.0" />
                      </padding>

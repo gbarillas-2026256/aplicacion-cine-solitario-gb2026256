@@ -1,43 +1,57 @@
 package org.cinekinal.system.model;
 
 /**
- * Seat representation in a movie theater.
+ * Seat entity representing an individual chair in a theater hall.
  */
-public class Seat extends Asiento {
+public class Seat {
+    private String idSeat;
+    private String row;
+    private int number;
 
     public Seat() {
-        super();
     }
 
     public Seat(String idSeat, String row, int number) {
-        super(idSeat, row, number);
+        this.idSeat = idSeat;
+        this.row = row;
+        this.number = number;
     }
 
     public String getIdSeat() {
-        return getIdAsiento();
+        return idSeat;
     }
 
     public void setIdSeat(String idSeat) {
-        setIdAsiento(idSeat);
+        this.idSeat = idSeat;
     }
 
     public String getRow() {
-        return getFila();
+        return row;
     }
 
     public void setRow(String row) {
-        setFila(row);
+        this.row = row;
     }
 
     public int getNumber() {
-        return getNumero();
+        return number;
     }
 
     public void setNumber(int number) {
-        setNumero(number);
+        this.number = number;
+    }
+
+    public String getLabel() {
+        return row + number;
     }
 
     public String getShortLabel() {
-        return getEtiqueta();
+        return row + number;
     }
+
+    // Compatibility
+    public String getIdAsiento() { return idSeat; }
+    public String getFila() { return row; }
+    public int getNumero() { return number; }
+    public String getEtiqueta() { return getLabel(); }
 }

@@ -1,103 +1,145 @@
 package org.cinekinal.system.model;
 
 /**
- * Employee model.
+ * Employee entity representing staff members and theater administrators.
  */
-public class Employee extends Empleado {
+public class Employee {
+    private String idEmployee;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String username;
+    private String password;
+    private boolean active;
+    private String inactiveReason;
+    private int positionId;
+    private String positionName;
+    private int hierarchyLevel;
 
     public Employee() {
-        super();
+    }
+
+    public Employee(String idEmployee, String firstName, String lastName, String email,
+                    String username, String password, boolean active, String inactiveReason,
+                    int positionId, String positionName, int hierarchyLevel) {
+        this.idEmployee = idEmployee;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.active = active;
+        this.inactiveReason = inactiveReason;
+        this.positionId = positionId;
+        this.positionName = positionName;
+        this.hierarchyLevel = hierarchyLevel;
     }
 
     public String getIdEmployee() {
-        return getIdEmpleado();
+        return idEmployee;
     }
 
     public void setIdEmployee(String idEmployee) {
-        setIdEmpleado(idEmployee);
+        this.idEmployee = idEmployee;
     }
 
     public String getFirstName() {
-        return getNombres();
+        return firstName;
     }
 
     public void setFirstName(String firstName) {
-        setNombres(firstName);
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return getApellidos();
+        return lastName;
     }
 
     public void setLastName(String lastName) {
-        setApellidos(lastName);
+        this.lastName = lastName;
     }
 
     public String getEmail() {
-        return getCorreo();
+        return email;
     }
 
     public void setEmail(String email) {
-        setCorreo(email);
+        this.email = email;
     }
 
     public String getUsername() {
-        return getUsuario();
+        return username;
     }
 
     public void setUsername(String username) {
-        setUsuario(username);
+        this.username = username;
     }
 
     public String getPassword() {
-        return super.getPassword();
+        return password;
     }
 
     public void setPassword(String password) {
-        super.setPassword(password);
+        this.password = password;
     }
 
     public boolean isActive() {
-        return isActivo();
+        return active;
     }
 
     public void setActive(boolean active) {
-        setActivo(active);
+        this.active = active;
     }
 
-    public String getDeactivationReason() {
-        return getMotivoBaja();
+    public String getInactiveReason() {
+        return inactiveReason;
     }
 
-    public void setDeactivationReason(String deactivationReason) {
-        setMotivoBaja(deactivationReason);
+    public void setInactiveReason(String inactiveReason) {
+        this.inactiveReason = inactiveReason;
     }
 
-    public int getIdPosition() {
-        return getIdPuesto();
+    public int getPositionId() {
+        return positionId;
     }
 
-    public void setIdPosition(int idPosition) {
-        setIdPuesto(idPosition);
+    public void setPositionId(int positionId) {
+        this.positionId = positionId;
     }
+
+    public int getIdPosition() { return positionId; }
+    public void setIdPosition(int id) { this.positionId = id; }
 
     public String getPositionName() {
-        return getNombrePuesto();
+        return positionName;
     }
 
     public void setPositionName(String positionName) {
-        setNombrePuesto(positionName);
+        this.positionName = positionName;
     }
 
     public int getHierarchyLevel() {
-        return getNivelJerarquico();
+        return hierarchyLevel;
     }
 
     public void setHierarchyLevel(int hierarchyLevel) {
-        setNivelJerarquico(hierarchyLevel);
+        this.hierarchyLevel = hierarchyLevel;
     }
 
     public String getFullName() {
-        return getNombreCompleto();
+        return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "").trim();
     }
+
+    // Compatibility getters
+    public String getIdEmpleado() { return idEmployee; }
+    public String getNombres() { return firstName; }
+    public String getApellidos() { return lastName; }
+    public String getCorreo() { return email; }
+    public String getUsuario() { return username; }
+    public boolean isActivo() { return active; }
+    public String getMotivoBaja() { return inactiveReason; }
+    public int getIdPuesto() { return positionId; }
+    public String getNombrePuesto() { return positionName; }
+    public int getNivelJerarquico() { return hierarchyLevel; }
+    public String getNombreCompleto() { return getFullName(); }
 }
