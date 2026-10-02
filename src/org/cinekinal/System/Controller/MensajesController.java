@@ -12,28 +12,23 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import org.cinekinal.system.model.Empleado;
-import org.cinekinal.system.model.Solicitud;
-import org.cinekinal.system.service.SolicitudService;
+import org.cinekinal.system.model.Employee;
+import org.cinekinal.system.model.Request;
+import org.cinekinal.system.service.RequestService;
 import org.cinekinal.system.utils.Session;
 import org.cinekinal.system.utils.ViewFactory;
 
 /**
- * Bandeja de mensajes del empleado: por ahora muestra los avisos de las
- * solicitudes que el Dueño le RECHAZO, junto con la razon que dio.
- *
- * No necesita un procedimiento propio en la base de datos: reutiliza
- * sp_obtener_solicitudes_por_empleado (el mismo de "Mis solicitudes")
- * y se queda solo con las que tienen estado RECHAZADA.
+ * Controller for viewing rejected request notifications/messages for employees.
  */
 public class MensajesController implements Initializable {
 
     @FXML
-    private ListView<Solicitud> listaMensajes;
+    private ListView<Request> listaMensajes;
     @FXML
     private Label lblSinMensajes;
 
-    private final SolicitudService solicitudService = new SolicitudService();
+    private final RequestService requestService = new RequestService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -42,13 +37,13 @@ public class MensajesController implements Initializable {
     }
 
     private void cargarMensajes() {
-        if (!Session.esEmpleado()) {
+        if (!Session.isEmployee()) {
             return;
         }
-        Empleado empleado = Session.getEmpleadoActual();
+        Employee employee = Session.getCurrentEmployee();
 
-        List<Solicitud> rechazadas = solicitudService.obtenerMisSolicitudes(empleado).stream()
-                .filter(solicitud -> "RECHAZADA".equals(solicitud.getEstado()))
+        List<Request> rechazadas = requestService.getMyRequests(employee).stream()
+                .filter(request -> "RECHAZADA".equals(request.getStatus()))
                 .toList();
 
         listaMensajes.setItems(FXCollections.observableArrayList(rechazadas));
@@ -61,10 +56,10 @@ public class MensajesController implements Initializable {
     }
 
     /** Cada mensaje se pinta como un bloque: titulo en rojo, accion, razon y quien respondio. */
-    private ListCell<Solicitud> celdaDeMensaje() {
+    private ListCell<Request> celdaDeMensaje() {
         return new ListCell<>() {
             @Override
-            protected void updateItem(Solicitud solicitud, boolean vacio) {
+            protected void updateItem(Request solicitud, boolean vacio) {
                 super.updateItem(solicitud, vacio);
                 if (vacio || solicitud == null) {
                     setText(null);
@@ -75,20 +70,20 @@ public class MensajesController implements Initializable {
                 Label titulo = new Label("SOLICITUD RECHAZADA");
                 titulo.setStyle("-fx-text-fill: #FF3B3B; -fx-font-weight: bold; -fx-font-size: 14px;");
 
-                Label accion = new Label(solicitud.getAccion());
+                Label accion = new Label(solicitud.getAction());
                 accion.setStyle("-fx-text-fill: #FF9A3C; -fx-font-weight: bold;");
                 accion.setWrapText(true);
 
-                String razon = solicitud.getMotivoRespuesta() == null
+                String razon = solicitud.getResponseReason() == null
                         ? "(el Dueño no dejó una razón)"
-                        : solicitud.getMotivoRespuesta();
+                        : solicitud.getResponseReason();
                 Label motivoRespuesta = new Label("Razón: " + razon);
                 motivoRespuesta.setStyle("-fx-text-fill: #E8E8E8;");
                 motivoRespuesta.setWrapText(true);
 
-                Label pie = new Label("Lo pediste porque: \"" + solicitud.getMotivo() + "\"   |   "
+                Label pie = new Label("Lo pediste porque: \"" + solicitud.getReason() + "\"   |   "
                         + "Respondió: " + nombreDelAprobador(solicitud)
-                        + "   |   " + solicitud.getFechaRespuesta());
+                        + "   |   " + solicitud.getResponseDate());
                 pie.setStyle("-fx-text-fill: #9A9A9A; -fx-font-size: 11px;");
                 pie.setWrapText(true);
 
@@ -100,11 +95,11 @@ public class MensajesController implements Initializable {
         };
     }
 
-    private String nombreDelAprobador(Solicitud solicitud) {
-        if (solicitud.getAprobadorNombres() == null) {
+    private String nombreDelAprobador(Request solicitud) {
+        if (solicitud.getApproverFirstName() == null) {
             return "—";
         }
-        return solicitud.getAprobadorNombres() + " " + solicitud.getAprobadorApellidos();
+        return solicitud.getApproverFirstName() + " " + solicitud.getApproverLastName();
     }
 
     @FXML

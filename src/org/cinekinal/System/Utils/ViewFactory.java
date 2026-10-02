@@ -160,4 +160,19 @@ public class ViewFactory {
     public void viewMisBoletos(){
         loadScene("misboletos");
     }
+
+    // English aliases
+    public void viewBuyTickets() { viewComprarBoletos(); }
+    public void viewVerifyEntry() { viewVerificarEntrada(); }
+    public void viewBoxOfficeSale() { viewRegistrarVenta(); }
+    public void viewManageMovies() { viewAdministrarPeliculas(); }
+    public void viewManageShowtimesTheaters() { viewAdministrarFuncionesSalas(); }
+    public void viewChangePrice() { viewCambiarPrecio(); }
+    public void viewReports() { viewReportes(); }
+    public void viewEarnings() { viewGanancias(); }
+    public void viewCashClosing() { viewCorteCaja(); }
+    public void viewMyTickets() { viewMisBoletos(); }
+    public void viewMyRequests() { viewMisSolicitudes(); }
+    public void viewRequests() { viewSolicitudes(); }
+    public void viewMessages() { viewMensajes(); }
 }

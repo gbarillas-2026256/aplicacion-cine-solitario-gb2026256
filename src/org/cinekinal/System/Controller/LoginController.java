@@ -7,10 +7,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import org.cinekinal.system.model.Cliente;
-import org.cinekinal.system.model.Empleado;
-import org.cinekinal.system.service.ClienteService;
-import org.cinekinal.system.service.EmpleadoService;
+import org.cinekinal.system.model.Customer;
+import org.cinekinal.system.model.Employee;
+import org.cinekinal.system.service.CustomerService;
+import org.cinekinal.system.service.EmployeeService;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.Session;
 import org.cinekinal.system.utils.ViewFactory;
@@ -23,8 +23,8 @@ public class LoginController implements Initializable {
     private PasswordField pwdPassword;
 
     private final AlertInformation alertInfo = new AlertInformation();
-    private final EmpleadoService employeeService = new EmpleadoService();
-    private final ClienteService customereService = new ClienteService();
+    private final EmployeeService employeeService = new EmployeeService();
+    private final CustomerService customerService = new CustomerService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -32,38 +32,33 @@ public class LoginController implements Initializable {
 
     @FXML
     public void onLogin(MouseEvent event) {
-        //Empleados y Clientes ahora inician sesion con "usuario" los dos —
-        //el formulario es el mismo, y decidimos a cual tabla pertenece
-        //DESPUES de intentar contra la primera.
-        String usuario = txtUser.getText().trim();
+        String username = txtUser.getText().trim();
         String password = pwdPassword.getText().trim();
 
-        if (usuario.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty()) {
             alertInfo.viewAlert("WARNING", "CAMPOS INCOMPLETOS",
                     "FALTAN DATOS",
                     "Ingresa tu usuario y tu contraseña.");
             return;
         }
 
-        //1. Primero intentamos como Empleado
-        Empleado empleado = employeeService.login(usuario, password);
-        if (empleado != null) {
-            Session.iniciarSesionComoEmpleado(empleado);
-            ViewFactory viewFactory = new ViewFactory();
-            viewFactory.viewMainMenu();
+        // 1. Try to authenticate as Employee first
+        Employee employee = employeeService.login(username, password);
+        if (employee != null) {
+            Session.loginAsEmployee(employee);
+            new ViewFactory().viewMainMenu();
             return;
         }
 
-        //2. Si no coincidio con ningun empleado, intentamos como Cliente
-        Cliente cliente = customereService.login(usuario, password);
-        if (cliente != null) {
-            Session.iniciarSesionComoCliente(cliente);
-            ViewFactory viewFactory = new ViewFactory();
-            viewFactory.viewMainMenu();
+        // 2. Try to authenticate as Customer
+        Customer customer = customerService.login(username, password);
+        if (customer != null) {
+            Session.loginAsCustomer(customer);
+            new ViewFactory().viewMainMenu();
             return;
         }
 
-        //3. No coincidio con ninguno de los dos
+        // 3. Invalid credentials
         alertInfo.viewAlert("WARNING", "ERROR DE ACCESO",
                 "CREDENCIALES INCORRECTAS",
                 "El usuario o la contraseña no son correctos.");
@@ -71,7 +66,6 @@ public class LoginController implements Initializable {
 
     @FXML
     public void onRegister(MouseEvent event) {
-        ViewFactory viewFactory = new ViewFactory();
-        viewFactory.viewRegister();
+        new ViewFactory().viewRegister();
     }
 }

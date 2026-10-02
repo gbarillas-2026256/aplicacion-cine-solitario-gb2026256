@@ -8,6 +8,12 @@ public class Asiento {
     public Asiento() {
     }
 
+    public Asiento(String idAsiento, String fila, int numero) {
+        this.idAsiento = idAsiento;
+        this.fila = fila;
+        this.numero = numero;
+    }
+
     public String getIdAsiento() {
         return idAsiento;
     }

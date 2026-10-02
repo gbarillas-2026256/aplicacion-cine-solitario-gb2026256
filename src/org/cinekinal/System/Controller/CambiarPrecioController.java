@@ -15,10 +15,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import org.cinekinal.system.model.Empleado;
-import org.cinekinal.system.model.Funcion;
-import org.cinekinal.system.repository.FuncionRepository;
-import org.cinekinal.system.repository.SolicitudRepository;
+import org.cinekinal.system.model.Employee;
+import org.cinekinal.system.model.Showtime;
+import org.cinekinal.system.repository.RequestRepository;
+import org.cinekinal.system.repository.ShowtimeRepository;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.Session;
 import org.cinekinal.system.utils.ViewFactory;
@@ -26,17 +26,17 @@ import org.cinekinal.system.utils.ViewFactory;
 public class CambiarPrecioController implements Initializable {
 
     @FXML
-    private TableView<Funcion> tableFunciones;
+    private TableView<Showtime> tableFunciones;
     @FXML
-    private TableColumn<Funcion, String> colPelicula;
+    private TableColumn<Showtime, String> colPelicula;
     @FXML
-    private TableColumn<Funcion, String> colSala;
+    private TableColumn<Showtime, String> colSala;
     @FXML
-    private TableColumn<Funcion, String> colFecha;
+    private TableColumn<Showtime, String> colFecha;
     @FXML
-    private TableColumn<Funcion, String> colHora;
+    private TableColumn<Showtime, String> colHora;
     @FXML
-    private TableColumn<Funcion, String> colPrecioActual;
+    private TableColumn<Showtime, String> colPrecioActual;
 
     @FXML
     private Label lblPeliculaSel;
@@ -51,26 +51,26 @@ public class CambiarPrecioController implements Initializable {
     @FXML
     private Button btnAplicarPrecio;
 
-    private final FuncionRepository funcionRepo = new FuncionRepository();
-    private final SolicitudRepository solicitudRepo = new SolicitudRepository();
+    private final ShowtimeRepository showtimeRepo = new ShowtimeRepository();
+    private final RequestRepository requestRepo = new RequestRepository();
     private final AlertInformation alertInfo = new AlertInformation();
-    private Funcion funcionSeleccionada = null;
+    private Showtime funcionSeleccionada = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        colPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTituloPelicula()));
-        colSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombreSala()));
-        colFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFecha() != null ? d.getValue().getFecha().toString() : "—"));
-        colHora.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getHora() != null ? d.getValue().getHora().toString() : "—"));
-        colPrecioActual.setCellValueFactory(d -> new SimpleStringProperty("Q " + d.getValue().getPrecioBase()));
+        colPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMovieTitle()));
+        colSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTheaterName()));
+        colFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDate() != null ? d.getValue().getDate().toString() : "—"));
+        colHora.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTime() != null ? d.getValue().getTime().toString() : "—"));
+        colPrecioActual.setCellValueFactory(d -> new SimpleStringProperty("Q " + d.getValue().getBasePrice()));
 
         tableFunciones.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 funcionSeleccionada = newVal;
-                lblPeliculaSel.setText("Película: " + newVal.getTituloPelicula());
-                lblHorarioSel.setText("Horario: " + newVal.getFecha() + " " + newVal.getHora() + " (" + newVal.getNombreSala() + ")");
-                lblPrecioBaseSel.setText("Precio actual: Q " + newVal.getPrecioBase());
-                txtNuevoPrecio.setText(newVal.getPrecioBase().toString());
+                lblPeliculaSel.setText("Película: " + newVal.getMovieTitle());
+                lblHorarioSel.setText("Horario: " + newVal.getDate() + " " + newVal.getTime() + " (" + newVal.getTheaterName() + ")");
+                lblPrecioBaseSel.setText("Precio actual: Q " + newVal.getBasePrice());
+                txtNuevoPrecio.setText(newVal.getBasePrice().toString());
                 btnAplicarPrecio.setDisable(false);
             } else {
                 funcionSeleccionada = null;
@@ -82,8 +82,8 @@ public class CambiarPrecioController implements Initializable {
             }
         });
 
-        Empleado emp = Session.getEmpleadoActual();
-        if (emp != null && emp.getNivelJerarquico() == 1) {
+        Employee emp = Session.getCurrentEmployee();
+        if (emp != null && emp.getHierarchyLevel() == 1) {
             lblNotaPermiso.setText("Rol: Dueño (nivel 1). Los cambios de precio se aplican inmediatamente.");
             btnAplicarPrecio.setText("APLICAR PRECIO DIRECTO");
         } else {
@@ -95,7 +95,7 @@ public class CambiarPrecioController implements Initializable {
     }
 
     private void cargarTabla() {
-        tableFunciones.setItems(FXCollections.observableArrayList(funcionRepo.obtenerCartelera()));
+        tableFunciones.setItems(FXCollections.observableArrayList(showtimeRepo.getBillboard()));
     }
 
     @FXML
@@ -117,16 +117,16 @@ public class CambiarPrecioController implements Initializable {
             return;
         }
 
-        Empleado emp = Session.getEmpleadoActual();
-        if (emp != null && emp.getNivelJerarquico() == 1) {
+        Employee emp = Session.getCurrentEmployee();
+        if (emp != null && emp.getHierarchyLevel() == 1) {
             // Dueño: aplica directo
             // Se guarda el titulo ANTES de refrescar la tabla: cargarTabla()
             // reemplaza los items de tableFunciones, y eso hace que se pierda
             // la seleccion actual -- lo cual dispara el listener de seleccion
             // y deja funcionSeleccionada en null. Si se lee despues de
             // cargarTabla(), truena con NullPointerException.
-            String tituloParaElMensaje = funcionSeleccionada.getTituloPelicula();
-            boolean ok = funcionRepo.actualizarPrecioBase(funcionSeleccionada.getIdFuncion(), nuevoPrecio);
+            String tituloParaElMensaje = funcionSeleccionada.getMovieTitle();
+            boolean ok = showtimeRepo.updateBasePrice(funcionSeleccionada.getIdShowtime(), nuevoPrecio);
             if (ok) {
                 cargarTabla();
                 alertInfo.viewAlert("INFORMATION", "PRECIO ACTUALIZADO", "CAMBIO APLICADO",
@@ -136,9 +136,9 @@ public class CambiarPrecioController implements Initializable {
             }
         } else if (emp != null) {
             // Gerente u otro: pide el motivo y genera Solicitud formal
-            String accion = "CAMBIO DE PRECIO: " + funcionSeleccionada.getTituloPelicula()
-                    + " (" + funcionSeleccionada.getFecha() + " " + funcionSeleccionada.getHora() + ")"
-                    + " de Q" + funcionSeleccionada.getPrecioBase() + " a Q" + nuevoPrecio;
+            String accion = "CAMBIO DE PRECIO: " + funcionSeleccionada.getMovieTitle()
+                    + " (" + funcionSeleccionada.getDate() + " " + funcionSeleccionada.getTime() + ")"
+                    + " de Q" + funcionSeleccionada.getBasePrice() + " a Q" + nuevoPrecio;
 
             Optional<String> motivoIngresado = pedirMotivo();
             if (motivoIngresado.isEmpty()) {
@@ -146,7 +146,7 @@ public class CambiarPrecioController implements Initializable {
             }
             String motivo = motivoIngresado.get();
 
-            solicitudRepo.crear(emp.getIdEmpleado(), accion, motivo);
+            requestRepo.create(emp.getIdEmployee(), accion, motivo);
             alertInfo.viewAlert("INFORMATION", "SOLICITUD ENVIADA", "PENDIENTE DE APROBACIÓN",
                     "Tu solicitud para cambiar el precio a Q " + nuevoPrecio
                             + " ha sido enviada al Dueño para su revisión.");

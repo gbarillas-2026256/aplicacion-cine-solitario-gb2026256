@@ -22,22 +22,22 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.GridPane;
-import org.cinekinal.system.model.Asiento;
-import org.cinekinal.system.model.BoletoCompraStatus;
-import org.cinekinal.system.model.Cliente;
-import org.cinekinal.system.model.Funcion;
-import org.cinekinal.system.repository.AsientoRepository;
-import org.cinekinal.system.repository.BoletoRepository;
-import org.cinekinal.system.repository.ClienteRepository;
-import org.cinekinal.system.repository.FuncionRepository;
-import org.cinekinal.system.service.BoletoService;
+import org.cinekinal.system.model.Customer;
+import org.cinekinal.system.model.Seat;
+import org.cinekinal.system.model.Showtime;
+import org.cinekinal.system.model.TicketPurchaseStatus;
+import org.cinekinal.system.repository.CustomerRepository;
+import org.cinekinal.system.repository.SeatRepository;
+import org.cinekinal.system.repository.ShowtimeRepository;
+import org.cinekinal.system.repository.TicketRepository;
+import org.cinekinal.system.service.TicketService;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.ViewFactory;
 
 public class VentaTaquillaController implements Initializable {
 
     @FXML
-    private ListView<Funcion> listFunciones;
+    private ListView<Showtime> listFunciones;
     @FXML
     private Button btnHoy;
     @FXML
@@ -51,7 +51,7 @@ public class VentaTaquillaController implements Initializable {
     private GridPane gridAsientos;
 
     @FXML
-    private ComboBox<Cliente> cmbCliente;
+    private ComboBox<Customer> cmbCliente;
     @FXML
     private Label lblPeliculaResumen;
     @FXML
@@ -63,16 +63,16 @@ public class VentaTaquillaController implements Initializable {
     @FXML
     private Button btnCobrar;
 
-    private final FuncionRepository funcionRepo = new FuncionRepository();
-    private final AsientoRepository asientoRepo = new AsientoRepository();
-    private final BoletoRepository boletoRepo = new BoletoRepository();
-    private final ClienteRepository clienteRepo = new ClienteRepository();
-    private final BoletoService boletoService = new BoletoService();
+    private final ShowtimeRepository showtimeRepo = new ShowtimeRepository();
+    private final SeatRepository seatRepo = new SeatRepository();
+    private final TicketRepository ticketRepo = new TicketRepository();
+    private final CustomerRepository customerRepo = new CustomerRepository();
+    private final TicketService ticketService = new TicketService();
     private final AlertInformation alertInfo = new AlertInformation();
 
-    private final Set<Asiento> asientosSeleccionados = new HashSet<>();
-    private Funcion funcionSeleccionada = null;
-    private List<Funcion> carteleraCompleta = new ArrayList<>();
+    private final Set<Seat> asientosSeleccionados = new HashSet<>();
+    private Showtime funcionSeleccionada = null;
+    private List<Showtime> carteleraCompleta = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -85,15 +85,15 @@ public class VentaTaquillaController implements Initializable {
     private void configurarListaFunciones() {
         listFunciones.setCellFactory(lv -> new ListCell<>() {
             @Override
-            protected void updateItem(Funcion item, boolean empty) {
+            protected void updateItem(Showtime item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
                 } else {
-                    setText(item.getTituloPelicula() + "\n"
-                            + item.getNombreSala() + " · " + item.getFecha() + " " + item.getHora()
-                            + " · Q" + item.getPrecioBase());
+                    setText(item.getMovieTitle() + "\n"
+                            + item.getTheaterName() + " · " + item.getDate() + " " + item.getTime()
+                            + " · Q" + item.getBasePrice());
                 }
             }
         });
@@ -106,15 +106,15 @@ public class VentaTaquillaController implements Initializable {
     }
 
     private void configurarComboClientes() {
-        Cliente generico = clienteRepo.obtenerOcrearClienteGenerico();
-        List<Cliente> clientes = clienteRepo.obtenerTodos();
+        Customer generico = customerRepo.getOrCreateGenericCustomer();
+        List<Customer> clientes = customerRepo.getAll();
 
-        List<Cliente> comboItems = new ArrayList<>();
+        List<Customer> comboItems = new ArrayList<>();
         if (generico != null) {
             comboItems.add(generico);
         }
-        for (Cliente c : clientes) {
-            if (generico == null || !c.getIdCliente().equals(generico.getIdCliente())) {
+        for (Customer c : clientes) {
+            if (generico == null || !c.getIdCustomer().equals(generico.getIdCustomer())) {
                 comboItems.add(c);
             }
         }
@@ -126,38 +126,38 @@ public class VentaTaquillaController implements Initializable {
 
         cmbCliente.setCellFactory(lv -> new ListCell<>() {
             @Override
-            protected void updateItem(Cliente item, boolean empty) {
+            protected void updateItem(Customer item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.getNombreCompleto() + (item.isEsVip() ? " [VIP]" : "") + " (" + item.getCorreo() + ")");
+                    setText(item.getFullName() + (item.isVip() ? " [VIP]" : "") + " (" + item.getEmail() + ")");
                 }
             }
         });
 
         cmbCliente.setButtonCell(new ListCell<>() {
             @Override
-            protected void updateItem(Cliente item, boolean empty) {
+            protected void updateItem(Customer item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(item.getNombreCompleto() + (item.isEsVip() ? " [VIP]" : ""));
+                    setText(item.getFullName() + (item.isVip() ? " [VIP]" : ""));
                 }
             }
         });
     }
 
     private void cargarCartelera() {
-        carteleraCompleta = funcionRepo.obtenerCartelera();
+        carteleraCompleta = showtimeRepo.getBillboard();
     }
 
     @FXML
     public void onFiltrarHoy(ActionEvent event) {
         LocalDate hoy = LocalDate.now();
-        List<Funcion> filtradas = carteleraCompleta.stream()
-                .filter(f -> f.getFecha() != null && f.getFecha().toLocalDate().equals(hoy))
+        List<Showtime> filtradas = carteleraCompleta.stream()
+                .filter(f -> f.getDate() != null && f.getDate().toLocalDate().equals(hoy))
                 .toList();
         listFunciones.setItems(FXCollections.observableArrayList(filtradas));
         actualizarEstiloFiltro(btnHoy);
@@ -166,8 +166,8 @@ public class VentaTaquillaController implements Initializable {
     @FXML
     public void onFiltrarManana(ActionEvent event) {
         LocalDate manana = LocalDate.now().plusDays(1);
-        List<Funcion> filtradas = carteleraCompleta.stream()
-                .filter(f -> f.getFecha() != null && f.getFecha().toLocalDate().equals(manana))
+        List<Showtime> filtradas = carteleraCompleta.stream()
+                .filter(f -> f.getDate() != null && f.getDate().toLocalDate().equals(manana))
                 .toList();
         listFunciones.setItems(FXCollections.observableArrayList(filtradas));
         actualizarEstiloFiltro(btnManana);
@@ -189,13 +189,13 @@ public class VentaTaquillaController implements Initializable {
         btnTodas.getStyleClass().add(btnTodas == activo ? "boton-filtro-activo" : "boton-filtro");
     }
 
-    private void seleccionarFuncion(Funcion funcion) {
+    private void seleccionarFuncion(Showtime funcion) {
         this.funcionSeleccionada = funcion;
         asientosSeleccionados.clear();
 
-        lblPeliculaResumen.setText("Película: " + funcion.getTituloPelicula());
-        lblHorarioResumen.setText("Horario: " + funcion.getFecha() + " " + funcion.getHora() + " (" + funcion.getNombreSala() + ")");
-        lblSalaSeleccionada.setText(funcion.getNombreSala() + " · " + funcion.getTipoSala() + " · Entrada: Q" + funcion.getPrecioBase());
+        lblPeliculaResumen.setText("Película: " + funcion.getMovieTitle());
+        lblHorarioResumen.setText("Horario: " + funcion.getDate() + " " + funcion.getTime() + " (" + funcion.getTheaterName() + ")");
+        lblSalaSeleccionada.setText(funcion.getTheaterName() + " · " + funcion.getTheaterType() + " · Entrada: Q" + funcion.getBasePrice());
 
         actualizarResumenVenta();
         renderizarMapaAsientos();
@@ -207,28 +207,28 @@ public class VentaTaquillaController implements Initializable {
             return;
         }
 
-        List<Asiento> todosAsientos = asientoRepo.obtenerPorSala(funcionSeleccionada.getIdSala());
-        Set<String> ocupados = boletoRepo.obtenerAsientosOcupados(funcionSeleccionada.getIdFuncion());
+        List<Seat> todosAsientos = seatRepo.getByTheater(funcionSeleccionada.getIdTheater());
+        Set<String> ocupados = ticketRepo.getOccupiedSeats(funcionSeleccionada.getIdShowtime());
 
         Map<String, Integer> filaIndices = new HashMap<>();
         int indiceFila = 0;
 
-        for (Asiento asiento : todosAsientos) {
-            if (!filaIndices.containsKey(asiento.getFila())) {
-                filaIndices.put(asiento.getFila(), indiceFila);
-                Label lblFila = new Label(asiento.getFila());
+        for (Seat asiento : todosAsientos) {
+            if (!filaIndices.containsKey(asiento.getRow())) {
+                filaIndices.put(asiento.getRow(), indiceFila);
+                Label lblFila = new Label(asiento.getRow());
                 lblFila.setStyle("-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-padding: 0 8 0 0;");
                 gridAsientos.add(lblFila, 0, indiceFila);
                 indiceFila++;
             }
 
-            int r = filaIndices.get(asiento.getFila());
-            int c = asiento.getNumero();
+            int r = filaIndices.get(asiento.getRow());
+            int c = asiento.getNumber();
 
-            Button btnAsiento = new Button(asiento.getFila() + asiento.getNumero());
+            Button btnAsiento = new Button(asiento.getShortLabel());
             btnAsiento.getStyleClass().add("eva-seat");
 
-            boolean estaOcupado = ocupados.contains(asiento.getIdAsiento());
+            boolean estaOcupado = ocupados.contains(asiento.getIdSeat());
             if (estaOcupado) {
                 btnAsiento.getStyleClass().add("eva-seat-ocupado");
                 btnAsiento.setDisable(true);
@@ -241,7 +241,7 @@ public class VentaTaquillaController implements Initializable {
         }
     }
 
-    private void alternarSeleccionAsiento(Asiento asiento, Button boton) {
+    private void alternarSeleccionAsiento(Seat asiento, Button boton) {
         if (asientosSeleccionados.contains(asiento)) {
             asientosSeleccionados.remove(asiento);
             boton.getStyleClass().remove("eva-seat-seleccionado");
@@ -263,12 +263,12 @@ public class VentaTaquillaController implements Initializable {
         }
 
         StringBuilder sb = new StringBuilder("Butacas: ");
-        for (Asiento a : asientosSeleccionados) {
-            sb.append(a.getFila()).append(a.getNumero()).append(" ");
+        for (Seat a : asientosSeleccionados) {
+            sb.append(a.getShortLabel()).append(" ");
         }
         lblAsientosResumen.setText(sb.toString().trim());
 
-        BigDecimal base = funcionSeleccionada != null ? funcionSeleccionada.getPrecioBase() : BigDecimal.ZERO;
+        BigDecimal base = funcionSeleccionada != null ? funcionSeleccionada.getBasePrice() : BigDecimal.ZERO;
         BigDecimal total = base.multiply(BigDecimal.valueOf(asientosSeleccionados.size()));
         lblTotalPagar.setText(String.format("Q %.2f", total));
         btnCobrar.setDisable(false);
@@ -280,7 +280,7 @@ public class VentaTaquillaController implements Initializable {
             return;
         }
 
-        Cliente cliente = cmbCliente.getValue();
+        Customer cliente = cmbCliente.getValue();
         if (cliente == null) {
             alertInfo.viewAlert("WARNING", "SIN CLIENTE", "SELECCIONA UN CLIENTE", "Selecciona el cliente asignado a la venta.");
             return;
@@ -288,23 +288,23 @@ public class VentaTaquillaController implements Initializable {
 
         int exitosos = 0;
         List<String> fallidos = new ArrayList<>();
-        BigDecimal precioFinal = funcionSeleccionada.getPrecioBase();
-        if (cliente.isEsVip()) {
+        BigDecimal precioFinal = funcionSeleccionada.getBasePrice();
+        if (cliente.isVip()) {
             precioFinal = precioFinal.multiply(new BigDecimal("0.85")).setScale(2, java.math.RoundingMode.HALF_UP);
         }
 
-        for (Asiento asiento : new ArrayList<>(asientosSeleccionados)) {
-            BoletoCompraStatus status = boletoService.comprar(
-                    funcionSeleccionada.getIdFuncion(),
-                    cliente.getIdCliente(),
-                    asiento.getIdAsiento(),
+        for (Seat asiento : new ArrayList<>(asientosSeleccionados)) {
+            TicketPurchaseStatus status = ticketService.purchase(
+                    funcionSeleccionada.getIdShowtime(),
+                    cliente.getIdCustomer(),
+                    asiento.getIdSeat(),
                     precioFinal
             );
 
-            if (status == BoletoCompraStatus.COMPRA_EXITOSA) {
+            if (status == TicketPurchaseStatus.PURCHASE_COMPLETED) {
                 exitosos++;
             } else {
-                fallidos.add(asiento.getFila() + asiento.getNumero());
+                fallidos.add(asiento.getShortLabel());
             }
         }
 
@@ -316,9 +316,9 @@ public class VentaTaquillaController implements Initializable {
 
             StringBuilder mensaje = new StringBuilder();
             mensaje.append("Se emitieron ").append(exitosos).append(" boleto(s) para \"")
-                    .append(funcionSeleccionada.getTituloPelicula()).append("\".\n")
-                    .append("Cliente: ").append(cliente.getNombreCompleto()).append("\n")
-                    .append("Sala: ").append(funcionSeleccionada.getNombreSala()).append("\n")
+                    .append(funcionSeleccionada.getMovieTitle()).append("\".\n")
+                    .append("Cliente: ").append(cliente.getFullName()).append("\n")
+                    .append("Sala: ").append(funcionSeleccionada.getTheaterName()).append("\n")
                     .append(String.format("Total cobrado: Q %.2f", totalCobrado));
 
             if (!fallidos.isEmpty()) {

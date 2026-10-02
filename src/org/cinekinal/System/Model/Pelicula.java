@@ -13,6 +13,17 @@ public class Pelicula {
     public Pelicula() {
     }
 
+    public Pelicula(String idPelicula, String titulo, String genero, String clasificacion, int duracionMin, String sinopsis, String posterUrl, String trailerUrl) {
+        this.idPelicula = idPelicula;
+        this.titulo = titulo;
+        this.genero = genero;
+        this.clasificacion = clasificacion;
+        this.duracionMin = duracionMin;
+        this.sinopsis = sinopsis;
+        this.posterUrl = posterUrl;
+        this.trailerUrl = trailerUrl;
+    }
+
     public String getIdPelicula() {
         return idPelicula;
     }

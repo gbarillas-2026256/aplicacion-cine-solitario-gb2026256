@@ -38,15 +38,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import org.cinekinal.system.model.Asiento;
-import org.cinekinal.system.model.Boleto;
-import org.cinekinal.system.model.BoletoCompraStatus;
-import org.cinekinal.system.model.Cliente;
-import org.cinekinal.system.model.Funcion;
-import org.cinekinal.system.repository.AsientoRepository;
-import org.cinekinal.system.repository.BoletoRepository;
-import org.cinekinal.system.repository.FuncionRepository;
-import org.cinekinal.system.service.BoletoService;
+import org.cinekinal.system.model.Customer;
+import org.cinekinal.system.model.Seat;
+import org.cinekinal.system.model.Showtime;
+import org.cinekinal.system.model.Ticket;
+import org.cinekinal.system.model.TicketPurchaseStatus;
+import org.cinekinal.system.repository.SeatRepository;
+import org.cinekinal.system.repository.ShowtimeRepository;
+import org.cinekinal.system.repository.TicketRepository;
+import org.cinekinal.system.service.TicketService;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.QRCodeGenerator;
 import org.cinekinal.system.utils.Session;
@@ -58,17 +58,17 @@ public class CompraBoletoController implements Initializable {
     @FXML
     private TextField txtBuscarPelicula;
     @FXML
-    private TableView<Funcion> tablaCartelera;
+    private TableView<Showtime> tablaCartelera;
     @FXML
-    private TableColumn<Funcion, String> colPelicula;
+    private TableColumn<Showtime, String> colPelicula;
     @FXML
-    private TableColumn<Funcion, String> colSala;
+    private TableColumn<Showtime, String> colSala;
     @FXML
-    private TableColumn<Funcion, String> colFecha;
+    private TableColumn<Showtime, String> colFecha;
     @FXML
-    private TableColumn<Funcion, String> colHora;
+    private TableColumn<Showtime, String> colHora;
     @FXML
-    private TableColumn<Funcion, String> colPrecio;
+    private TableColumn<Showtime, String> colPrecio;
 
     @FXML
     private GridPane gridAsientos;
@@ -126,25 +126,25 @@ public class CompraBoletoController implements Initializable {
     @FXML
     private Label lblTicketId;
 
-    private final FuncionRepository funcionRepo = new FuncionRepository();
-    private final AsientoRepository asientoRepo = new AsientoRepository();
-    private final BoletoRepository boletoRepo = new BoletoRepository();
-    private final BoletoService boletoService = new BoletoService();
+    private final ShowtimeRepository showtimeRepo = new ShowtimeRepository();
+    private final SeatRepository seatRepo = new SeatRepository();
+    private final TicketRepository ticketRepo = new TicketRepository();
+    private final TicketService ticketService = new TicketService();
     private final AlertInformation alertInfo = new AlertInformation();
 
     private final Map<String, Button> botonesPorAsiento = new HashMap<>();
-    private Funcion funcionSeleccionada;
-    private Asiento asientoSeleccionado;
+    private Showtime funcionSeleccionada;
+    private Seat asientoSeleccionado;
 
     private record DatosTarjeta(String ultimos4Digitos, String nombreTitular) {}
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        colPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTituloPelicula()));
-        colSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombreSala()));
-        colFecha.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getFecha())));
-        colHora.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getHora())));
-        colPrecio.setCellValueFactory(d -> new SimpleStringProperty("Q" + d.getValue().getPrecioBase()));
+        colPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMovieTitle()));
+        colSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTheaterName()));
+        colFecha.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getDate())));
+        colHora.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getTime())));
+        colPrecio.setCellValueFactory(d -> new SimpleStringProperty("Q" + d.getValue().getBasePrice()));
 
         btnTrailer.setDisable(true);
 
@@ -157,7 +157,7 @@ public class CompraBoletoController implements Initializable {
 
         // 2. Configurar clic directo sobre la tabla para asegurar respuesta aunque ya estuviera seleccionada
         tablaCartelera.setOnMouseClicked(event -> {
-            Funcion seleccionada = tablaCartelera.getSelectionModel().getSelectedItem();
+            Showtime seleccionada = tablaCartelera.getSelectionModel().getSelectedItem();
             if (seleccionada != null) {
                 seleccionarFuncion(seleccionada);
             }
@@ -168,10 +168,10 @@ public class CompraBoletoController implements Initializable {
         }
 
         // 3. Cargar funciones iniciales
-        cargarCartelera(funcionRepo.obtenerCartelera());
+        cargarCartelera(showtimeRepo.getBillboard());
     }
 
-    private void seleccionarFuncion(Funcion seleccionada) {
+    private void seleccionarFuncion(Showtime seleccionada) {
         if (seleccionada == null) {
             limpiarFichaDetalle();
             return;
@@ -182,11 +182,11 @@ public class CompraBoletoController implements Initializable {
         mostrarPanelDetalle();
     }
 
-    private void cargarCartelera(List<Funcion> funciones) {
+    private void cargarCartelera(List<Showtime> funciones) {
         tablaCartelera.setItems(FXCollections.observableArrayList(funciones));
         if (!funciones.isEmpty()) {
             tablaCartelera.getSelectionModel().select(0);
-            Funcion primera = tablaCartelera.getSelectionModel().getSelectedItem();
+            Showtime primera = tablaCartelera.getSelectionModel().getSelectedItem();
             if (primera == null) {
                 primera = funciones.get(0);
             }
@@ -200,10 +200,10 @@ public class CompraBoletoController implements Initializable {
     public void onBuscar(MouseEvent event) {
         String query = txtBuscarPelicula.getText();
         if (query == null || query.isBlank()) {
-            cargarCartelera(funcionRepo.obtenerCartelera());
+            cargarCartelera(showtimeRepo.getBillboard());
             return;
         }
-        List<Funcion> resultados = funcionRepo.buscarPorTitulo(query.trim());
+        List<Showtime> resultados = showtimeRepo.searchByTitle(query.trim());
         cargarCartelera(resultados);
         if (resultados.isEmpty()) {
             alertInfo.viewAlert("INFORMATION", "BÚSQUEDA DE PELÍCULAS", "Sin resultados",
@@ -211,16 +211,16 @@ public class CompraBoletoController implements Initializable {
         }
     }
 
-    private void mostrarDetallePelicula(Funcion funcion) {
-        lblTituloPelicula.setText(funcion.getTituloPelicula());
-        lblGenero.setText("Género: " + (funcion.getGenero() != null ? funcion.getGenero() : "N/D"));
-        lblClasificacion.setText("Clasificación: " + (funcion.getClasificacion() != null ? funcion.getClasificacion() : "N/D"));
-        lblDuracion.setText("Duración: " + funcion.getDuracionMin() + " min");
-        lblSalaTipo.setText("Sala: " + funcion.getNombreSala() + " (" + funcion.getTipoSala() + ")");
-        lblPrecioFicha.setText("Precio base: Q" + funcion.getPrecioBase());
+    private void mostrarDetallePelicula(Showtime funcion) {
+        lblTituloPelicula.setText(funcion.getMovieTitle());
+        lblGenero.setText("Género: " + (funcion.getGenre() != null ? funcion.getGenre() : "N/D"));
+        lblClasificacion.setText("Clasificación: " + (funcion.getRating() != null ? funcion.getRating() : "N/D"));
+        lblDuracion.setText("Duración: " + funcion.getDurationMin() + " min");
+        lblSalaTipo.setText("Sala: " + funcion.getTheaterName() + " (" + funcion.getTheaterType() + ")");
+        lblPrecioFicha.setText("Precio base: Q" + funcion.getBasePrice());
 
-        if (funcion.getSinopsis() != null && !funcion.getSinopsis().isBlank()) {
-            lblSinopsis.setText(funcion.getSinopsis());
+        if (funcion.getSynopsis() != null && !funcion.getSynopsis().isBlank()) {
+            lblSinopsis.setText(funcion.getSynopsis());
         } else {
             lblSinopsis.setText("Sin sinopsis registrada para esta película.");
         }
@@ -271,36 +271,36 @@ public class CompraBoletoController implements Initializable {
         lblSeleccion.setText("Ningún asiento seleccionado");
     }
 
-    private void cargarMapaAsientos(Funcion funcion) {
+    private void cargarMapaAsientos(Showtime funcion) {
         asientoSeleccionado = null;
         botonesPorAsiento.clear();
         lblSeleccion.setText("Ningún asiento seleccionado");
         gridAsientos.getChildren().clear();
 
-        List<Asiento> asientos = asientoRepo.obtenerPorSala(funcion.getIdSala());
-        Set<String> idsOcupados = boletoRepo.obtenerAsientosOcupados(funcion.getIdFuncion());
+        List<Seat> asientos = seatRepo.getByTheater(funcion.getIdTheater());
+        Set<String> idsOcupados = ticketRepo.getOccupiedSeats(funcion.getIdShowtime());
 
-        for (Asiento asiento : asientos) {
-            Button boton = new Button(asiento.getEtiqueta());
+        for (Seat asiento : asientos) {
+            Button boton = new Button(asiento.getShortLabel());
             boton.getStyleClass().add("eva-seat");
 
-            boolean ocupado = idsOcupados.contains(asiento.getIdAsiento());
+            boolean ocupado = idsOcupados.contains(asiento.getIdSeat());
             boton.getStyleClass().add(ocupado ? "eva-seat-ocupado" : "eva-seat-libre");
             boton.setDisable(ocupado);
             if (!ocupado) {
                 boton.setOnAction(e -> seleccionarAsiento(asiento, boton));
             }
-            botonesPorAsiento.put(asiento.getIdAsiento(), boton);
+            botonesPorAsiento.put(asiento.getIdSeat(), boton);
 
-            int fila = Character.toUpperCase(asiento.getFila().charAt(0)) - 'A';
-            int columna = asiento.getNumero() - 1;
+            int fila = Character.toUpperCase(asiento.getRow().charAt(0)) - 'A';
+            int columna = asiento.getNumber() - 1;
             gridAsientos.add(boton, columna, fila);
         }
     }
 
-    private void seleccionarAsiento(Asiento asiento, Button boton) {
+    private void seleccionarAsiento(Seat asiento, Button boton) {
         if (asientoSeleccionado != null) {
-            Button botonAnterior = botonesPorAsiento.get(asientoSeleccionado.getIdAsiento());
+            Button botonAnterior = botonesPorAsiento.get(asientoSeleccionado.getIdSeat());
             if (botonAnterior != null) {
                 botonAnterior.getStyleClass().remove("eva-seat-seleccionado");
                 botonAnterior.getStyleClass().add("eva-seat-libre");
@@ -309,7 +309,7 @@ public class CompraBoletoController implements Initializable {
         asientoSeleccionado = asiento;
         boton.getStyleClass().remove("eva-seat-libre");
         boton.getStyleClass().add("eva-seat-seleccionado");
-        lblSeleccion.setText("Asiento seleccionado: " + asiento.getEtiqueta() + " (Q" + funcionSeleccionada.getPrecioBase() + ")");
+        lblSeleccion.setText("Asiento seleccionado: " + asiento.getShortLabel() + " (Q" + funcionSeleccionada.getBasePrice() + ")");
     }
 
     @FXML
@@ -335,25 +335,25 @@ public class CompraBoletoController implements Initializable {
     @FXML
     public void onFiltrarHoy(MouseEvent event) {
         Date fechaHoy = Date.valueOf(LocalDate.now());
-        cargarCartelera(funcionRepo.obtenerCarteleraPorFecha(fechaHoy));
+        cargarCartelera(showtimeRepo.getBillboardByDate(fechaHoy));
     }
 
     @FXML
     public void onFiltrarManana(MouseEvent event) {
         Date fechaManana = Date.valueOf(LocalDate.now().plusDays(1));
-        cargarCartelera(funcionRepo.obtenerCarteleraPorFecha(fechaManana));
+        cargarCartelera(showtimeRepo.getBillboardByDate(fechaManana));
     }
 
     @FXML
     public void onFiltrarTodas(MouseEvent event) {
-        cargarCartelera(funcionRepo.obtenerCartelera());
+        cargarCartelera(showtimeRepo.getBillboard());
     }
 
     @FXML
     public void onFechaCambiada(ActionEvent event) {
         if (dpFecha.getValue() != null) {
             Date fecha = Date.valueOf(dpFecha.getValue());
-            cargarCartelera(funcionRepo.obtenerCarteleraPorFecha(fecha));
+            cargarCartelera(showtimeRepo.getBillboardByDate(fecha));
         }
     }
 
@@ -367,11 +367,11 @@ public class CompraBoletoController implements Initializable {
 
         String idCliente;
         String nombreClienteParaBoleto;
-        if (Session.esCliente() && Session.getClienteActual() != null) {
-            Cliente clienteActual = Session.getClienteActual();
-            idCliente = clienteActual.getIdCliente();
-            nombreClienteParaBoleto = clienteActual.getNombres() + " " + clienteActual.getApellidos();
-        } else if (Session.esEmpleado()) {
+        if (Session.isCustomer() && Session.getCurrentCustomer() != null) {
+            Customer clienteActual = Session.getCurrentCustomer();
+            idCliente = clienteActual.getIdCustomer();
+            nombreClienteParaBoleto = clienteActual.getFullName();
+        } else if (Session.isEmployee()) {
             alertInfo.viewAlert("WARNING", "MODO ADMINISTRADOR", "Venta en Taquilla",
                     "Estás conectado como empleado. Para registrar ventas desde recepción, "
                     + "utiliza la opción 'Registrar Venta / Taquilla'.");
@@ -395,19 +395,19 @@ public class CompraBoletoController implements Initializable {
         DatosTarjeta tarjeta = tarjetaOpt.get();
 
         // 3. Procesar compra en base de datos
-        BoletoCompraStatus resultado = boletoService.comprar(
-                funcionSeleccionada.getIdFuncion(), idCliente,
-                asientoSeleccionado.getIdAsiento(), funcionSeleccionada.getPrecioBase());
+        TicketPurchaseStatus resultado = ticketService.purchase(
+                funcionSeleccionada.getIdShowtime(), idCliente,
+                asientoSeleccionado.getIdSeat(), funcionSeleccionada.getBasePrice());
 
         switch (resultado) {
-            case COMPRA_EXITOSA -> {
+            case PURCHASE_COMPLETED -> {
                 // Obtener el boleto recién comprado de la BD
-                Boleto boleto = boletoRepo.obtenerUltimoBoletoComprado(
-                        funcionSeleccionada.getIdFuncion(), asientoSeleccionado.getIdAsiento());
+                Ticket boleto = ticketRepo.getLastPurchasedTicket(
+                        funcionSeleccionada.getIdShowtime(), asientoSeleccionado.getIdSeat());
 
-                String idBoleto = boleto != null ? boleto.getIdBoleto() : UUID.randomUUID().toString();
-                String nombreMostrar = (boleto != null && boleto.getNombreCliente() != null)
-                        ? boleto.getNombreCliente() : nombreClienteParaBoleto;
+                String idBoleto = boleto != null ? boleto.getIdTicket() : UUID.randomUUID().toString();
+                String nombreMostrar = (boleto != null && boleto.getCustomerName() != null)
+                        ? boleto.getCustomerName() : nombreClienteParaBoleto;
 
                 // 4. Construir contenido y generar Código QR
                 String contenidoQR = construirContenidoQR(idBoleto, funcionSeleccionada, asientoSeleccionado, nombreMostrar);
@@ -417,25 +417,25 @@ public class CompraBoletoController implements Initializable {
                 mostrarTicket(idBoleto, funcionSeleccionada, asientoSeleccionado, nombreMostrar, tarjeta, qrImage);
                 cargarMapaAsientos(funcionSeleccionada);
             }
-            case ASIENTO_YA_VENDIDO -> {
+            case SEAT_ALREADY_SOLD -> {
                 alertInfo.viewAlert("WARNING", "ASIENTO OCUPADO", "Asiento no disponible",
                         "Alguien más reservó este asiento hace unos instantes. Por favor elige otro.");
                 cargarMapaAsientos(funcionSeleccionada);
             }
-            case ERROR_AL_COMPRAR -> alertInfo.viewAlert("ERROR", "ERROR", "No se pudo procesar la compra",
+            case PURCHASE_ERROR -> alertInfo.viewAlert("ERROR", "ERROR", "No se pudo procesar la compra",
                     "Ocurrió un error al registrar la compra. Intenta de nuevo.");
         }
     }
 
-    private boolean confirmarCompra(Funcion funcion, Asiento asiento) {
+    private boolean confirmarCompra(Showtime funcion, Seat asiento) {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("CONFIRMAR COMPRA DE BOLETO");
         confirmacion.setHeaderText("¿Confirmas la compra de este boleto?");
-        confirmacion.setContentText("🎬 Película: " + funcion.getTituloPelicula()
-                + "\n🏛️ Sala: " + funcion.getNombreSala() + " (" + funcion.getTipoSala() + ")"
-                + "\n📅 Horario: " + funcion.getFecha() + " " + funcion.getHora()
-                + "\n🪑 Asiento: " + asiento.getEtiqueta()
-                + "\n💰 Total a pagar: Q" + funcion.getPrecioBase());
+        confirmacion.setContentText("🎬 Película: " + funcion.getMovieTitle()
+                + "\n🏛️ Sala: " + funcion.getTheaterName() + " (" + funcion.getTheaterType() + ")"
+                + "\n📅 Horario: " + funcion.getDate() + " " + funcion.getTime()
+                + "\n🪑 Asiento: " + asiento.getShortLabel()
+                + "\n💰 Total a pagar: Q" + funcion.getBasePrice());
         Optional<ButtonType> respuesta = confirmacion.showAndWait();
         return respuesta.isPresent() && respuesta.get() == ButtonType.OK;
     }
@@ -445,7 +445,7 @@ public class CompraBoletoController implements Initializable {
         dialog.setTitle("PAGO CON TARJETA DE CRÉDITO / DÉBITO");
         dialog.setHeaderText("Simulación de Cobro Seguro · Ingrese los datos de su tarjeta");
 
-        ButtonType botonPagar = new ButtonType("Pagar Q" + funcionSeleccionada.getPrecioBase(), ButtonBar.ButtonData.OK_DONE);
+        ButtonType botonPagar = new ButtonType("Pagar Q" + funcionSeleccionada.getBasePrice(), ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(botonPagar, ButtonType.CANCEL);
 
         TextField txtNumero = new TextField();
@@ -515,18 +515,18 @@ public class CompraBoletoController implements Initializable {
         return null;
     }
 
-    private String construirContenidoQR(String idBoleto, Funcion funcion, Asiento asiento, String nombreCliente) {
+    private String construirContenidoQR(String idBoleto, Showtime funcion, Seat asiento, String nombreCliente) {
         return "CINE KINAL · TICKET DE ENTRADA\n"
                 + "ID Boleto: " + idBoleto + "\n"
-                + "Película: " + funcion.getTituloPelicula() + "\n"
-                + "Sala: " + funcion.getNombreSala() + " (" + funcion.getTipoSala() + ")\n"
-                + "Fecha: " + funcion.getFecha() + " " + funcion.getHora() + "\n"
-                + "Asiento: " + asiento.getEtiqueta() + "\n"
+                + "Película: " + funcion.getMovieTitle() + "\n"
+                + "Sala: " + funcion.getTheaterName() + " (" + funcion.getTheaterType() + ")\n"
+                + "Fecha: " + funcion.getDate() + " " + funcion.getTime() + "\n"
+                + "Asiento: " + asiento.getShortLabel() + "\n"
                 + "Cliente: " + nombreCliente + "\n"
-                + "Precio: Q" + funcion.getPrecioBase();
+                + "Precio: Q" + funcion.getBasePrice();
     }
 
-    private void mostrarTicket(String idBoleto, Funcion funcion, Asiento asiento,
+    private void mostrarTicket(String idBoleto, Showtime funcion, Seat asiento,
                                String nombreCliente, DatosTarjeta tarjeta, Image qrImage) {
         panelFichaDetalle.setVisible(false);
         panelFichaDetalle.setManaged(false);
@@ -534,11 +534,11 @@ public class CompraBoletoController implements Initializable {
         panelTicket.setManaged(true);
 
         imgQR.setImage(qrImage);
-        lblTicketPelicula.setText("🎬 " + funcion.getTituloPelicula());
-        lblTicketSalaHorario.setText("🏛️ " + funcion.getNombreSala() + " (" + funcion.getTipoSala() + ") · " + funcion.getFecha() + " " + funcion.getHora());
-        lblTicketAsiento.setText("🪑 Asiento: " + asiento.getEtiqueta());
+        lblTicketPelicula.setText("🎬 " + funcion.getMovieTitle());
+        lblTicketSalaHorario.setText("🏛️ " + funcion.getTheaterName() + " (" + funcion.getTheaterType() + ") · " + funcion.getDate() + " " + funcion.getTime());
+        lblTicketAsiento.setText("🪑 Asiento: " + asiento.getShortLabel());
         lblTicketCliente.setText("👤 Cliente: " + nombreCliente);
-        lblTicketPago.setText("💳 Total Pagado: Q" + funcion.getPrecioBase() + " (Tarjeta **** " + tarjeta.ultimos4Digitos() + ")");
+        lblTicketPago.setText("💳 Total Pagado: Q" + funcion.getBasePrice() + " (Tarjeta **** " + tarjeta.ultimos4Digitos() + ")");
         lblTicketId.setText("UUID / Código de Entrada: " + idBoleto);
     }
 

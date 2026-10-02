@@ -11,32 +11,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import org.cinekinal.system.model.Accion;
-import org.cinekinal.system.model.Boleto;
-import org.cinekinal.system.model.Cliente;
-import org.cinekinal.system.model.Empleado;
-import org.cinekinal.system.model.Funcion;
-import org.cinekinal.system.model.ResultadoIntento;
-import org.cinekinal.system.repository.BoletoRepository;
-import org.cinekinal.system.repository.FuncionRepository;
-import org.cinekinal.system.service.PermisoService;
-import org.cinekinal.system.service.SolicitudService;
+import org.cinekinal.system.model.Action;
+import org.cinekinal.system.model.AttemptResult;
+import org.cinekinal.system.model.Customer;
+import org.cinekinal.system.model.Employee;
+import org.cinekinal.system.model.Showtime;
+import org.cinekinal.system.model.Ticket;
+import org.cinekinal.system.repository.ShowtimeRepository;
+import org.cinekinal.system.repository.TicketRepository;
+import org.cinekinal.system.service.PermissionService;
+import org.cinekinal.system.service.RequestService;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.Session;
 import org.cinekinal.system.utils.ViewFactory;
 
 /**
- * Vista provisional del "hub" al que se llega despues de iniciar
- * sesion. El sidebar NO esta escrito en el FXML: se arma aqui en
- * codigo segun el tipo de cuenta, para poder decidir boton por boton
- * si se muestra o no con PermisoService.puedeVer(...).
- *
- * Cada boton de una accion sensible de Empleado pasa por
- * SolicitudService.intentar(...) -- el mismo punto unico de
- * validacion que se usaria desde cualquier otro Controller. Asi,
- * aunque la pantalla de una seccion todavia no este construida (la
- * mayoria son un aviso de "en construccion" por ahora), el flujo de
- * permisos y de Solicitudes ya funciona de verdad de punta a punta.
+ * Hub view reached after user login.
+ * The sidebar is built dynamically according to the user's role and hierarchy level.
  */
 public class MainMenuController implements Initializable {
 
@@ -47,89 +38,80 @@ public class MainMenuController implements Initializable {
     @FXML
     private VBox vboxSidebar;
 
-    private final PermisoService permisoService = new PermisoService();
-    private final SolicitudService solicitudService = new SolicitudService();
-    private final FuncionRepository funcionRepo = new FuncionRepository();
-    private final BoletoRepository boletoRepo = new BoletoRepository();
+    private final PermissionService permissionService = new PermissionService();
+    private final RequestService requestService = new RequestService();
+    private final ShowtimeRepository showtimeRepo = new ShowtimeRepository();
+    private final TicketRepository ticketRepo = new TicketRepository();
     private final AlertInformation alertInfo = new AlertInformation();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         vboxSidebar.getChildren().clear();
 
-        if (Session.esEmpleado()) {
-            Empleado empleado = Session.getEmpleadoActual();
-            lblBienvenida.setText("Bienvenido, " + empleado.getNombres());
-            lblTipoCuenta.setText("Empleado · " + empleado.getNombrePuesto());
-            construirMenuEmpleado(empleado);
-        } else if (Session.esCliente()) {
-            Cliente cliente = Session.getClienteActual();
-            lblBienvenida.setText("Bienvenido, " + cliente.getNombres());
-            lblTipoCuenta.setText(cliente.isEsVip() ? "Cliente VIP" : "Cliente");
-            construirMenuCliente();
+        if (Session.isEmployee()) {
+            Employee employee = Session.getCurrentEmployee();
+            lblBienvenida.setText("Bienvenido, " + employee.getFirstName());
+            lblTipoCuenta.setText("Empleado · " + employee.getPositionName());
+            buildEmployeeMenu(employee);
+        } else if (Session.isCustomer()) {
+            Customer customer = Session.getCurrentCustomer();
+            lblBienvenida.setText("Bienvenido, " + customer.getFirstName());
+            lblTipoCuenta.setText(customer.isVip() ? "Cliente VIP" : "Cliente");
+            buildCustomerMenu();
         }
     }
 
-    private void construirMenuEmpleado(Empleado empleado) {
-        agregarBotonAccion(empleado, Accion.VER_CARTELERA, () -> new ViewFactory().viewComprarBoletos());
-        agregarBotonAccion(empleado, Accion.VERIFICAR_ENTRADA, () -> new ViewFactory().viewVerificarEntrada());
-        agregarBotonAccion(empleado, Accion.REGISTRAR_VENTA, () -> new ViewFactory().viewRegistrarVenta());
-        // El corte de caja NO lo hace el Dueño; es labor operativa de los empleados al cerrar su turno:
-        if (empleado.getNivelJerarquico() > 1) {
-            agregarBotonAccion(empleado, Accion.CORTE_CAJA, () -> new ViewFactory().viewCorteCaja());
+    private void buildEmployeeMenu(Employee employee) {
+        addActionButton(employee, Action.VIEW_BILLBOARD, () -> new ViewFactory().viewComprarBoletos());
+        addActionButton(employee, Action.VERIFY_ENTRY, () -> new ViewFactory().viewVerificarEntrada());
+        addActionButton(employee, Action.BOX_OFFICE_SALE, () -> new ViewFactory().viewRegistrarVenta());
+
+        if (employee.getHierarchyLevel() > 1) {
+            addActionButton(employee, Action.CASH_CLOSING, () -> new ViewFactory().viewCorteCaja());
         }
-        agregarBotonAccion(empleado, Accion.ADMINISTRAR_FUNCIONES_SALAS, () -> new ViewFactory().viewAdministrarFuncionesSalas());
-        agregarBotonAccion(empleado, Accion.ADMINISTRAR_PELICULAS, () -> new ViewFactory().viewAdministrarPeliculas());
-        agregarBotonAccion(empleado, Accion.VER_REPORTES, () -> new ViewFactory().viewReportes());
-        agregarBotonAccion(empleado, Accion.VER_GANANCIAS, () -> new ViewFactory().viewGanancias());
-        // CAMBIAR_PRECIO ya NO pasa por agregarBotonAccion/manejarAccionSensible:
-        // esa pantalla necesita saber CUAL funcion y CUANTO es el precio nuevo
-        // para armar un motivo detallado, asi que el permiso (directo vs
-        // solicitud) se decide DENTRO de CambiarPrecioController, no aqui.
-        // Aqui solo controlamos que puedan VER el boton.
-        if (permisoService.puedeVer(empleado, Accion.CAMBIAR_PRECIO)) {
-            Button btnCambiarPrecio = crearBotonSidebar(Accion.CAMBIAR_PRECIO.getDescripcion());
+
+        addActionButton(employee, Action.MANAGE_SHOWTIMES_THEATERS, () -> new ViewFactory().viewAdministrarFuncionesSalas());
+        addActionButton(employee, Action.MANAGE_MOVIES, () -> new ViewFactory().viewAdministrarPeliculas());
+        addActionButton(employee, Action.VIEW_REPORTS, () -> new ViewFactory().viewReportes());
+        addActionButton(employee, Action.VIEW_EARNINGS, () -> new ViewFactory().viewGanancias());
+
+        if (permissionService.canView(employee, Action.CHANGE_PRICE)) {
+            Button btnCambiarPrecio = createSidebarButton(Action.CHANGE_PRICE.getDescription());
             btnCambiarPrecio.setOnAction(e -> new ViewFactory().viewCambiarPrecio());
             vboxSidebar.getChildren().add(btnCambiarPrecio);
         }
-        // "Dar de baja a un empleado" ya NO es un boton aparte: vive dentro
-        // de "Gestion de empleados" (mas abajo), donde tiene sentido junto
-        // con crear y editar empleados en un solo lugar.
 
-        // Solo el Dueño ve esto -- pantallas administrativas exclusivas de jerarquía 1
-        if (empleado.getNivelJerarquico() == 1) {
-            Button btnGestionUsuarios = crearBotonSidebar("Gestión de empleados");
+        if (employee.getHierarchyLevel() == 1) {
+            Button btnGestionUsuarios = createSidebarButton("Gestión de empleados");
             btnGestionUsuarios.setOnAction(e -> new ViewFactory().viewManageUsers());
             vboxSidebar.getChildren().add(btnGestionUsuarios);
 
-            Button btnSolicitudes = crearBotonSidebar("Solicitudes pendientes");
+            Button btnSolicitudes = createSidebarButton("Solicitudes pendientes");
             btnSolicitudes.setOnAction(e -> new ViewFactory().viewSolicitudes());
             vboxSidebar.getChildren().add(btnSolicitudes);
         }
 
-        // Cualquier empleado puede consultar el estado de lo que el mismo
-        // ha solicitado -- para eso ya no hace falta "quedarse esperando".
-        Button btnMisSolicitudes = crearBotonSidebar("Mis solicitudes");
+        Button btnMisSolicitudes = createSidebarButton("Mis solicitudes");
         btnMisSolicitudes.setOnAction(e -> new ViewFactory().viewMisSolicitudes());
         vboxSidebar.getChildren().add(btnMisSolicitudes);
 
-        Button btnMensajes = crearBotonSidebar("Mensajes");
+        Button btnMensajes = createSidebarButton("Mensajes");
         btnMensajes.setOnAction(e -> new ViewFactory().viewMensajes());
         vboxSidebar.getChildren().add(btnMensajes);
     }
 
-    private void construirMenuCliente() {
-        Button btnComprar = crearBotonSidebar("Comprar boletos");
+    private void buildCustomerMenu() {
+        Button btnComprar = createSidebarButton("Comprar boletos");
         btnComprar.setOnAction(e -> new ViewFactory().viewComprarBoletos());
         vboxSidebar.getChildren().add(btnComprar);
 
-        Cliente cliente = Session.getClienteActual();
-        if (cliente != null) {
+        Customer customer = Session.getCurrentCustomer();
+        if (customer != null) {
             try {
-                List<Boleto> boletos = boletoRepo.obtenerPorCliente(cliente.getIdCliente());
-                if (!boletos.isEmpty()) {
-                    String textoBoton = boletos.size() == 1 ? "🎟️ Ver mi Boleto" : "🎟️ Mis Boletos (" + boletos.size() + ")";
-                    Button btnMisBoletos = crearBotonSidebar(textoBoton);
+                List<Ticket> tickets = ticketRepo.getTicketsByCustomer(customer.getIdCustomer());
+                if (!tickets.isEmpty()) {
+                    String buttonText = tickets.size() == 1 ? "🎟️ Ver mi Boleto" : "🎟️ Mis Boletos (" + tickets.size() + ")";
+                    Button btnMisBoletos = createSidebarButton(buttonText);
                     btnMisBoletos.setOnAction(e -> new ViewFactory().viewMisBoletos());
                     vboxSidebar.getChildren().add(btnMisBoletos);
                 }
@@ -139,110 +121,71 @@ public class MainMenuController implements Initializable {
         }
     }
 
-    /**
-     * Agrega el boton SOLO si el empleado puede verlo. Al hacer clic,
-     * la accion pasa por SolicitudService.intentar(...): si su nivel
-     * alcanza, corre 'siEjecuta' directo; si no, genera una Solicitud
-     * en vez de ejecutar nada.
-     */
-    private void agregarBotonAccion(Empleado empleado, Accion accion, Runnable siEjecuta) {
-        if (!permisoService.puedeVer(empleado, accion)) {
+    private void addActionButton(Employee employee, Action action, Runnable onExecute) {
+        if (!permissionService.canView(employee, action)) {
             return;
         }
-        Button boton = crearBotonSidebar(accion.getDescripcion());
-        boton.setOnAction(e -> manejarAccionSensible(empleado, accion, siEjecuta));
-        vboxSidebar.getChildren().add(boton);
+        Button button = createSidebarButton(action.getDescription());
+        button.setOnAction(e -> handleSensitiveAction(employee, action, onExecute));
+        vboxSidebar.getChildren().add(button);
     }
 
-    private void manejarAccionSensible(Empleado empleado, Accion accion, Runnable siEjecuta) {
-        String motivo = "";
+    private void handleSensitiveAction(Employee employee, Action action, Runnable onExecute) {
+        String reason = "";
 
-        //Solo interrumpimos con el cuadro de motivo cuando de verdad va a
-        //generar una Solicitud. Si el empleado ya puede ejecutarlo directo,
-        //pedirle un motivo no tendria para que -- por eso se pregunta ANTES
-        //de llamar a intentar(...), usando el mismo PermisoService que ya
-        //existia pero que nadie llamaba todavia.
-        if (permisoService.necesitaSolicitud(empleado, accion)) {
-            Optional<String> motivoIngresado = pedirMotivo(accion);
-            if (motivoIngresado.isEmpty()) {
-                return; //el empleado cancelo el cuadro de texto
+        if (permissionService.needsRequest(employee, action)) {
+            Optional<String> promptResult = promptReason(action);
+            if (promptResult.isEmpty()) {
+                return;
             }
-            motivo = motivoIngresado.get();
+            reason = promptResult.get();
         }
 
-        ResultadoIntento resultado = solicitudService.intentar(empleado, accion, motivo, siEjecuta);
-        switch (resultado) {
-            case EJECUTADA -> {
-                // siEjecuta ya corrio y ya dio su propio feedback (alerta o navegacion)
+        AttemptResult result = requestService.attempt(employee, action, reason, onExecute);
+        switch (result) {
+            case EXECUTED -> {
             }
-            case SOLICITADA -> alertInfo.viewAlert("INFORMATION", "SOLICITUD ENVIADA",
+            case REQUESTED -> alertInfo.viewAlert("INFORMATION", "SOLICITUD ENVIADA",
                     "Pendiente de aprobación del Dueño",
-                    "Tu nivel actual no permite ejecutar \"" + accion.getDescripcion()
+                    "Tu nivel actual no permite ejecutar \"" + action.getDescription()
                     + "\" directamente. Se envió tu solicitud con el motivo indicado -- puedes revisar "
                     + "su estado más tarde en \"Mis solicitudes\".");
-            case NO_AUTORIZADO -> alertInfo.viewAlert("ERROR", "SIN PERMISO",
+            case UNAUTHORIZED -> alertInfo.viewAlert("ERROR", "SIN PERMISO",
                     "Acción no autorizada",
                     "No tienes permiso para realizar esta acción.");
         }
     }
 
-    /**
-     * Pide una breve justificacion antes de mandar una Solicitud.
-     * Optional.empty() si el empleado le dio Cancelar o dejo el texto vacio.
-     */
-    private Optional<String> pedirMotivo(Accion accion) {
+    private Optional<String> promptReason(Action action) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("EXPLICA TU SOLICITUD");
-        dialog.setHeaderText("\"" + accion.getDescripcion() + "\" necesita aprobación del Dueño");
+        dialog.setHeaderText("\"" + action.getDescription() + "\" necesita aprobación del Dueño");
         dialog.setContentText("¿Por qué necesitas realizar esta acción?");
 
-        Optional<String> respuesta = dialog.showAndWait();
-        if (respuesta.isEmpty()) {
+        Optional<String> response = dialog.showAndWait();
+        if (response.isEmpty()) {
             return Optional.empty();
         }
-        String motivo = respuesta.get().trim();
-        if (motivo.isEmpty()) {
+        String reason = response.get().trim();
+        if (reason.isEmpty()) {
             alertInfo.viewAlert("WARNING", "MOTIVO REQUERIDO", "Explica el motivo",
                     "Escribe una breve razón antes de enviar la solicitud.");
             return Optional.empty();
         }
-        return Optional.of(motivo);
+        return Optional.of(reason);
     }
 
-    private Button crearBotonSidebar(String texto) {
-        Button boton = new Button(texto);
-        boton.setMaxWidth(Double.MAX_VALUE);
-        boton.setWrapText(true);
-        boton.getStyleClass().add("eva-button-ghost");
-        return boton;
-    }
-
-    private void mostrarEnConstruccion(String nombreVista) {
-        alertInfo.viewAlert("INFORMATION", "EN CONSTRUCCIÓN", nombreVista,
-                "Esta sección todavía no tiene pantalla propia -- por ahora este botón "
-                + "solo confirma que el permiso y/o la solicitud ya funcionan.");
-    }
-
-    /** "Ver cartelera" ya tiene datos reales detras (sp_obtener_cartelera), asi que
-     *  en vez de un aviso generico mostramos la info real en el mismo Alert. */
-    private void mostrarCarteleraRapida() {
-        List<Funcion> cartelera = funcionRepo.obtenerCartelera();
-        if (cartelera.isEmpty()) {
-            alertInfo.viewAlert("INFORMATION", "CARTELERA", "Sin funciones", "No hay funciones programadas todavía.");
-            return;
-        }
-        StringBuilder texto = new StringBuilder();
-        for (Funcion f : cartelera) {
-            texto.append(f.getTituloPelicula()).append("  -  ").append(f.getNombreSala())
-                    .append("  -  ").append(f.getFecha()).append(" ").append(f.getHora())
-                    .append("  -  Q").append(f.getPrecioBase()).append("\n");
-        }
-        alertInfo.viewAlert("INFORMATION", "CARTELERA", "Funciones programadas", texto.toString());
+    private Button createSidebarButton(String text) {
+        Button button = new Button(text);
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setWrapText(true);
+        button.getStyleClass().add("eva-button-ghost");
+        return button;
     }
 
     @FXML
     public void onCerrarSesion(MouseEvent event) {
-        Session.cerrarSesion();
+        Session.logout();
         new ViewFactory().viewLogin();
     }
 }

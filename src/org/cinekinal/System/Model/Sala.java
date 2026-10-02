@@ -10,6 +10,14 @@ public class Sala {
     public Sala() {
     }
 
+    public Sala(String idSala, String nombreSala, String tipoSala, int filas, int columnas) {
+        this.idSala = idSala;
+        this.nombreSala = nombreSala;
+        this.tipoSala = tipoSala;
+        this.filas = filas;
+        this.columnas = columnas;
+    }
+
     public String getIdSala() {
         return idSala;
     }

@@ -1,19 +1,13 @@
 package org.cinekinal.system.repository;
 
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
-import java.util.ArrayList;
 import java.util.List;
-import org.cinekinal.system.config.ConexionDB;
 import org.cinekinal.system.model.Funcion;
 
 public class FuncionRepository {
-
-    private final ConexionDB conexionDB = ConexionDB.getInstanciaConexionDB();
 
     /**
      * IMPORTANTE: requiere haber corrido el parche
@@ -22,103 +16,61 @@ public class FuncionRepository {
      * los asientos de esa sala con AsientoRepository).
      */
     public List<Funcion> obtenerCartelera() {
-        List<Funcion> cartelera = new ArrayList<>();
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_obtener_cartelera()}")) {
-            try (ResultSet resultado = callSP.executeQuery()) {
-                while (resultado.next()) {
-                    Funcion funcion = mapearFuncion(resultado);
-                    cartelera.add(funcion);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al obtener la cartelera: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-        return cartelera;
+        return Db.list("{call sp_obtener_cartelera()}", FuncionRepository::mapear);
     }
 
     public List<Funcion> obtenerCarteleraPorFecha(Date fecha) {
-        List<Funcion> cartelera = new ArrayList<>();
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_obtener_cartelera_por_fecha(?)}")) {
-            callSP.setDate(1, fecha);
-            try (ResultSet resultado = callSP.executeQuery()) {
-                while (resultado.next()) {
-                    Funcion funcion = mapearFuncion(resultado);
-                    cartelera.add(funcion);
-                }
-            }
-            return cartelera;
-        } catch (SQLException e) {
-            System.out.println("Aviso: No se pudo llamar sp_obtener_cartelera_por_fecha (" + e.getMessage() + "). Filtrando en memoria...");
-            List<Funcion> todas = obtenerCartelera();
-            for (Funcion f : todas) {
-                if (f.getFecha() != null && f.getFecha().toString().equals(fecha.toString())) {
-                    cartelera.add(f);
-                }
-            }
-            return cartelera;
+        try {
+            return Db.list("{call sp_obtener_cartelera_por_fecha(?)}", FuncionRepository::mapear, fecha);
+        } catch (RuntimeException e) {
+            System.out.println("Aviso: No se pudo llamar sp_obtener_cartelera_por_fecha (" + e.getMessage()
+                    + "). Filtrando en memoria...");
+            return obtenerCartelera().stream()
+                    .filter(f -> f.getFecha() != null && f.getFecha().toString().equals(fecha.toString()))
+                    .toList();
         }
     }
 
     public List<Funcion> buscarPorTitulo(String query) {
-        List<Funcion> resultados = new ArrayList<>();
-        if (query == null || query.trim().isEmpty()) {
+        if (query == null || query.isBlank()) {
             return obtenerCartelera();
         }
         String filtro = query.trim().toLowerCase();
-        for (Funcion f : obtenerCartelera()) {
-            if (f.getTituloPelicula() != null && f.getTituloPelicula().toLowerCase().contains(filtro)) {
-                resultados.add(f);
-            }
-        }
-        return resultados;
-    }
-
-    private Funcion mapearFuncion(ResultSet resultado) throws SQLException {
-        Funcion funcion = new Funcion();
-        funcion.setIdFuncion(resultado.getString("id_funcion"));
-        funcion.setIdSala(resultado.getString("id_sala"));
-        funcion.setTituloPelicula(resultado.getString("titulo"));
-        funcion.setDuracionMin(resultado.getInt("duracion_min"));
-        try { funcion.setGenero(resultado.getString("genero")); } catch (SQLException ignored) {}
-        try { funcion.setClasificacion(resultado.getString("clasificacion")); } catch (SQLException ignored) {}
-        try { funcion.setSinopsis(resultado.getString("sinopsis")); } catch (SQLException ignored) {}
-        try { funcion.setPosterUrl(resultado.getString("poster_url")); } catch (SQLException ignored) {}
-        try { funcion.setTrailerUrl(resultado.getString("trailer_url")); } catch (SQLException ignored) {}
-        funcion.setNombreSala(resultado.getString("nombre_sala"));
-        funcion.setTipoSala(resultado.getString("tipo_sala"));
-        funcion.setFecha(resultado.getDate("fecha"));
-        funcion.setHora(resultado.getTime("hora"));
-        funcion.setPrecioBase(resultado.getBigDecimal("precio_base"));
-        return funcion;
+        return obtenerCartelera().stream()
+                .filter(f -> f.getTituloPelicula() != null && f.getTituloPelicula().toLowerCase().contains(filtro))
+                .toList();
     }
 
     public void crear(String idPelicula, String idSala, Date fecha, Time hora, BigDecimal precioBase) {
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_crear_funcion(?,?,?,?,?)}")) {
-            callSP.setString(1, idPelicula);
-            callSP.setString(2, idSala);
-            callSP.setDate(3, fecha);
-            callSP.setTime(4, hora);
-            callSP.setBigDecimal(5, precioBase);
-            callSP.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error al crear funcion: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
+        Db.update("{call sp_crear_funcion(?,?,?,?,?)}", idPelicula, idSala, fecha, hora, precioBase);
     }
 
     public boolean actualizarPrecioBase(String idFuncion, BigDecimal nuevoPrecio) {
-        String sql = "UPDATE Funciones SET precio_base = ? WHERE id_funcion = ?";
-        try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(sql)) {
-            ps.setBigDecimal(1, nuevoPrecio);
-            ps.setString(2, idFuncion);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
+        try {
+            return Db.update("UPDATE Funciones SET precio_base = ? WHERE id_funcion = ?",
+                    nuevoPrecio, idFuncion) > 0;
+        } catch (RuntimeException e) {
             System.out.println("Error al actualizar precio de funcion: " + e.getMessage());
             return false;
         }
+    }
+
+    private static Funcion mapear(java.sql.ResultSet rs) throws SQLException {
+        Funcion funcion = new Funcion();
+        funcion.setIdFuncion(rs.getString("id_funcion"));
+        funcion.setIdSala(rs.getString("id_sala"));
+        funcion.setTituloPelicula(rs.getString("titulo"));
+        funcion.setDuracionMin(rs.getInt("duracion_min"));
+        try { funcion.setGenero(rs.getString("genero")); } catch (SQLException ignored) {}
+        try { funcion.setClasificacion(rs.getString("clasificacion")); } catch (SQLException ignored) {}
+        try { funcion.setSinopsis(rs.getString("sinopsis")); } catch (SQLException ignored) {}
+        try { funcion.setPosterUrl(rs.getString("poster_url")); } catch (SQLException ignored) {}
+        try { funcion.setTrailerUrl(rs.getString("trailer_url")); } catch (SQLException ignored) {}
+        funcion.setNombreSala(rs.getString("nombre_sala"));
+        funcion.setTipoSala(rs.getString("tipo_sala"));
+        funcion.setFecha(rs.getDate("fecha"));
+        funcion.setHora(rs.getTime("hora"));
+        funcion.setPrecioBase(rs.getBigDecimal("precio_base"));
+        return funcion;
     }
 }

@@ -1,97 +1,33 @@
 package org.cinekinal.system.repository;
 
-import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import org.cinekinal.system.config.ConexionDB;
 import org.cinekinal.system.model.Empleado;
 
 public class EmpleadoRepository {
 
-    private final ConexionDB conexionDB = ConexionDB.getInstanciaConexionDB();
-
     public Empleado login(String usuario, String password) {
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_login_empleado(?,?)}")) {
-            callSP.setString(1, usuario);
-            callSP.setString(2, password);
-
-            try (ResultSet resultado = callSP.executeQuery()) {
-                if (resultado.next()) {
-                    Empleado empleado = new Empleado();
-                    empleado.setIdEmpleado(resultado.getString("id_empleado"));
-                    empleado.setNombres(resultado.getString("nombres"));
-                    empleado.setApellidos(resultado.getString("apellidos"));
-                    empleado.setCorreo(resultado.getString("correo"));
-                    empleado.setUsuario(resultado.getString("usuario"));
-                    empleado.setIdPuesto(resultado.getInt("id_puesto"));
-                    empleado.setNombrePuesto(resultado.getString("nombre_puesto"));
-                    empleado.setNivelJerarquico(resultado.getInt("nivel_jerarquico"));
-                    return empleado;
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al validar login de empleado: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-        return null;
+        return Db.one("{call sp_login_empleado(?,?)}", EmpleadoRepository::mapear, usuario, password);
     }
 
     public void crear(Empleado empleado) {
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_crear_empleado(?,?,?,?,?,?)}")) {
-            callSP.setString(1, empleado.getNombres());
-            callSP.setString(2, empleado.getApellidos());
-            callSP.setString(3, empleado.getCorreo());
-            callSP.setString(4, empleado.getUsuario());
-            callSP.setString(5, empleado.getPassword());
-            callSP.setInt(6, empleado.getIdPuesto());
-
-            callSP.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error al crear empleado: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
+        Db.update("{call sp_crear_empleado(?,?,?,?,?,?)}",
+                empleado.getNombres(), empleado.getApellidos(), empleado.getCorreo(),
+                empleado.getUsuario(), empleado.getPassword(), empleado.getIdPuesto());
     }
 
     public List<Empleado> obtenerTodos() {
-        List<Empleado> empleados = new ArrayList<>();
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_obtener_empleados()}")) {
-            try (ResultSet resultado = callSP.executeQuery()) {
-                while (resultado.next()) {
-                    Empleado empleado = new Empleado();
-                    empleado.setIdEmpleado(resultado.getString("id_empleado"));
-                    empleado.setNombres(resultado.getString("nombres"));
-                    empleado.setApellidos(resultado.getString("apellidos"));
-                    empleado.setCorreo(resultado.getString("correo"));
-                    empleado.setUsuario(resultado.getString("usuario"));
-                    empleado.setIdPuesto(resultado.getInt("id_puesto"));
-                    empleado.setNombrePuesto(resultado.getString("nombre_puesto"));
-                    empleado.setNivelJerarquico(resultado.getInt("nivel_jerarquico"));
-                    empleado.setActivo(resultado.getBoolean("activo"));
-                    empleados.add(empleado);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error al obtener empleados: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
-        return empleados;
+        return Db.list("{call sp_obtener_empleados()}", rs -> {
+            Empleado e = mapear(rs);
+            e.setActivo(rs.getBoolean("activo"));
+            return e;
+        });
     }
 
     public void desactivar(String idEmpleado, String motivoBaja) {
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_desactivar_empleado(?,?)}")) {
-            callSP.setString(1, idEmpleado);
-            callSP.setString(2, motivoBaja != null ? motivoBaja : "Baja administrativa");
-            callSP.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Error al desactivar empleado: " + e.getMessage());
-            throw new RuntimeException(e);
-        }
+        Db.update("{call sp_desactivar_empleado(?,?)}",
+                idEmpleado, motivoBaja != null ? motivoBaja : "Baja administrativa");
     }
 
     public void desactivar(String idEmpleado) {
@@ -99,65 +35,42 @@ public class EmpleadoRepository {
     }
 
     public void editar(String idEmpleado, String nombres, String apellidos, String correo, int idPuesto) {
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_editar_empleado(?,?,?,?,?)}")) {
-            callSP.setString(1, idEmpleado);
-            callSP.setString(2, nombres);
-            callSP.setString(3, apellidos);
-            callSP.setString(4, correo);
-            callSP.setInt(5, idPuesto);
-            callSP.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Aviso: intentando fallback para editar empleado: " + e.getMessage());
-            try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(
-                    "UPDATE Empleados SET nombres = ?, apellidos = ?, correo = ?, id_puesto = ? WHERE id_empleado = ?")) {
-                ps.setString(1, nombres);
-                ps.setString(2, apellidos);
-                ps.setString(3, correo);
-                ps.setInt(4, idPuesto);
-                ps.setString(5, idEmpleado);
-                ps.executeUpdate();
-            } catch (SQLException ex) {
-                System.out.println("Error al editar empleado: " + ex.getMessage());
-                throw new RuntimeException(ex);
-            }
+        try {
+            Db.update("{call sp_editar_empleado(?,?,?,?,?)}", idEmpleado, nombres, apellidos, correo, idPuesto);
+        } catch (RuntimeException e) {
+            System.out.println("Aviso: fallback para editar empleado: " + e.getMessage());
+            Db.update("UPDATE Empleados SET nombres = ?, apellidos = ?, correo = ?, id_puesto = ? "
+                    + "WHERE id_empleado = ?", nombres, apellidos, correo, idPuesto, idEmpleado);
         }
     }
 
     public void reportar(String idEmpleado, String idReportador, String tipoReporte, String descripcion) {
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_reportar_empleado(?,?,?,?)}")) {
-            callSP.setString(1, idEmpleado);
-            callSP.setString(2, idReportador);
-            callSP.setString(3, tipoReporte);
-            callSP.setString(4, descripcion);
-            callSP.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Aviso: intentando registrar reporte en BD directamente: " + e.getMessage());
-            try {
-                try (java.sql.Statement st = conexionDB.getConnection().createStatement()) {
-                    st.executeUpdate("create table if not exists ReportesEmpleados ("
-                            + "id_reporte varchar(36) not null primary key, "
-                            + "id_empleado varchar(36) not null, "
-                            + "id_reportador varchar(36) not null, "
-                            + "tipo_reporte varchar(60) not null, "
-                            + "descripcion varchar(500) not null, "
-                            + "fecha_reporte datetime not null default current_timestamp)");
-                }
-                try (java.sql.PreparedStatement ps = conexionDB.getConnection().prepareStatement(
-                        "INSERT INTO ReportesEmpleados(id_reporte, id_empleado, id_reportador, tipo_reporte, descripcion) VALUES(uuid(), ?, ?, ?, ?)")) {
-                    ps.setString(1, idEmpleado);
-                    ps.setString(2, idReportador);
-                    ps.setString(3, tipoReporte);
-                    ps.setString(4, descripcion);
-                    ps.executeUpdate();
-                }
-            } catch (SQLException ex) {
-                System.out.println("Error al guardar reporte de empleado: " + ex.getMessage());
-                throw new RuntimeException(ex);
-            }
+        try {
+            Db.update("{call sp_reportar_empleado(?,?,?,?)}", idEmpleado, idReportador, tipoReporte, descripcion);
+        } catch (RuntimeException e) {
+            System.out.println("Aviso: registrando reporte directo en BD: " + e.getMessage());
+            Db.update("create table if not exists ReportesEmpleados ("
+                    + "id_reporte varchar(36) not null primary key, "
+                    + "id_empleado varchar(36) not null, "
+                    + "id_reportador varchar(36) not null, "
+                    + "tipo_reporte varchar(60) not null, "
+                    + "descripcion varchar(500) not null, "
+                    + "fecha_reporte datetime not null default current_timestamp)");
+            Db.update("INSERT INTO ReportesEmpleados(id_reporte, id_empleado, id_reportador, tipo_reporte, "
+                    + "descripcion) VALUES(uuid(), ?, ?, ?, ?)", idEmpleado, idReportador, tipoReporte, descripcion);
         }
     }
 
+    private static Empleado mapear(ResultSet rs) throws SQLException {
+        Empleado empleado = new Empleado();
+        empleado.setIdEmpleado(rs.getString("id_empleado"));
+        empleado.setNombres(rs.getString("nombres"));
+        empleado.setApellidos(rs.getString("apellidos"));
+        empleado.setCorreo(rs.getString("correo"));
+        empleado.setUsuario(rs.getString("usuario"));
+        empleado.setIdPuesto(rs.getInt("id_puesto"));
+        empleado.setNombrePuesto(rs.getString("nombre_puesto"));
+        empleado.setNivelJerarquico(rs.getInt("nivel_jerarquico"));
+        return empleado;
+    }
 }
-

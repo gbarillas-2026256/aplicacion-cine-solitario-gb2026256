@@ -8,8 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.cinekinal.system.model.Boleto;
-import org.cinekinal.system.repository.BoletoRepository;
+import org.cinekinal.system.model.Ticket;
+import org.cinekinal.system.repository.TicketRepository;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.ViewFactory;
 
@@ -38,9 +38,9 @@ public class VerificarEntradaController implements Initializable {
     @FXML
     private Button btnValidarIngreso;
 
-    private final BoletoRepository boletoRepo = new BoletoRepository();
+    private final TicketRepository ticketRepo = new TicketRepository();
     private final AlertInformation alertInfo = new AlertInformation();
-    private Boleto boletoActual = null;
+    private Ticket boletoActual = null;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -72,7 +72,7 @@ public class VerificarEntradaController implements Initializable {
             txtIdBoleto.setText(idBoleto);
         }
 
-        boletoActual = boletoRepo.buscarBoletoPorId(idBoleto);
+        boletoActual = ticketRepo.findTicketById(idBoleto);
         if (boletoActual == null) {
             limpiarDetalles();
             lblEstadoAcceso.setText("❌ BOLETO NO ENCONTRADO / INVÁLIDO");
@@ -84,16 +84,16 @@ public class VerificarEntradaController implements Initializable {
         }
 
         // Mostrar detalles
-        lblPelicula.setText(boletoActual.getTituloPelicula());
-        lblSala.setText(boletoActual.getNombreSala());
-        lblFecha.setText(boletoActual.getFecha() != null ? boletoActual.getFecha().toString() : "—");
-        lblHora.setText(boletoActual.getHora() != null ? boletoActual.getHora().toString() : "—");
-        lblAsiento.setText("Fila " + boletoActual.getFila() + " · Asiento " + boletoActual.getNumero());
-        lblPrecio.setText("Q " + boletoActual.getPrecioFinal());
-        lblCliente.setText(boletoActual.getNombreCliente());
-        lblFechaCompra.setText(boletoActual.getFechaCompra() != null ? boletoActual.getFechaCompra().toString() : "—");
+        lblPelicula.setText(boletoActual.getMovieTitle());
+        lblSala.setText(boletoActual.getTheaterName());
+        lblFecha.setText(boletoActual.getDate() != null ? boletoActual.getDate().toString() : "—");
+        lblHora.setText(boletoActual.getTime() != null ? boletoActual.getTime().toString() : "—");
+        lblAsiento.setText("Fila " + boletoActual.getRow() + " · Asiento " + boletoActual.getNumber());
+        lblPrecio.setText("Q " + boletoActual.getFinalPrice());
+        lblCliente.setText(boletoActual.getCustomerName());
+        lblFechaCompra.setText(boletoActual.getPurchaseDate() != null ? boletoActual.getPurchaseDate().toString() : "—");
 
-        boolean yaIngreso = boletoRepo.estaBoletoIngresado(boletoActual.getIdBoleto());
+        boolean yaIngreso = ticketRepo.isTicketCheckedIn(boletoActual.getIdTicket());
         if (yaIngreso) {
             lblEstadoAcceso.setText("⚠️ BOLETO YA UTILIZADO (ACCESO DENEGADO)");
             lblEstadoAcceso.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 6 14; -fx-background-radius: 2; -fx-background-color: #C4470A; -fx-text-fill: #ECEDE9;");
@@ -113,7 +113,7 @@ public class VerificarEntradaController implements Initializable {
             return;
         }
 
-        boletoRepo.marcarBoletoIngresado(boletoActual.getIdBoleto());
+        ticketRepo.markTicketCheckedIn(boletoActual.getIdTicket());
         lblEstadoAcceso.setText("✓ ACCESO REGISTRADO - DISFRUTE LA FUNCIÓN");
         lblEstadoAcceso.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 6 14; -fx-background-radius: 2; -fx-background-color: #12777F; -fx-text-fill: #ECEDE9;");
         btnValidarIngreso.setDisable(true);
@@ -121,7 +121,7 @@ public class VerificarEntradaController implements Initializable {
         alertInfo.viewAlert("INFORMATION", "ACCESO AUTORIZADO",
                 "ENTRADA REGISTRADA",
                 "El boleto ha sido marcado como ingresado correctamente.\nAsiento: "
-                        + boletoActual.getAsientoFormateado() + "\nSala: " + boletoActual.getNombreSala());
+                        + boletoActual.getFormattedSeat() + "\nSala: " + boletoActual.getTheaterName());
     }
 
     @FXML

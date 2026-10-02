@@ -27,8 +27,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import org.cinekinal.system.model.Pelicula;
-import org.cinekinal.system.repository.PeliculaRepository;
+import org.cinekinal.system.model.Movie;
+import org.cinekinal.system.repository.MovieRepository;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.Validations;
 import org.cinekinal.system.utils.ViewFactory;
@@ -36,15 +36,15 @@ import org.cinekinal.system.utils.ViewFactory;
 public class AdministrarPeliculasController implements Initializable {
 
     @FXML
-    private TableView<Pelicula> tablePeliculas;
+    private TableView<Movie> tablePeliculas;
     @FXML
-    private TableColumn<Pelicula, String> colTitulo;
+    private TableColumn<Movie, String> colTitulo;
     @FXML
-    private TableColumn<Pelicula, String> colGenero;
+    private TableColumn<Movie, String> colGenero;
     @FXML
-    private TableColumn<Pelicula, String> colClasificacion;
+    private TableColumn<Movie, String> colClasificacion;
     @FXML
-    private TableColumn<Pelicula, String> colDuracion;
+    private TableColumn<Movie, String> colDuracion;
 
     @FXML
     private Button btnEditar;
@@ -62,16 +62,16 @@ public class AdministrarPeliculasController implements Initializable {
     @FXML
     private Button btnVerTrailer;
 
-    private final PeliculaRepository peliculaRepo = new PeliculaRepository();
+    private final MovieRepository movieRepo = new MovieRepository();
     private final Validations validate = new Validations();
     private final AlertInformation alertInfo = new AlertInformation();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        colTitulo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTitulo()));
-        colGenero.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getGenero()));
-        colClasificacion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getClasificacion()));
-        colDuracion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDuracionMin() + " min"));
+        colTitulo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTitle()));
+        colGenero.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getGenre()));
+        colClasificacion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getRating()));
+        colDuracion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDurationMin() + " min"));
 
         tablePeliculas.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
@@ -89,11 +89,11 @@ public class AdministrarPeliculasController implements Initializable {
     }
 
     private void cargarTabla() {
-        List<Pelicula> lista = peliculaRepo.obtenerActivas();
+        List<Movie> lista = movieRepo.getActiveMovies();
         tablePeliculas.setItems(FXCollections.observableArrayList(lista));
     }
 
-    private void mostrarDetallePelicula(Pelicula p) {
+    private void mostrarDetallePelicula(Movie p) {
         lblTituloDetalle.setText(p.getTitulo());
         lblMetaDetalle.setText((p.getGenero() != null ? p.getGenero() : "General") + " · "
                 + (p.getClasificacion() != null ? p.getClasificacion() : "PG") + " · "
@@ -216,7 +216,7 @@ public class AdministrarPeliculasController implements Initializable {
                 return;
             }
 
-            peliculaRepo.crear(titulo, genero, clasif, duracion, sinopsis,
+            movieRepo.create(titulo, genero, clasif, duracion, sinopsis,
                     poster.isEmpty() ? null : poster, trailer.isEmpty() ? null : trailer);
 
             cargarTabla();
@@ -226,7 +226,7 @@ public class AdministrarPeliculasController implements Initializable {
 
     @FXML
     public void onEditarPelicula(ActionEvent event) {
-        Pelicula seleccionada = tablePeliculas.getSelectionModel().getSelectedItem();
+        Movie seleccionada = tablePeliculas.getSelectionModel().getSelectedItem();
         if (seleccionada == null) {
             return;
         }
@@ -311,7 +311,7 @@ public class AdministrarPeliculasController implements Initializable {
                 return;
             }
 
-            peliculaRepo.editar(seleccionada.getIdPelicula(), titulo, genero, clasif, duracion, sinopsis,
+            movieRepo.edit(seleccionada.getIdPelicula(), titulo, genero, clasif, duracion, sinopsis,
                     poster.isEmpty() ? null : poster, trailer.isEmpty() ? null : trailer);
 
             cargarTabla();
@@ -321,7 +321,7 @@ public class AdministrarPeliculasController implements Initializable {
 
     @FXML
     public void onDesactivarPelicula(ActionEvent event) {
-        Pelicula seleccionada = tablePeliculas.getSelectionModel().getSelectedItem();
+        Movie seleccionada = tablePeliculas.getSelectionModel().getSelectedItem();
         if (seleccionada == null) {
             return;
         }
@@ -334,7 +334,7 @@ public class AdministrarPeliculasController implements Initializable {
 
         Optional<ButtonType> res = conf.showAndWait();
         if (res.isPresent() && res.get() == ButtonType.OK) {
-            peliculaRepo.desactivar(seleccionada.getIdPelicula());
+            movieRepo.deactivate(seleccionada.getIdPelicula());
             cargarTabla();
             limpiarDetalle();
             alertInfo.viewAlert("INFORMATION", "PELÍCULA RETIRADA", "ÉXITO", "La película fue desactivada del catálogo activo.");
@@ -343,7 +343,7 @@ public class AdministrarPeliculasController implements Initializable {
 
     @FXML
     public void onVerTrailer(ActionEvent event) {
-        Pelicula p = tablePeliculas.getSelectionModel().getSelectedItem();
+        Movie p = tablePeliculas.getSelectionModel().getSelectedItem();
         if (p == null || p.getTrailerUrl() == null || p.getTrailerUrl().trim().isEmpty()) {
             return;
         }

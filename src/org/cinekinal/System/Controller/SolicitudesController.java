@@ -11,41 +11,35 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
-import org.cinekinal.system.model.Empleado;
-import org.cinekinal.system.model.Solicitud;
-import org.cinekinal.system.service.SolicitudService;
+import org.cinekinal.system.model.Employee;
+import org.cinekinal.system.model.Request;
+import org.cinekinal.system.service.RequestService;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.Session;
 import org.cinekinal.system.utils.ViewFactory;
 
 /**
- * Pantalla donde el Dueño resuelve las Solicitudes pendientes creadas
- * por SolicitudService.intentar(...) cuando un empleado de menor
- * jerarquia intenta una accion que necesita permiso.
- *
- * IMPORTANTE (ver el comentario en SolicitudService): aprobar una
- * solicitud NO ejecuta la accion original sola -- el Dueño debe
- * realizarla el mismo despues desde su propia sesion.
+ * Controller for managing pending employee requests by owner.
  */
 public class SolicitudesController implements Initializable {
 
     @FXML
-    private TableView<Solicitud> tablaSolicitudes;
+    private TableView<Request> tablaSolicitudes;
     @FXML
-    private TableColumn<Solicitud, String> colSolicitante;
+    private TableColumn<Request, String> colSolicitante;
     @FXML
-    private TableColumn<Solicitud, String> colAccion;
+    private TableColumn<Request, String> colAccion;
     @FXML
-    private TableColumn<Solicitud, String> colMotivo;
+    private TableColumn<Request, String> colMotivo;
     @FXML
-    private TableColumn<Solicitud, String> colFecha;
+    private TableColumn<Request, String> colFecha;
 
-    private final SolicitudService solicitudService = new SolicitudService();
+    private final RequestService requestService = new RequestService();
     private final AlertInformation alertInfo = new AlertInformation();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        if (!Session.esEmpleado() || Session.getEmpleadoActual().getNivelJerarquico() != 1) {
+        if (!Session.isEmployee() || Session.getCurrentEmployee().getHierarchyLevel() != 1) {
             alertInfo.viewAlert("ERROR", "SOLO EL DUEÑO", "Acceso restringido",
                     "Esta sección es solo para el Dueño.");
             new ViewFactory().viewMainMenu();
@@ -53,20 +47,20 @@ public class SolicitudesController implements Initializable {
         }
 
         colSolicitante.setCellValueFactory(d ->
-                new SimpleStringProperty(d.getValue().getSolicitanteNombres() + " " + d.getValue().getSolicitanteApellidos()));
-        colAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAccion()));
-        colMotivo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMotivo()));
-        colFecha.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getFechaSolicitud())));
+                new SimpleStringProperty(d.getValue().getRequesterFirstName() + " " + d.getValue().getRequesterLastName()));
+        colAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAction()));
+        colMotivo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getReason()));
+        colFecha.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getRequestDate())));
 
         cargarTabla();
     }
 
     private void cargarTabla() {
-        tablaSolicitudes.setItems(FXCollections.observableArrayList(solicitudService.obtenerPendientes()));
+        tablaSolicitudes.setItems(FXCollections.observableArrayList(requestService.getPending()));
     }
 
-    private Solicitud obtenerSeleccionada() {
-        Solicitud seleccionada = tablaSolicitudes.getSelectionModel().getSelectedItem();
+    private Request obtenerSeleccionada() {
+        Request seleccionada = tablaSolicitudes.getSelectionModel().getSelectedItem();
         if (seleccionada == null) {
             alertInfo.viewAlert("WARNING", "SIN SELECCIÓN", "Ninguna solicitud seleccionada",
                     "Selecciona una solicitud de la tabla primero.");
@@ -76,46 +70,41 @@ public class SolicitudesController implements Initializable {
 
     @FXML
     public void onAprobar(MouseEvent event) {
-        Solicitud seleccionada = obtenerSeleccionada();
+        Request seleccionada = obtenerSeleccionada();
         if (seleccionada == null) {
             return;
         }
-        Empleado dueño = Session.getEmpleadoActual();
-        solicitudService.aprobar(seleccionada, dueño);
+        Employee owner = Session.getCurrentEmployee();
+        requestService.approve(seleccionada, owner);
         alertInfo.viewAlert("INFORMATION", "SOLICITUD APROBADA", "Listo",
-                "Se aprobó \"" + seleccionada.getAccion() + "\". Recuerda que debes realizar tú "
+                "Se aprobó \"" + seleccionada.getAction() + "\". Recuerda que debes realizar tú "
                 + "mismo esa acción desde tu sesión -- aprobar no la ejecuta automáticamente.");
         cargarTabla();
     }
 
     @FXML
     public void onRechazar(MouseEvent event) {
-        Solicitud seleccionada = obtenerSeleccionada();
+        Request seleccionada = obtenerSeleccionada();
         if (seleccionada == null) {
             return;
         }
 
         Optional<String> motivoIngresado = pedirMotivoRechazo(seleccionada);
         if (motivoIngresado.isEmpty()) {
-            return; // el Dueño cancelo el cuadro de texto
+            return;
         }
 
-        Empleado dueño = Session.getEmpleadoActual();
-        solicitudService.rechazar(seleccionada, dueño, motivoIngresado.get());
+        Employee owner = Session.getCurrentEmployee();
+        requestService.reject(seleccionada, owner, motivoIngresado.get());
         alertInfo.viewAlert("INFORMATION", "SOLICITUD RECHAZADA", "Listo",
-                "Se rechazó la solicitud de \"" + seleccionada.getAccion() + "\".");
+                "Se rechazó la solicitud de \"" + seleccionada.getAction() + "\".");
         cargarTabla();
     }
 
-    /**
-     * El rechazo SIEMPRE necesita una razon (a diferencia de aprobar, que
-     * no la pide): el Gerente la va a ver en su pantalla de Mensajes, asi
-     * que dejarla vacia lo dejaria sin saber por que le negaron la accion.
-     */
-    private Optional<String> pedirMotivoRechazo(Solicitud solicitud) {
+    private Optional<String> pedirMotivoRechazo(Request solicitud) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("MOTIVO DEL RECHAZO");
-        dialog.setHeaderText("Vas a rechazar \"" + solicitud.getAccion() + "\"");
+        dialog.setHeaderText("Vas a rechazar \"" + solicitud.getAction() + "\"");
         dialog.setContentText("Explica por qué la rechazas (el empleado lo va a ver):");
 
         Optional<String> respuesta = dialog.showAndWait();

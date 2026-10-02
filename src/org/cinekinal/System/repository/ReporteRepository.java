@@ -1,17 +1,10 @@
 package org.cinekinal.system.repository;
 
 import java.math.BigDecimal;
-import java.sql.CallableStatement;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import org.cinekinal.system.config.ConexionDB;
 
 public class ReporteRepository {
-
-    private final ConexionDB conexionDB = ConexionDB.getInstanciaConexionDB();
 
     public static class ResumenHoy {
         public int boletosHoy;
@@ -43,105 +36,57 @@ public class ReporteRepository {
     }
 
     public ResumenHoy obtenerResumenHoy() {
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_reporte_resumen_hoy()}")) {
-            try (ResultSet rs = callSP.executeQuery()) {
-                if (rs.next()) {
-                    return new ResumenHoy(rs.getInt("boletos_vendidos_hoy"), rs.getBigDecimal("ingresos_hoy"));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Aviso al obtener resumen de hoy: " + e.getMessage());
-        }
-        return new ResumenHoy(0, BigDecimal.ZERO);
+        return intentar(() -> Db.one("{call sp_reporte_resumen_hoy()}",
+                rs -> new ResumenHoy(rs.getInt("boletos_vendidos_hoy"), rs.getBigDecimal("ingresos_hoy"))),
+                new ResumenHoy(0, BigDecimal.ZERO), "resumen de hoy");
     }
 
     public List<ReporteFila> obtenerIngresosPorDia(Date fechaInicio, Date fechaFin) {
-        List<ReporteFila> lista = new ArrayList<>();
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_reporte_ingresos_por_dia(?,?)}")) {
-            callSP.setDate(1, fechaInicio);
-            callSP.setDate(2, fechaFin);
-            try (ResultSet rs = callSP.executeQuery()) {
-                while (rs.next()) {
-                    lista.add(new ReporteFila(
-                            rs.getDate("fecha").toString(),
-                            rs.getInt("boletos_vendidos") + " boletos",
-                            "Q " + rs.getBigDecimal("ingresos"),
-                            "—"
-                    ));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Aviso al obtener ingresos por dia: " + e.getMessage());
-        }
-        return lista;
+        return intentar(() -> Db.list("{call sp_reporte_ingresos_por_dia(?,?)}", rs -> new ReporteFila(
+                rs.getDate("fecha").toString(),
+                rs.getInt("boletos_vendidos") + " boletos",
+                "Q " + rs.getBigDecimal("ingresos"), "—"),
+                fechaInicio, fechaFin), List.of(), "ingresos por dia");
     }
 
     public List<ReporteFila> obtenerTopPeliculas(Date fechaInicio, Date fechaFin, int limite) {
-        List<ReporteFila> lista = new ArrayList<>();
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_reporte_top_peliculas(?,?,?)}")) {
-            callSP.setDate(1, fechaInicio);
-            callSP.setDate(2, fechaFin);
-            callSP.setInt(3, limite);
-            try (ResultSet rs = callSP.executeQuery()) {
-                int pos = 1;
-                while (rs.next()) {
-                    lista.add(new ReporteFila(
-                            "#" + pos + " " + rs.getString("titulo"),
-                            rs.getInt("boletos_vendidos") + " boletos",
-                            "Q " + rs.getBigDecimal("ingresos"),
-                            "—"
-                    ));
-                    pos++;
-                }
+        return intentar(() -> {
+            List<ReporteFila> filas = Db.list("{call sp_reporte_top_peliculas(?,?,?)}", rs -> new ReporteFila(
+                    rs.getString("titulo"), rs.getInt("boletos_vendidos") + " boletos",
+                    "Q " + rs.getBigDecimal("ingresos"), "—"),
+                    fechaInicio, fechaFin, limite);
+            for (int i = 0; i < filas.size(); i++) {
+                ReporteFila f = filas.get(i);
+                filas.set(i, new ReporteFila("#" + (i + 1) + " " + f.getColumna1(),
+                        f.getColumna2(), f.getColumna3(), f.getColumna4()));
             }
-        } catch (SQLException e) {
-            System.out.println("Aviso al obtener top peliculas: " + e.getMessage());
-        }
-        return lista;
+            return filas;
+        }, List.of(), "top peliculas");
     }
 
     public List<ReporteFila> obtenerOcupacionCartelera() {
-        List<ReporteFila> lista = new ArrayList<>();
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_reporte_ocupacion_cartelera()}")) {
-            try (ResultSet rs = callSP.executeQuery()) {
-                while (rs.next()) {
-                    lista.add(new ReporteFila(
-                            rs.getString("titulo"),
-                            rs.getString("nombre_sala") + " · " + rs.getDate("fecha") + " " + rs.getTime("hora"),
-                            rs.getInt("asientos_vendidos") + " / " + rs.getInt("capacidad_total") + " butacas",
-                            rs.getDouble("porcentaje_ocupacion") + "%"
-                    ));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Aviso al obtener ocupacion de salas: " + e.getMessage());
-        }
-        return lista;
+        return intentar(() -> Db.list("{call sp_reporte_ocupacion_cartelera()}", rs -> new ReporteFila(
+                rs.getString("titulo"),
+                rs.getString("nombre_sala") + " · " + rs.getDate("fecha") + " " + rs.getTime("hora"),
+                rs.getInt("asientos_vendidos") + " / " + rs.getInt("capacidad_total") + " butacas",
+                rs.getDouble("porcentaje_ocupacion") + "%")),
+                List.of(), "ocupacion de salas");
     }
 
     public List<ReporteFila> obtenerIngresosPorPelicula(Date fechaInicio, Date fechaFin) {
-        List<ReporteFila> lista = new ArrayList<>();
-        try (CallableStatement callSP = conexionDB.getConnection()
-                     .prepareCall("{call sp_reporte_ingresos_por_pelicula(?,?)}")) {
-            callSP.setDate(1, fechaInicio);
-            callSP.setDate(2, fechaFin);
-            try (ResultSet rs = callSP.executeQuery()) {
-                while (rs.next()) {
-                    lista.add(new ReporteFila(
-                            rs.getString("titulo"),
-                            rs.getInt("boletos_vendidos") + " boletos",
-                            "Q " + rs.getBigDecimal("ingresos"),
-                            "—"
-                    ));
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Aviso al obtener ingresos por pelicula: " + e.getMessage());
+        return intentar(() -> Db.list("{call sp_reporte_ingresos_por_pelicula(?,?)}", rs -> new ReporteFila(
+                rs.getString("titulo"), rs.getInt("boletos_vendidos") + " boletos",
+                "Q " + rs.getBigDecimal("ingresos"), "—"),
+                fechaInicio, fechaFin), List.of(), "ingresos por pelicula");
+    }
+
+    /** Los reportes son informativos: si uno falla, se avisa por consola y la pantalla sigue con datos vacios. */
+    private <T> T intentar(java.util.function.Supplier<T> consulta, T porDefecto, String nombre) {
+        try {
+            return consulta.get();
+        } catch (RuntimeException e) {
+            System.out.println("Aviso al obtener " + nombre + ": " + e.getMessage());
+            return porDefecto;
         }
-        return lista;
     }
 }

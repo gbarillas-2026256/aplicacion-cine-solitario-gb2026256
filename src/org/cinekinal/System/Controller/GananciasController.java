@@ -9,27 +9,30 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.collections.ObservableList;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
-import org.cinekinal.system.model.CorteCaja;
-import org.cinekinal.system.model.CorteDetalle;
-import org.cinekinal.system.repository.ReporteRepository;
-import org.cinekinal.system.repository.ReporteRepository.ReporteFila;
-import org.cinekinal.system.repository.ReporteRepository.ResumenHoy;
-import org.cinekinal.system.service.CorteCajaService;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import org.cinekinal.system.model.CashClosing;
+import org.cinekinal.system.model.CashClosingDetail;
+import org.cinekinal.system.repository.ReportRepository;
+import org.cinekinal.system.repository.ReportRepository.ReportRow;
+import org.cinekinal.system.repository.ReportRepository.TodaySummary;
+import org.cinekinal.system.service.CashClosingService;
 import org.cinekinal.system.utils.ViewFactory;
 
+/**
+ * Controller for cinema earnings and financial analytics.
+ */
 public class GananciasController implements Initializable {
 
     @FXML
@@ -57,23 +60,23 @@ public class GananciasController implements Initializable {
     @FXML
     private Label lblTotalPeriodo;
     @FXML
-    private TableView<ReporteFila> tableIngresos;
+    private TableView<ReportRow> tableIngresos;
     @FXML
-    private TableColumn<ReporteFila, String> colIngresoFecha;
+    private TableColumn<ReportRow, String> colIngresoFecha;
     @FXML
-    private TableColumn<ReporteFila, String> colIngresoBoletos;
+    private TableColumn<ReportRow, String> colIngresoBoletos;
     @FXML
-    private TableColumn<ReporteFila, String> colIngresoTotal;
+    private TableColumn<ReportRow, String> colIngresoTotal;
 
     // Pestaña 2: Ingresos por Película
     @FXML
-    private TableView<ReporteFila> tableIngresosPelicula;
+    private TableView<ReportRow> tableIngresosPelicula;
     @FXML
-    private TableColumn<ReporteFila, String> colPeliculaTitulo;
+    private TableColumn<ReportRow, String> colPeliculaTitulo;
     @FXML
-    private TableColumn<ReporteFila, String> colPeliculaBoletos;
+    private TableColumn<ReportRow, String> colPeliculaBoletos;
     @FXML
-    private TableColumn<ReporteFila, String> colPeliculaIngresos;
+    private TableColumn<ReportRow, String> colPeliculaIngresos;
 
     // Pestaña 3: Cortes de caja enviados por los empleados
     @FXML
@@ -85,49 +88,49 @@ public class GananciasController implements Initializable {
     @FXML
     private Label lblObservacionesCorte;
     @FXML
-    private TableView<CorteCaja> tableCortes;
+    private TableView<CashClosing> tableCortes;
     @FXML
-    private TableColumn<CorteCaja, String> colCorteFecha;
+    private TableColumn<CashClosing, String> colCorteFecha;
     @FXML
-    private TableColumn<CorteCaja, String> colCorteEmpleado;
+    private TableColumn<CashClosing, String> colCorteEmpleado;
     @FXML
-    private TableColumn<CorteCaja, String> colCortePuesto;
+    private TableColumn<CashClosing, String> colCortePuesto;
     @FXML
-    private TableColumn<CorteCaja, String> colCorteBoletos;
+    private TableColumn<CashClosing, String> colCorteBoletos;
     @FXML
-    private TableColumn<CorteCaja, String> colCorteEntradas;
+    private TableColumn<CashClosing, String> colCorteEntradas;
     @FXML
-    private TableColumn<CorteCaja, String> colCorteDulceria;
+    private TableColumn<CashClosing, String> colCorteDulceria;
     @FXML
-    private TableColumn<CorteCaja, String> colCorteTotal;
+    private TableColumn<CashClosing, String> colCorteTotal;
     @FXML
-    private TableView<CorteDetalle> tableCorteDetalles;
+    private TableView<CashClosingDetail> tableCorteDetalles;
     @FXML
-    private TableColumn<CorteDetalle, String> colDetCategoria;
+    private TableColumn<CashClosingDetail, String> colDetCategoria;
     @FXML
-    private TableColumn<CorteDetalle, String> colDetDescripcion;
+    private TableColumn<CashClosingDetail, String> colDetDescripcion;
     @FXML
-    private TableColumn<CorteDetalle, String> colDetCantidad;
+    private TableColumn<CashClosingDetail, String> colDetCantidad;
     @FXML
-    private TableColumn<CorteDetalle, String> colDetPrecio;
+    private TableColumn<CashClosingDetail, String> colDetPrecio;
     @FXML
-    private TableColumn<CorteDetalle, String> colDetSubtotal;
+    private TableColumn<CashClosingDetail, String> colDetSubtotal;
 
-    private final ReporteRepository reporteRepo = new ReporteRepository();
-    private final CorteCajaService corteService = new CorteCajaService();
+    private final ReportRepository reportRepo = new ReportRepository();
+    private final CashClosingService closingService = new CashClosingService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         dpInicio.setValue(LocalDate.now().minusMonths(1));
         dpFin.setValue(LocalDate.now().plusDays(1));
 
-        colIngresoFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumna1()));
-        colIngresoBoletos.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumna2()));
-        colIngresoTotal.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumna3()));
+        colIngresoFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumn1()));
+        colIngresoBoletos.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumn2()));
+        colIngresoTotal.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumn3()));
 
-        colPeliculaTitulo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumna1()));
-        colPeliculaBoletos.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumna2()));
-        colPeliculaIngresos.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumna3()));
+        colPeliculaTitulo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumn1()));
+        colPeliculaBoletos.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumn2()));
+        colPeliculaIngresos.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getColumn3()));
 
         configurarTablaCortes();
 
@@ -142,21 +145,20 @@ public class GananciasController implements Initializable {
         dpCorteInicio.setValue(LocalDate.now().minusMonths(1));
         dpCorteFin.setValue(LocalDate.now());
 
-        colCorteFecha.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getFechaCorte())));
-        colCorteEmpleado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmpleadoNombreCompleto()));
-        colCortePuesto.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmpleadoPuesto()));
-        colCorteBoletos.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getBoletosVendidos())));
-        colCorteEntradas.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getTotalEntradas())));
-        colCorteDulceria.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getTotalDulceria())));
-        colCorteTotal.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getTotalGeneral())));
+        colCorteFecha.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getClosingDate())));
+        colCorteEmpleado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmployeeFullName()));
+        colCortePuesto.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmployeePosition()));
+        colCorteBoletos.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getTicketsSold())));
+        colCorteEntradas.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getTotalTickets())));
+        colCorteDulceria.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getTotalConcessions())));
+        colCorteTotal.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getGrandTotal())));
 
-        colDetCategoria.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCategoria()));
-        colDetDescripcion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDescripcion()));
-        colDetCantidad.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getCantidad())));
-        colDetPrecio.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getPrecioUnitario())));
+        colDetCategoria.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCategory()));
+        colDetDescripcion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDescription()));
+        colDetCantidad.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getQuantity())));
+        colDetPrecio.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getUnitPrice())));
         colDetSubtotal.setCellValueFactory(d -> new SimpleStringProperty(String.format("%.2f", d.getValue().getSubtotal())));
 
-        //Al seleccionar un corte, se carga su desglose de dulceria abajo
         tableCortes.getSelectionModel().selectedItemProperty().addListener((obs, viejo, nuevo) -> {
             if (nuevo == null) {
                 tableCorteDetalles.getItems().clear();
@@ -164,8 +166,8 @@ public class GananciasController implements Initializable {
                 return;
             }
             tableCorteDetalles.setItems(FXCollections.observableArrayList(
-                    corteService.obtenerDetalles(nuevo.getIdCorte())));
-            String obsTexto = nuevo.getObservaciones();
+                    closingService.getDetails(nuevo.getIdClosing())));
+            String obsTexto = nuevo.getNotes();
             lblObservacionesCorte.setText("Observaciones: "
                     + (obsTexto == null || obsTexto.isBlank() ? "—" : obsTexto));
         });
@@ -179,14 +181,13 @@ public class GananciasController implements Initializable {
             return;
         }
 
-        List<CorteCaja> cortes = corteService.obtenerPorFecha(Date.valueOf(ini), Date.valueOf(fin));
+        List<CashClosing> cortes = closingService.getByDateRange(Date.valueOf(ini), Date.valueOf(fin));
         tableCortes.setItems(FXCollections.observableArrayList(cortes));
 
-        //Se suma directo del BigDecimal, no parseando texto de la tabla
         BigDecimal total = BigDecimal.ZERO;
-        for (CorteCaja corte : cortes) {
-            if (corte.getTotalGeneral() != null) {
-                total = total.add(corte.getTotalGeneral());
+        for (CashClosing corte : cortes) {
+            if (corte.getGrandTotal() != null) {
+                total = total.add(corte.getGrandTotal());
             }
         }
         lblTotalCortes.setText(String.format("Total Cortes: Q %.2f", total));
@@ -196,12 +197,12 @@ public class GananciasController implements Initializable {
     }
 
     private void cargarResumenHoy() {
-        ResumenHoy hoy = reporteRepo.obtenerResumenHoy();
-        lblIngresosHoy.setText("Q " + hoy.ingresosHoy);
-        lblBoletosHoy.setText(hoy.boletosHoy + " boletos");
+        TodaySummary hoy = reportRepo.getTodaySummary();
+        lblIngresosHoy.setText("Q " + hoy.incomeToday);
+        lblBoletosHoy.setText(hoy.ticketsToday + " boletos");
 
-        if (hoy.boletosHoy > 0) {
-            BigDecimal promedio = hoy.ingresosHoy.divide(BigDecimal.valueOf(hoy.boletosHoy), 2, RoundingMode.HALF_UP);
+        if (hoy.ticketsToday > 0) {
+            BigDecimal promedio = hoy.incomeToday.divide(BigDecimal.valueOf(hoy.ticketsToday), 2, RoundingMode.HALF_UP);
             lblTicketPromedio.setText("Q " + promedio);
         } else {
             lblTicketPromedio.setText("Q 0.00");
@@ -215,13 +216,13 @@ public class GananciasController implements Initializable {
         Date sqlIni = ini != null ? Date.valueOf(ini) : null;
         Date sqlFin = fin != null ? Date.valueOf(fin) : null;
 
-        List<ReporteFila> filas = reporteRepo.obtenerIngresosPorDia(sqlIni, sqlFin);
+        List<ReportRow> filas = reportRepo.getDailyIncome(sqlIni, sqlFin);
         tableIngresos.setItems(FXCollections.observableArrayList(filas));
 
         BigDecimal totalPeriodo = BigDecimal.ZERO;
-        for (ReporteFila f : filas) {
+        for (ReportRow f : filas) {
             try {
-                String str = f.getColumna3().replace("Q", "").trim();
+                String str = f.getColumn3().replace("Q", "").trim();
                 totalPeriodo = totalPeriodo.add(new BigDecimal(str));
             } catch (Exception ignored) {}
         }
@@ -230,7 +231,7 @@ public class GananciasController implements Initializable {
 
     private void cargarIngresosPeliculas() {
         tableIngresosPelicula.setItems(FXCollections.observableArrayList(
-                reporteRepo.obtenerIngresosPorPelicula(null, null)));
+                reportRepo.getMovieIncome(null, null)));
     }
 
     @FXML
@@ -240,26 +241,25 @@ public class GananciasController implements Initializable {
 
     private void actualizarGraficas() {
         // 1. Gráfica de distribución de ingresos (Boletos vs Dulcería)
-        List<CorteCaja> cortes = corteService.obtenerPorFecha(
+        List<CashClosing> cortes = closingService.getByDateRange(
                 Date.valueOf(LocalDate.now().minusMonths(6)),
                 Date.valueOf(LocalDate.now().plusDays(1)));
         BigDecimal totalEntradas = BigDecimal.ZERO;
         BigDecimal totalDulceria = BigDecimal.ZERO;
 
-        for (CorteCaja c : cortes) {
-            if (c.getTotalEntradas() != null) {
-                totalEntradas = totalEntradas.add(c.getTotalEntradas());
+        for (CashClosing c : cortes) {
+            if (c.getTotalTickets() != null) {
+                totalEntradas = totalEntradas.add(c.getTotalTickets());
             }
-            if (c.getTotalDulceria() != null) {
-                totalDulceria = totalDulceria.add(c.getTotalDulceria());
+            if (c.getTotalConcessions() != null) {
+                totalDulceria = totalDulceria.add(c.getTotalConcessions());
             }
         }
 
-        // Si aún no hay cortes o para sumar todas las entradas de taquilla registradas
         BigDecimal totalTaquillaHistorica = BigDecimal.ZERO;
-        for (ReporteFila f : reporteRepo.obtenerIngresosPorPelicula(null, null)) {
+        for (ReportRow f : reportRepo.getMovieIncome(null, null)) {
             try {
-                totalTaquillaHistorica = totalTaquillaHistorica.add(new BigDecimal(f.getColumna3().replace("Q", "").trim()));
+                totalTaquillaHistorica = totalTaquillaHistorica.add(new BigDecimal(f.getColumn3().replace("Q", "").trim()));
             } catch (Exception ignored) {}
         }
         if (totalTaquillaHistorica.compareTo(totalEntradas) > 0) {
@@ -280,11 +280,11 @@ public class GananciasController implements Initializable {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Recaudación (Q)");
 
-        List<ReporteFila> peliculas = reporteRepo.obtenerIngresosPorPelicula(null, null);
-        for (ReporteFila p : peliculas) {
+        List<ReportRow> peliculas = reportRepo.getMovieIncome(null, null);
+        for (ReportRow p : peliculas) {
             try {
-                double monto = Double.parseDouble(p.getColumna3().replace("Q", "").trim());
-                String titulo = p.getColumna1();
+                double monto = Double.parseDouble(p.getColumn3().replace("Q", "").trim());
+                String titulo = p.getColumn1();
                 if (titulo.length() > 18) {
                     titulo = titulo.substring(0, 16) + "..";
                 }

@@ -16,10 +16,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import org.cinekinal.system.model.Boleto;
-import org.cinekinal.system.model.Cliente;
-import org.cinekinal.system.repository.BoletoRepository;
+import org.cinekinal.system.model.Customer;
+import org.cinekinal.system.model.Ticket;
+import org.cinekinal.system.repository.TicketRepository;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.QRCodeGenerator;
 import org.cinekinal.system.utils.Session;
@@ -28,19 +29,19 @@ import org.cinekinal.system.utils.ViewFactory;
 public class MisBoletosController implements Initializable {
 
     @FXML
-    private TableView<Boleto> tablaBoletos;
+    private TableView<Ticket> tablaBoletos;
     @FXML
-    private TableColumn<Boleto, String> colPelicula;
+    private TableColumn<Ticket, String> colPelicula;
     @FXML
-    private TableColumn<Boleto, String> colSala;
+    private TableColumn<Ticket, String> colSala;
     @FXML
-    private TableColumn<Boleto, String> colFecha;
+    private TableColumn<Ticket, String> colFecha;
     @FXML
-    private TableColumn<Boleto, String> colHora;
+    private TableColumn<Ticket, String> colHora;
     @FXML
-    private TableColumn<Boleto, String> colAsiento;
+    private TableColumn<Ticket, String> colAsiento;
     @FXML
-    private TableColumn<Boleto, String> colEstado;
+    private TableColumn<Ticket, String> colEstado;
 
     @FXML
     private VBox panelDetalle;
@@ -65,19 +66,19 @@ public class MisBoletosController implements Initializable {
     @FXML
     private Button btnCopiarId;
 
-    private final BoletoRepository boletoRepo = new BoletoRepository();
+    private final TicketRepository ticketRepo = new TicketRepository();
     private final AlertInformation alertInfo = new AlertInformation();
-    private Boleto boletoSeleccionado;
+    private Ticket boletoSeleccionado;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        colPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTituloPelicula()));
-        colSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombreSala()));
-        colFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFecha() != null ? d.getValue().getFecha().toString() : ""));
-        colHora.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getHora() != null ? d.getValue().getHora().toString() : ""));
-        colAsiento.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAsientoFormateado()));
+        colPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMovieTitle()));
+        colSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTheaterName()));
+        colFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDate() != null ? d.getValue().getDate().toString() : ""));
+        colHora.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTime() != null ? d.getValue().getTime().toString() : ""));
+        colAsiento.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFormattedSeat()));
         colEstado.setCellValueFactory(d -> new SimpleStringProperty(
-                boletoRepo.estaBoletoIngresado(d.getValue().getIdBoleto()) ? "🟡 UTILIZADO" : "🟢 VÁLIDO"));
+                ticketRepo.isTicketCheckedIn(d.getValue().getIdTicket()) ? "🟡 UTILIZADO" : "🟢 VÁLIDO"));
 
         // Listener de selección
         tablaBoletos.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionada) -> {
@@ -88,7 +89,7 @@ public class MisBoletosController implements Initializable {
 
         // Clic directo
         tablaBoletos.setOnMouseClicked(event -> {
-            Boleto seleccionada = tablaBoletos.getSelectionModel().getSelectedItem();
+            Ticket seleccionada = tablaBoletos.getSelectionModel().getSelectedItem();
             if (seleccionada != null) {
                 mostrarDetalleBoleto(seleccionada);
             }
@@ -98,18 +99,18 @@ public class MisBoletosController implements Initializable {
     }
 
     private void cargarBoletos() {
-        if (!Session.esCliente() || Session.getClienteActual() == null) {
+        if (!Session.isCustomer() || Session.getCurrentCustomer() == null) {
             limpiarDetalles();
             return;
         }
 
-        Cliente cliente = Session.getClienteActual();
-        List<Boleto> boletos = boletoRepo.obtenerPorCliente(cliente.getIdCliente());
+        Customer cliente = Session.getCurrentCustomer();
+        List<Ticket> boletos = ticketRepo.getTicketsByCustomer(cliente.getIdCustomer());
         tablaBoletos.setItems(FXCollections.observableArrayList(boletos));
 
         if (!boletos.isEmpty()) {
             tablaBoletos.getSelectionModel().select(0);
-            Boleto primero = tablaBoletos.getSelectionModel().getSelectedItem();
+            Ticket primero = tablaBoletos.getSelectionModel().getSelectedItem();
             if (primero == null) {
                 primero = boletos.get(0);
             }
@@ -119,9 +120,9 @@ public class MisBoletosController implements Initializable {
         }
     }
 
-    private void mostrarDetalleBoleto(Boleto boleto) {
+    private void mostrarDetalleBoleto(Ticket boleto) {
         this.boletoSeleccionado = boleto;
-        boolean yaIngreso = boletoRepo.estaBoletoIngresado(boleto.getIdBoleto());
+        boolean yaIngreso = ticketRepo.isTicketCheckedIn(boleto.getIdTicket());
 
         if (yaIngreso) {
             lblEstadoAcceso.setText("🟡 UTILIZADO · INGRESO YA REGISTRADO");
@@ -131,23 +132,23 @@ public class MisBoletosController implements Initializable {
             lblEstadoAcceso.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-padding: 6 14; -fx-background-radius: 4; -fx-background-color: #0F9D66; -fx-text-fill: #FFFFFF;");
         }
 
-        lblTituloPelicula.setText("🎬 " + boleto.getTituloPelicula());
-        lblSalaHorario.setText("🏛️ " + boleto.getNombreSala() + " · 📅 " + boleto.getFecha() + " · 🕒 " + boleto.getHora());
-        lblAsiento.setText("🪑 Asiento: " + boleto.getAsientoFormateado());
-        lblCliente.setText("👤 Titular: " + boleto.getNombreCliente());
-        lblPrecio.setText("💰 Total pagado: Q" + boleto.getPrecioFinal());
-        lblFechaCompra.setText("📅 Compra registrada: " + (boleto.getFechaCompra() != null ? boleto.getFechaCompra().toString() : "Reciente"));
-        lblIdBoleto.setText("UUID: " + boleto.getIdBoleto());
+        lblTituloPelicula.setText("🎬 " + boleto.getMovieTitle());
+        lblSalaHorario.setText("🏛️ " + boleto.getTheaterName() + " · 📅 " + boleto.getDate() + " · 🕒 " + boleto.getTime());
+        lblAsiento.setText("🪑 Asiento: " + boleto.getFormattedSeat());
+        lblCliente.setText("👤 Titular: " + boleto.getCustomerName());
+        lblPrecio.setText("💰 Total pagado: Q" + boleto.getFinalPrice());
+        lblFechaCompra.setText("📅 Compra registrada: " + (boleto.getPurchaseDate() != null ? boleto.getPurchaseDate().toString() : "Reciente"));
+        lblIdBoleto.setText("UUID: " + boleto.getIdTicket());
 
         // Generar Código QR con los datos del boleto
         String contenidoQR = "CINE KINAL · TICKET DE ENTRADA\n"
-                + "ID Boleto: " + boleto.getIdBoleto() + "\n"
-                + "Película: " + boleto.getTituloPelicula() + "\n"
-                + "Sala: " + boleto.getNombreSala() + "\n"
-                + "Fecha: " + boleto.getFecha() + " " + boleto.getHora() + "\n"
-                + "Asiento: " + boleto.getAsientoFormateado() + "\n"
-                + "Cliente: " + boleto.getNombreCliente() + "\n"
-                + "Precio: Q" + boleto.getPrecioFinal();
+                + "ID Boleto: " + boleto.getIdTicket() + "\n"
+                + "Película: " + boleto.getMovieTitle() + "\n"
+                + "Sala: " + boleto.getTheaterName() + "\n"
+                + "Fecha: " + boleto.getDate() + " " + boleto.getTime() + "\n"
+                + "Asiento: " + boleto.getFormattedSeat() + "\n"
+                + "Cliente: " + boleto.getCustomerName() + "\n"
+                + "Precio: Q" + boleto.getFinalPrice();
 
         try {
             Image qrImage = QRCodeGenerator.generar(contenidoQR, 200);
@@ -173,13 +174,13 @@ public class MisBoletosController implements Initializable {
 
     @FXML
     public void onCopiarId(MouseEvent event) {
-        if (boletoSeleccionado != null && boletoSeleccionado.getIdBoleto() != null) {
+        if (boletoSeleccionado != null && boletoSeleccionado.getIdTicket() != null) {
             Clipboard clipboard = Clipboard.getSystemClipboard();
             ClipboardContent content = new ClipboardContent();
-            content.putString(boletoSeleccionado.getIdBoleto());
+            content.putString(boletoSeleccionado.getIdTicket());
             clipboard.setContent(content);
             alertInfo.viewAlert("INFORMATION", "PORTAPAPELES", "Código Copiado",
-                    "El UUID del boleto fue copiado al portapapeles:\n" + boletoSeleccionado.getIdBoleto());
+                    "El UUID del boleto fue copiado al portapapeles:\n" + boletoSeleccionado.getIdTicket());
         }
     }
 

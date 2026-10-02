@@ -30,56 +30,53 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.cinekinal.system.model.Empleado;
-import org.cinekinal.system.model.EmpleadoRegistroStatus;
-import org.cinekinal.system.service.EmpleadoService;
+import org.cinekinal.system.model.Employee;
+import org.cinekinal.system.model.EmployeeRegistrationStatus;
+import org.cinekinal.system.service.EmployeeService;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.Session;
 import org.cinekinal.system.utils.Validations;
 import org.cinekinal.system.utils.ViewFactory;
 
 /**
- * Controlador para la Gestión Unificada de Empleados y Subordinados (Opción 2: Diálogos Modales).
- * Ofrece una vista limpia centrada en el listado de personal activo con opciones para:
- *  - Agregar empleado (modal de alta)
- *  - Gestionar empleado seleccionado (modal con opciones de Editar, Dar de baja o Reportar).
+ * Controller for Unified Employee and Subordinate Management.
  */
 public class ManageUsersController implements Initializable {
 
     @FXML
-    private TableView<Empleado> tableUsers;
+    private TableView<Employee> tableUsers;
     @FXML
-    private TableColumn<Empleado, String> colUser;
+    private TableColumn<Employee, String> colUser;
     @FXML
-    private TableColumn<Empleado, String> colFullName;
+    private TableColumn<Employee, String> colFullName;
     @FXML
-    private TableColumn<Empleado, String> colEmail;
+    private TableColumn<Employee, String> colEmail;
     @FXML
-    private TableColumn<Empleado, String> colPuesto;
+    private TableColumn<Employee, String> colPuesto;
 
     @FXML
     private Label lblStatus;
     @FXML
     private Button btnGestionarEmpleado;
 
-    private final EmpleadoService empleadoService = new EmpleadoService();
+    private final EmployeeService employeeService = new EmployeeService();
     private final Validations validate = new Validations();
     private final AlertInformation alertInfo = new AlertInformation();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Solo el Dueño (nivel 1) puede gestionar usuarios y subordinados
-        if (!Session.esEmpleado() || Session.getEmpleadoActual().getNivelJerarquico() != 1) {
+        if (!Session.isEmployee() || Session.getCurrentEmployee().getHierarchyLevel() != 1) {
             alertInfo.viewAlert("ERROR", "ACCESO DENEGADO", "Solo el Dueño",
                     "Esta sección es exclusiva para el Dueño del cine.");
             new ViewFactory().viewMainMenu();
             return;
         }
 
-        colUser.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUsuario()));
-        colFullName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombreCompleto()));
-        colEmail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCorreo()));
-        colPuesto.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombrePuesto()));
+        colUser.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getUsername()));
+        colFullName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFullName()));
+        colEmail.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEmail()));
+        colPuesto.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getPositionName()));
 
         tableUsers.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
@@ -87,8 +84,8 @@ public class ManageUsersController implements Initializable {
                 lblStatus.setText("Ningún empleado seleccionado. Haz clic en una fila para seleccionarlo.");
             } else {
                 btnGestionarEmpleado.setDisable(false);
-                lblStatus.setText("Seleccionado: " + newVal.getNombreCompleto()
-                        + " (" + newVal.getNombrePuesto() + ") · Haz clic en GESTIONAR para ver acciones.");
+                lblStatus.setText("Seleccionado: " + newVal.getFullName()
+                        + " (" + newVal.getPositionName() + ") · Haz clic en GESTIONAR para ver acciones.");
             }
         });
 
@@ -96,7 +93,7 @@ public class ManageUsersController implements Initializable {
     }
 
     private void cargarTabla() {
-        List<Empleado> lista = empleadoService.obtenerTodos();
+        List<Employee> lista = employeeService.getAll();
         tableUsers.setItems(FXCollections.observableArrayList(lista));
         btnGestionarEmpleado.setDisable(true);
         lblStatus.setText("Total de empleados activos: " + lista.size());
@@ -210,19 +207,19 @@ public class ManageUsersController implements Initializable {
                 default -> 4; // Empleado
             };
 
-            EmpleadoRegistroStatus status = empleadoService.registrar(name, lastName, email, user, password, idPuesto);
+            EmployeeRegistrationStatus status = employeeService.register(name, lastName, email, user, password, idPuesto);
             switch (status) {
-                case EMPLEADO_CREADO -> {
+                case EMPLOYEE_CREATED -> {
                     cargarTabla();
                     alertInfo.viewAlert("INFORMATION", "EMPLEADO REGISTRADO",
                             "ALTA COMPLETADA",
                             "El colaborador \"" + name + " " + lastName + "\" se registró correctamente con el rol de " + puestoSeleccionado + ".");
                 }
-                case USUARIO_YA_EXISTE -> alertInfo.viewAlert("WARNING", "USUARIO EN USO",
+                case USERNAME_ALREADY_EXISTS -> alertInfo.viewAlert("WARNING", "USUARIO EN USO",
                         "USUARIO YA EXISTE", "Ese nombre de usuario ya está en uso. Elige uno diferente.");
-                case CORREO_YA_EXISTE -> alertInfo.viewAlert("WARNING", "CORREO EN USO",
+                case EMAIL_ALREADY_EXISTS -> alertInfo.viewAlert("WARNING", "CORREO EN USO",
                         "CORREO YA REGISTRADO", "Ese correo ya está registrado en el sistema.");
-                case ERROR_AL_CREAR -> alertInfo.viewAlert("ERROR", "ERROR AL REGISTRAR",
+                case CREATION_ERROR -> alertInfo.viewAlert("ERROR", "ERROR AL REGISTRAR",
                         "NO SE PUDO CREAR EL EMPLEADO", "Ocurrió un error al guardar los datos en la base de datos.");
             }
         }
@@ -233,7 +230,7 @@ public class ManageUsersController implements Initializable {
     // =========================================================================
     @FXML
     public void onGestionarEmpleado(ActionEvent event) {
-        Empleado seleccionado = tableUsers.getSelectionModel().getSelectedItem();
+        Employee seleccionado = tableUsers.getSelectionModel().getSelectedItem();
         if (seleccionado == null) {
             alertInfo.viewAlert("WARNING", "SIN SELECCIÓN",
                     "NINGÚN EMPLEADO SELECCIONADO", "Selecciona un empleado de la tabla para gestionarlo.");
@@ -304,7 +301,7 @@ public class ManageUsersController implements Initializable {
     // =========================================================================
     // SUB-MODAL 2.1: EDITAR EMPLEADO
     // =========================================================================
-    private void abrirDialogoEditar(Empleado emp) {
+    private void abrirDialogoEditar(Employee emp) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("EDITAR EMPLEADO");
         dialog.setHeaderText("Modificar Datos: " + emp.getNombreCompleto());
@@ -377,14 +374,14 @@ public class ManageUsersController implements Initializable {
                 default -> 4;
             };
 
-            boolean actualizado = empleadoService.editar(emp.getIdEmpleado(), newName, newLastName, newEmail, idPuesto);
+            boolean actualizado = employeeService.edit(emp.getIdEmployee(), newName, newLastName, newEmail, idPuesto);
             if (actualizado) {
                 // Si el Dueño se editó a sí mismo, actualizar la sesión actual
-                Empleado actual = Session.getEmpleadoActual();
-                if (actual != null && actual.getIdEmpleado().equals(emp.getIdEmpleado())) {
-                    actual.setNombres(newName);
-                    actual.setApellidos(newLastName);
-                    actual.setCorreo(newEmail);
+                Employee actual = Session.getCurrentEmployee();
+                if (actual != null && actual.getIdEmployee().equals(emp.getIdEmployee())) {
+                    actual.setFirstName(newName);
+                    actual.setLastName(newLastName);
+                    actual.setEmail(newEmail);
                 }
 
                 cargarTabla();
@@ -402,7 +399,7 @@ public class ManageUsersController implements Initializable {
     // =========================================================================
     // SUB-MODAL 2.2: REPORTAR INCIDENCIA DE EMPLEADO
     // =========================================================================
-    private void abrirDialogoReportar(Empleado emp) {
+    private void abrirDialogoReportar(Employee emp) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("REPORTAR EMPLEADO");
         dialog.setHeaderText("Registro de Incidencia / Falta Disciplinaria");
@@ -415,7 +412,7 @@ public class ManageUsersController implements Initializable {
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(16, 20, 16, 20));
 
-        Label lblSub = new Label("Colaborador: " + emp.getNombreCompleto() + " (" + emp.getNombrePuesto() + ")");
+        Label lblSub = new Label("Colaborador: " + emp.getFullName() + " (" + emp.getPositionName() + ")");
         lblSub.setStyle("-fx-text-fill: #FF6A13; -fx-font-weight: bold;");
 
         Label lblTipo = crearLabel("TIPO DE REPORTE / FALTA:");
@@ -452,14 +449,14 @@ public class ManageUsersController implements Initializable {
                 return;
             }
 
-            Empleado reportador = Session.getEmpleadoActual();
-            String idReportador = reportador != null ? reportador.getIdEmpleado() : emp.getIdEmpleado();
+            Employee reportador = Session.getCurrentEmployee();
+            String idReportador = reportador != null ? reportador.getIdEmployee() : emp.getIdEmployee();
 
-            boolean registrado = empleadoService.reportar(emp.getIdEmpleado(), idReportador, tipo, detalle);
+            boolean registrado = employeeService.report(emp.getIdEmployee(), idReportador, tipo, detalle);
             if (registrado) {
                 alertInfo.viewAlert("INFORMATION", "REPORTE REGISTRADO",
                         "INCIDENCIA DOCUMENTADA",
-                        "El reporte para \"" + emp.getNombreCompleto() + "\" ha sido guardado exitosamente en el sistema.");
+                        "El reporte para \"" + emp.getFullName() + "\" ha sido guardado exitosamente en el sistema.");
             } else {
                 alertInfo.viewAlert("ERROR", "ERROR AL REPORTAR",
                         "FALLO DE REGISTRO", "Ocurrió un error al guardar el reporte.");
@@ -470,9 +467,9 @@ public class ManageUsersController implements Initializable {
     // =========================================================================
     // SUB-MODAL 2.3: DAR DE BAJA
     // =========================================================================
-    private void procederDarDeBaja(Empleado seleccionado) {
+    private void procederDarDeBaja(Employee seleccionado) {
         // Evitar que el Dueño se desactive a sí mismo
-        Empleado actual = Session.getEmpleadoActual();
+        Employee actual = Session.getCurrentEmployee();
         if (actual != null && actual.getIdEmpleado().equals(seleccionado.getIdEmpleado())) {
             alertInfo.viewAlert("WARNING", "ACCIÓN NO PERMITIDA",
                     "NO PUEDES DARTE DE BAJA A TI MISMO",
@@ -501,7 +498,7 @@ public class ManageUsersController implements Initializable {
                 if (motivo.isEmpty()) {
                     motivo = "Baja administrativa";
                 }
-                boolean eliminado = empleadoService.desactivar(seleccionado.getIdEmpleado(), motivo);
+                boolean eliminado = employeeService.deactivate(seleccionado.getIdEmployee(), motivo);
                 if (eliminado) {
                     cargarTabla();
                     alertInfo.viewAlert("INFORMATION", "EMPLEADO DADO DE BAJA",

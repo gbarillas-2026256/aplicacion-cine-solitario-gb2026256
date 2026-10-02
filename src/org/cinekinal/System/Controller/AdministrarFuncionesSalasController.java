@@ -25,12 +25,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import org.cinekinal.system.model.Funcion;
-import org.cinekinal.system.model.Pelicula;
-import org.cinekinal.system.model.Sala;
-import org.cinekinal.system.repository.FuncionRepository;
-import org.cinekinal.system.repository.PeliculaRepository;
-import org.cinekinal.system.repository.SalaRepository;
+import org.cinekinal.system.model.Movie;
+import org.cinekinal.system.model.Showtime;
+import org.cinekinal.system.model.Theater;
+import org.cinekinal.system.repository.MovieRepository;
+import org.cinekinal.system.repository.ShowtimeRepository;
+import org.cinekinal.system.repository.TheaterRepository;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.Validations;
 import org.cinekinal.system.utils.ViewFactory;
@@ -39,35 +39,35 @@ public class AdministrarFuncionesSalasController implements Initializable {
 
     // Tabla Funciones
     @FXML
-    private TableView<Funcion> tableFunciones;
+    private TableView<Showtime> tableFunciones;
     @FXML
-    private TableColumn<Funcion, String> colFuncionPelicula;
+    private TableColumn<Showtime, String> colFuncionPelicula;
     @FXML
-    private TableColumn<Funcion, String> colFuncionSala;
+    private TableColumn<Showtime, String> colFuncionSala;
     @FXML
-    private TableColumn<Funcion, String> colFuncionFecha;
+    private TableColumn<Showtime, String> colFuncionFecha;
     @FXML
-    private TableColumn<Funcion, String> colFuncionHora;
+    private TableColumn<Showtime, String> colFuncionHora;
     @FXML
-    private TableColumn<Funcion, String> colFuncionPrecio;
+    private TableColumn<Showtime, String> colFuncionPrecio;
 
     // Tabla Salas
     @FXML
-    private TableView<Sala> tableSalas;
+    private TableView<Theater> tableSalas;
     @FXML
-    private TableColumn<Sala, String> colSalaNombre;
+    private TableColumn<Theater, String> colSalaNombre;
     @FXML
-    private TableColumn<Sala, String> colSalaTipo;
+    private TableColumn<Theater, String> colSalaTipo;
     @FXML
-    private TableColumn<Sala, String> colSalaFilas;
+    private TableColumn<Theater, String> colSalaFilas;
     @FXML
-    private TableColumn<Sala, String> colSalaColumnas;
+    private TableColumn<Theater, String> colSalaColumnas;
     @FXML
-    private TableColumn<Sala, String> colSalaCapacidad;
+    private TableColumn<Theater, String> colSalaCapacidad;
 
-    private final FuncionRepository funcionRepo = new FuncionRepository();
-    private final SalaRepository salaRepo = new SalaRepository();
-    private final PeliculaRepository peliculaRepo = new PeliculaRepository();
+    private final ShowtimeRepository showtimeRepo = new ShowtimeRepository();
+    private final TheaterRepository theaterRepo = new TheaterRepository();
+    private final MovieRepository movieRepo = new MovieRepository();
     private final Validations validate = new Validations();
     private final AlertInformation alertInfo = new AlertInformation();
 
@@ -79,31 +79,31 @@ public class AdministrarFuncionesSalasController implements Initializable {
     }
 
     private void configurarTablaFunciones() {
-        colFuncionPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTituloPelicula()));
-        colFuncionSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombreSala() + " (" + d.getValue().getTipoSala() + ")"));
-        colFuncionFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getFecha() != null ? d.getValue().getFecha().toString() : "—"));
-        colFuncionHora.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getHora() != null ? d.getValue().getHora().toString() : "—"));
-        colFuncionPrecio.setCellValueFactory(d -> new SimpleStringProperty("Q " + d.getValue().getPrecioBase()));
+        colFuncionPelicula.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMovieTitle()));
+        colFuncionSala.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTheaterName() + " (" + d.getValue().getTheaterType() + ")"));
+        colFuncionFecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDate() != null ? d.getValue().getDate().toString() : "—"));
+        colFuncionHora.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTime() != null ? d.getValue().getTime().toString() : "—"));
+        colFuncionPrecio.setCellValueFactory(d -> new SimpleStringProperty("Q " + d.getValue().getBasePrice()));
     }
 
     private void configurarTablaSalas() {
-        colSalaNombre.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombreSala()));
-        colSalaTipo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTipoSala()));
-        colSalaFilas.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getFilas())));
-        colSalaColumnas.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getColumnas())));
+        colSalaNombre.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getName()));
+        colSalaTipo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getType()));
+        colSalaFilas.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getRows())));
+        colSalaColumnas.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().getColumns())));
         colSalaCapacidad.setCellValueFactory(d -> new SimpleStringProperty(
-                (d.getValue().getFilas() * d.getValue().getColumnas()) + " butacas"));
+                (d.getValue().getRows() * d.getValue().getColumns()) + " butacas"));
     }
 
     private void cargarDatos() {
-        tableFunciones.setItems(FXCollections.observableArrayList(funcionRepo.obtenerCartelera()));
-        tableSalas.setItems(FXCollections.observableArrayList(salaRepo.obtenerTodas()));
+        tableFunciones.setItems(FXCollections.observableArrayList(showtimeRepo.getBillboard()));
+        tableSalas.setItems(FXCollections.observableArrayList(theaterRepo.getAll()));
     }
 
     @FXML
     public void onProgramarFuncion(ActionEvent event) {
-        List<Pelicula> peliculas = peliculaRepo.obtenerActivas();
-        List<Sala> salas = salaRepo.obtenerTodas();
+        List<Movie> peliculas = movieRepo.getActiveMovies();
+        List<Theater> salas = theaterRepo.getAll();
 
         if (peliculas.isEmpty()) {
             alertInfo.viewAlert("WARNING", "SIN PELÍCULAS", "CATÁLOGO VACÍO",
@@ -131,41 +131,41 @@ public class AdministrarFuncionesSalasController implements Initializable {
         grid.setVgap(10);
         grid.setPadding(new Insets(16, 20, 16, 20));
 
-        ComboBox<Pelicula> cmbPelicula = new ComboBox<>(FXCollections.observableArrayList(peliculas));
+        ComboBox<Movie> cmbPelicula = new ComboBox<>(FXCollections.observableArrayList(peliculas));
         cmbPelicula.getSelectionModel().selectFirst();
         cmbPelicula.setMaxWidth(Double.MAX_VALUE);
         cmbPelicula.getStyleClass().add("eva-field");
         cmbPelicula.setCellFactory(lv -> new ListCell<>() {
             @Override
-            protected void updateItem(Pelicula p, boolean empty) {
+            protected void updateItem(Movie p, boolean empty) {
                 super.updateItem(p, empty);
-                setText(empty || p == null ? null : p.getTitulo() + " (" + p.getDuracionMin() + " min)");
+                setText(empty || p == null ? null : p.getTitle() + " (" + p.getDurationMin() + " min)");
             }
         });
         cmbPelicula.setButtonCell(new ListCell<>() {
             @Override
-            protected void updateItem(Pelicula p, boolean empty) {
+            protected void updateItem(Movie p, boolean empty) {
                 super.updateItem(p, empty);
-                setText(empty || p == null ? null : p.getTitulo());
+                setText(empty || p == null ? null : p.getTitle());
             }
         });
 
-        ComboBox<Sala> cmbSala = new ComboBox<>(FXCollections.observableArrayList(salas));
+        ComboBox<Theater> cmbSala = new ComboBox<>(FXCollections.observableArrayList(salas));
         cmbSala.getSelectionModel().selectFirst();
         cmbSala.setMaxWidth(Double.MAX_VALUE);
         cmbSala.getStyleClass().add("eva-field");
         cmbSala.setCellFactory(lv -> new ListCell<>() {
             @Override
-            protected void updateItem(Sala s, boolean empty) {
+            protected void updateItem(Theater s, boolean empty) {
                 super.updateItem(s, empty);
-                setText(empty || s == null ? null : s.getNombreSala() + " · " + s.getTipoSala() + " (" + (s.getFilas() * s.getColumnas()) + " butacas)");
+                setText(empty || s == null ? null : s.getName() + " · " + s.getType() + " (" + (s.getRows() * s.getColumns()) + " butacas)");
             }
         });
         cmbSala.setButtonCell(new ListCell<>() {
             @Override
-            protected void updateItem(Sala s, boolean empty) {
+            protected void updateItem(Theater s, boolean empty) {
                 super.updateItem(s, empty);
-                setText(empty || s == null ? null : s.getNombreSala());
+                setText(empty || s == null ? null : s.getName());
             }
         });
 
@@ -202,8 +202,8 @@ public class AdministrarFuncionesSalasController implements Initializable {
 
         Optional<ButtonType> res = dialog.showAndWait();
         if (res.isPresent() && res.get() == btnGuardar) {
-            Pelicula pSel = cmbPelicula.getValue();
-            Sala sSel = cmbSala.getValue();
+            Movie pSel = cmbPelicula.getValue();
+            Theater sSel = cmbSala.getValue();
             LocalDate fechaSel = dpFecha.getValue();
             String horaStr = cmbHora.getValue();
             String precioStr = txtPrecio.getText().trim();
@@ -232,10 +232,10 @@ public class AdministrarFuncionesSalasController implements Initializable {
                 return;
             }
 
-            funcionRepo.crear(pSel.getIdPelicula(), sSel.getIdSala(), Date.valueOf(fechaSel), horaSql, precio);
+            showtimeRepo.create(pSel.getIdMovie(), sSel.getIdTheater(), Date.valueOf(fechaSel), horaSql, precio);
             cargarDatos();
             alertInfo.viewAlert("INFORMATION", "FUNCIÓN PROGRAMADA", "ÉXITO",
-                    "Función programada para \"" + pSel.getTitulo() + "\" en " + sSel.getNombreSala()
+                    "Función programada para \"" + pSel.getTitle() + "\" en " + sSel.getName()
                             + " el " + fechaSel + " a las " + horaSql + ".");
         }
     }
@@ -310,7 +310,7 @@ public class AdministrarFuncionesSalasController implements Initializable {
                 return;
             }
 
-            String idNuevaSala = salaRepo.crear(nombre, tipo, filas, cols);
+            String idNuevaSala = theaterRepo.create(nombre, tipo, filas, cols);
             cargarDatos();
             alertInfo.viewAlert("INFORMATION", "SALA CREADA", "ÉXITO",
                     "Se creó \"" + nombre + "\" con " + (filas * cols) + " butacas generadas automáticamente.");

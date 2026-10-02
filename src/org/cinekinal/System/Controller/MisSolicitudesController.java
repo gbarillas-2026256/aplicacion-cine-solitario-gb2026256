@@ -10,72 +10,67 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseEvent;
-import org.cinekinal.system.model.Empleado;
-import org.cinekinal.system.model.Solicitud;
-import org.cinekinal.system.service.SolicitudService;
+import org.cinekinal.system.model.Employee;
+import org.cinekinal.system.model.Request;
+import org.cinekinal.system.service.RequestService;
 import org.cinekinal.system.utils.Session;
 import org.cinekinal.system.utils.ViewFactory;
 
 /**
- * Pantalla donde CUALQUIER empleado (no solo el Dueño) revisa el
- * historial completo de las solicitudes que el mismo ha hecho, y si
- * ya fueron aprobadas, rechazadas, o siguen pendientes. Es la forma
- * de "quedarse en espera de la respuesta" sin bloquear la pantalla:
- * el empleado sigue usando la app normalmente y viene aqui cuando
- * quiera revisar si ya le contestaron.
+ * Controller for viewing employee request history.
  */
 public class MisSolicitudesController implements Initializable {
 
     @FXML
-    private TableView<Solicitud> tablaMisSolicitudes;
+    private TableView<Request> tablaMisSolicitudes;
     @FXML
-    private TableColumn<Solicitud, String> colAccion;
+    private TableColumn<Request, String> colAccion;
     @FXML
-    private TableColumn<Solicitud, String> colMotivo;
+    private TableColumn<Request, String> colMotivo;
     @FXML
-    private TableColumn<Solicitud, String> colEstado;
+    private TableColumn<Request, String> colEstado;
     @FXML
-    private TableColumn<Solicitud, String> colMotivoRespuesta;
+    private TableColumn<Request, String> colMotivoRespuesta;
     @FXML
-    private TableColumn<Solicitud, String> colFechaSolicitud;
+    private TableColumn<Request, String> colFechaSolicitud;
     @FXML
-    private TableColumn<Solicitud, String> colRespondidoPor;
+    private TableColumn<Request, String> colRespondidoPor;
 
-    private final SolicitudService solicitudService = new SolicitudService();
+    private final RequestService requestService = new RequestService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        colAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAccion()));
-        colMotivo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getMotivo()));
-        colEstado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEstado()));
+        colAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAction()));
+        colMotivo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getReason()));
+        colEstado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getStatus()));
         colEstado.setCellFactory(columna -> celdaConColorDeEstado());
         colMotivoRespuesta.setCellValueFactory(d -> {
-            String respuesta = d.getValue().getMotivoRespuesta();
+            String respuesta = d.getValue().getResponseReason();
             return new SimpleStringProperty(respuesta == null ? "—" : respuesta);
         });
         colFechaSolicitud.setCellValueFactory(d ->
-                new SimpleStringProperty(String.valueOf(d.getValue().getFechaSolicitud())));
+                new SimpleStringProperty(String.valueOf(d.getValue().getRequestDate())));
         colRespondidoPor.setCellValueFactory(d -> {
-            Solicitud solicitud = d.getValue();
-            if (solicitud.getAprobadorNombres() == null) {
+            Request request = d.getValue();
+            if (request.getApproverFirstName() == null) {
                 return new SimpleStringProperty("—");
             }
-            return new SimpleStringProperty(solicitud.getAprobadorNombres() + " " + solicitud.getAprobadorApellidos());
+            return new SimpleStringProperty(request.getApproverFirstName() + " " + request.getApproverLastName());
         });
 
         cargarTabla();
     }
 
     private void cargarTabla() {
-        if (!Session.esEmpleado()) {
+        if (!Session.isEmployee()) {
             return;
         }
-        Empleado empleado = Session.getEmpleadoActual();
-        tablaMisSolicitudes.setItems(FXCollections.observableArrayList(solicitudService.obtenerMisSolicitudes(empleado)));
+        Employee employee = Session.getCurrentEmployee();
+        tablaMisSolicitudes.setItems(FXCollections.observableArrayList(requestService.getMyRequests(employee)));
     }
 
     /** Pinta PENDIENTE en amarillo, APROBADA en verde y RECHAZADA en rojo, igual que el resto de la UI. */
-    private TableCell<Solicitud, String> celdaConColorDeEstado() {
+    private TableCell<Request, String> celdaConColorDeEstado() {
         return new TableCell<>() {
             @Override
             protected void updateItem(String estado, boolean vacio) {
