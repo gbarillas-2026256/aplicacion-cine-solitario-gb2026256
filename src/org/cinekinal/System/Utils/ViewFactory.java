@@ -54,18 +54,18 @@ public class ViewFactory {
                 case "register" -> { fxmlFile = "RegisterView.fxml"; width = 900; height = 560; }
                 case "mainmenu" -> fxmlFile = "MainMenuView.fxml";
                 case "users" -> fxmlFile = "ManageUsersView.fxml";
-                case "solicitudes" -> fxmlFile = "SolicitudesView.fxml";
-                case "missolicitudes" -> fxmlFile = "MisSolicitudesView.fxml";
-                case "mensajes" -> fxmlFile = "MensajesView.fxml";
+                case "solicitudes", "requests" -> fxmlFile = "RequestsView.fxml";
+                case "missolicitudes", "myrequests" -> fxmlFile = "MyRequestsView.fxml";
+                case "mensajes", "messages" -> fxmlFile = "MessagesView.fxml";
                 case "comprarboletos", "buytickets" -> fxmlFile = "BuyTicketView.fxml";
                 case "verificarentrada", "verifyentry" -> fxmlFile = "VerifyEntryView.fxml";
                 case "ventataquilla", "boxofficesale" -> fxmlFile = "BoxOfficeSaleView.fxml";
                 case "administrarpeliculas", "managemovies" -> fxmlFile = "ManageMoviesView.fxml";
                 case "administrarfuncionessalas", "manageshowtimestheaters" -> fxmlFile = "ManageShowtimesTheatersView.fxml";
                 case "cambiarprecio", "changeprice" -> fxmlFile = "ChangePriceView.fxml";
-                case "reportes" -> fxmlFile = "ReportesView.fxml";
-                case "ganancias" -> fxmlFile = "GananciasView.fxml";
-                case "cortecaja" -> fxmlFile = "CorteCajaView.fxml";
+                case "reportes", "reports" -> fxmlFile = "ReportsView.fxml";
+                case "ganancias", "earnings" -> fxmlFile = "EarningsView.fxml";
+                case "cortecaja", "cashclosing" -> fxmlFile = "CashClosingView.fxml";
                 case "misboletos", "mytickets" -> fxmlFile = "MyTicketsView.fxml";
                 default -> { fxmlFile = "LoginView.fxml"; width = 820; height = 500; }
             }
@@ -109,70 +109,70 @@ public class ViewFactory {
         loadScene("users");
     }
 
-    public void viewSolicitudes(){
-        loadScene("solicitudes");
+    public void viewRequests(){
+        loadScene("requests");
     }
 
-    public void viewMisSolicitudes(){
-        loadScene("missolicitudes");
+    public void viewMyRequests(){
+        loadScene("myrequests");
     }
 
-    public void viewMensajes(){
-        loadScene("mensajes");
+    public void viewMessages(){
+        loadScene("messages");
     }
 
-    public void viewComprarBoletos(){
-        loadScene("comprarboletos");
+    public void viewBuyTickets(){
+        loadScene("buytickets");
     }
 
-    public void viewVerificarEntrada(){
-        loadScene("verificarentrada");
+    public void viewVerifyEntry(){
+        loadScene("verifyentry");
     }
 
-    public void viewRegistrarVenta(){
-        loadScene("ventataquilla");
+    public void viewBoxOfficeSale(){
+        loadScene("boxofficesale");
     }
 
-    public void viewAdministrarPeliculas(){
-        loadScene("administrarpeliculas");
+    public void viewManageMovies(){
+        loadScene("managemovies");
     }
 
-    public void viewAdministrarFuncionesSalas(){
-        loadScene("administrarfuncionessalas");
+    public void viewManageShowtimesTheaters(){
+        loadScene("manageshowtimestheaters");
     }
 
-    public void viewCambiarPrecio(){
-        loadScene("cambiarprecio");
+    public void viewChangePrice(){
+        loadScene("changeprice");
     }
 
-    public void viewReportes(){
-        loadScene("reportes");
+    public void viewReports(){
+        loadScene("reports");
     }
 
-    public void viewGanancias(){
-        loadScene("ganancias");
+    public void viewEarnings(){
+        loadScene("earnings");
     }
 
-    public void viewCorteCaja(){
-        loadScene("cortecaja");
+    public void viewCashClosing(){
+        loadScene("cashclosing");
     }
 
-    public void viewMisBoletos(){
-        loadScene("misboletos");
+    public void viewMyTickets(){
+        loadScene("mytickets");
     }
 
-    // English aliases
-    public void viewBuyTickets() { viewComprarBoletos(); }
-    public void viewVerifyEntry() { viewVerificarEntrada(); }
-    public void viewBoxOfficeSale() { viewRegistrarVenta(); }
-    public void viewManageMovies() { viewAdministrarPeliculas(); }
-    public void viewManageShowtimesTheaters() { viewAdministrarFuncionesSalas(); }
-    public void viewChangePrice() { viewCambiarPrecio(); }
-    public void viewReports() { viewReportes(); }
-    public void viewEarnings() { viewGanancias(); }
-    public void viewCashClosing() { viewCorteCaja(); }
-    public void viewMyTickets() { viewMisBoletos(); }
-    public void viewMyRequests() { viewMisSolicitudes(); }
-    public void viewRequests() { viewSolicitudes(); }
-    public void viewMessages() { viewMensajes(); }
+    // Spanish compatibility aliases
+    public void viewSolicitudes() { viewRequests(); }
+    public void viewMisSolicitudes() { viewMyRequests(); }
+    public void viewMensajes() { viewMessages(); }
+    public void viewComprarBoletos() { viewBuyTickets(); }
+    public void viewVerificarEntrada() { viewVerifyEntry(); }
+    public void viewRegistrarVenta() { viewBoxOfficeSale(); }
+    public void viewAdministrarPeliculas() { viewManageMovies(); }
+    public void viewAdministrarFuncionesSalas() { viewManageShowtimesTheaters(); }
+    public void viewCambiarPrecio() { viewChangePrice(); }
+    public void viewReportes() { viewReports(); }
+    public void viewGanancias() { viewEarnings(); }
+    public void viewCorteCaja() { viewCashClosing(); }
+    public void viewMisBoletos() { viewMyTickets(); }
 }

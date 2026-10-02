@@ -62,48 +62,48 @@ public class MainMenuController implements Initializable {
     }
 
     private void buildEmployeeMenu(Employee employee) {
-        addActionButton(employee, Action.VIEW_BILLBOARD, () -> new ViewFactory().viewComprarBoletos());
-        addActionButton(employee, Action.VERIFY_ENTRY, () -> new ViewFactory().viewVerificarEntrada());
-        addActionButton(employee, Action.BOX_OFFICE_SALE, () -> new ViewFactory().viewRegistrarVenta());
+        addActionButton(employee, Action.VIEW_BILLBOARD, () -> new ViewFactory().viewBuyTickets());
+        addActionButton(employee, Action.VERIFY_ENTRY, () -> new ViewFactory().viewVerifyEntry());
+        addActionButton(employee, Action.BOX_OFFICE_SALE, () -> new ViewFactory().viewBoxOfficeSale());
 
         if (employee.getHierarchyLevel() > 1) {
-            addActionButton(employee, Action.CASH_CLOSING, () -> new ViewFactory().viewCorteCaja());
+            addActionButton(employee, Action.CASH_CLOSING, () -> new ViewFactory().viewCashClosing());
         }
 
-        addActionButton(employee, Action.MANAGE_SHOWTIMES_THEATERS, () -> new ViewFactory().viewAdministrarFuncionesSalas());
-        addActionButton(employee, Action.MANAGE_MOVIES, () -> new ViewFactory().viewAdministrarPeliculas());
-        addActionButton(employee, Action.VIEW_REPORTS, () -> new ViewFactory().viewReportes());
-        addActionButton(employee, Action.VIEW_EARNINGS, () -> new ViewFactory().viewGanancias());
+        addActionButton(employee, Action.MANAGE_SHOWTIMES_THEATERS, () -> new ViewFactory().viewManageShowtimesTheaters());
+        addActionButton(employee, Action.MANAGE_MOVIES, () -> new ViewFactory().viewManageMovies());
+        addActionButton(employee, Action.VIEW_REPORTS, () -> new ViewFactory().viewReports());
+        addActionButton(employee, Action.VIEW_EARNINGS, () -> new ViewFactory().viewEarnings());
 
         if (permissionService.canView(employee, Action.CHANGE_PRICE)) {
-            Button btnCambiarPrecio = createSidebarButton(Action.CHANGE_PRICE.getDescription());
-            btnCambiarPrecio.setOnAction(e -> new ViewFactory().viewCambiarPrecio());
-            vboxSidebar.getChildren().add(btnCambiarPrecio);
+            Button btnChangePrice = createSidebarButton(Action.CHANGE_PRICE.getDescription());
+            btnChangePrice.setOnAction(e -> new ViewFactory().viewChangePrice());
+            vboxSidebar.getChildren().add(btnChangePrice);
         }
 
         if (employee.getHierarchyLevel() == 1) {
-            Button btnGestionUsuarios = createSidebarButton("Gestión de empleados");
-            btnGestionUsuarios.setOnAction(e -> new ViewFactory().viewManageUsers());
-            vboxSidebar.getChildren().add(btnGestionUsuarios);
+            Button btnManageUsers = createSidebarButton("Gestión de empleados");
+            btnManageUsers.setOnAction(e -> new ViewFactory().viewManageUsers());
+            vboxSidebar.getChildren().add(btnManageUsers);
 
-            Button btnSolicitudes = createSidebarButton("Solicitudes pendientes");
-            btnSolicitudes.setOnAction(e -> new ViewFactory().viewSolicitudes());
-            vboxSidebar.getChildren().add(btnSolicitudes);
+            Button btnRequests = createSidebarButton("Solicitudes pendientes");
+            btnRequests.setOnAction(e -> new ViewFactory().viewRequests());
+            vboxSidebar.getChildren().add(btnRequests);
         }
 
-        Button btnMisSolicitudes = createSidebarButton("Mis solicitudes");
-        btnMisSolicitudes.setOnAction(e -> new ViewFactory().viewMisSolicitudes());
-        vboxSidebar.getChildren().add(btnMisSolicitudes);
+        Button btnMyRequests = createSidebarButton("Mis solicitudes");
+        btnMyRequests.setOnAction(e -> new ViewFactory().viewMyRequests());
+        vboxSidebar.getChildren().add(btnMyRequests);
 
-        Button btnMensajes = createSidebarButton("Mensajes");
-        btnMensajes.setOnAction(e -> new ViewFactory().viewMensajes());
-        vboxSidebar.getChildren().add(btnMensajes);
+        Button btnMessages = createSidebarButton("Mensajes");
+        btnMessages.setOnAction(e -> new ViewFactory().viewMessages());
+        vboxSidebar.getChildren().add(btnMessages);
     }
 
     private void buildCustomerMenu() {
-        Button btnComprar = createSidebarButton("Comprar boletos");
-        btnComprar.setOnAction(e -> new ViewFactory().viewComprarBoletos());
-        vboxSidebar.getChildren().add(btnComprar);
+        Button btnBuy = createSidebarButton("Comprar boletos");
+        btnBuy.setOnAction(e -> new ViewFactory().viewBuyTickets());
+        vboxSidebar.getChildren().add(btnBuy);
 
         Customer customer = Session.getCurrentCustomer();
         if (customer != null) {
@@ -111,9 +111,9 @@ public class MainMenuController implements Initializable {
                 List<Ticket> tickets = ticketRepo.getTicketsByCustomer(customer.getIdCustomer());
                 if (!tickets.isEmpty()) {
                     String buttonText = tickets.size() == 1 ? "🎟️ Ver mi Boleto" : "🎟️ Mis Boletos (" + tickets.size() + ")";
-                    Button btnMisBoletos = createSidebarButton(buttonText);
-                    btnMisBoletos.setOnAction(e -> new ViewFactory().viewMisBoletos());
-                    vboxSidebar.getChildren().add(btnMisBoletos);
+                    Button btnMyTickets = createSidebarButton(buttonText);
+                    btnMyTickets.setOnAction(e -> new ViewFactory().viewMyTickets());
+                    vboxSidebar.getChildren().add(btnMyTickets);
                 }
             } catch (Exception e) {
                 System.out.println("Aviso al consultar boletos del cliente: " + e.getMessage());

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="680.0" prefWidth="1050.0" stylesheets="@../styles/ManageUsersStyles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.cinekinal.system.controller.ReportsController">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <HBox maxHeight="6.0" minHeight="6.0" prefHeight="6.0" styleClass="eva-hazard-strip" />
+            <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="12.0" styleClass="header">
+               <padding>
+                  <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+               </padding>
+               <children>
+                  <Label styleClass="header-titulo" text="CINE KINAL · REPORTES OPERATIVOS Y OCUPACIÓN DE SALAS" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#onBack" styleClass="boton-volver" text="◄ VOLVER" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <VBox spacing="14.0" styleClass="area-central" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="22.0" right="22.0" top="16.0" />
+         </padding>
+         <children>
+            <!-- Resumen Operativo Superior -->
+            <HBox spacing="14.0">
+               <children>
+                  <VBox spacing="4.0" style="-fx-background-color: #17181B; -fx-padding: 12 18; -fx-border-color: #39FF6A; -fx-border-width: 1.2; -fx-border-radius: 2;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="eva-label" text="👥 ASISTENCIA TOTAL REGISTRADA HOY" />
+                        <Label fx:id="lblTodayAttendance" style="-fx-text-fill: #39FF6A; -fx-font-size: 24px; -fx-font-weight: bold;" text="0 espectadores" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="4.0" style="-fx-background-color: #17181B; -fx-padding: 12 18; -fx-border-color: #FF6A13; -fx-border-width: 1.2; -fx-border-radius: 2;" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="eva-label" text="🎬 FUNCIONES Y SALAS ACTIVAS" />
+                        <Label fx:id="lblActiveShowtimes" style="-fx-text-fill: #FF6A13; -fx-font-size: 24px; -fx-font-weight: bold;" text="En cartelera" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <!-- Pestañas Operativas -->
+            <TabPane styleClass="tabla-usuarios" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+              <tabs>
+                <!-- PESTAÑA 1: OCUPACIÓN DE SALAS -->
+                <Tab text="  OCUPACIÓN DE CARTELERA Y BUTACAS  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <HBox alignment="CENTER_LEFT">
+                             <children>
+                                <Label styleClass="tarjeta-titulo" text="PORCENTAJE DE OCUPACIÓN POR FUNCIÓN" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button mnemonicParsing="false" onAction="#onRefreshOccupancy" styleClass="eva-button-ghost" text="🔄 REFRESCAR" />
+                             </children>
+                          </HBox>
+                          <TableView fx:id="tableOccupancy" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colOccupancyMovie" prefWidth="320.0" text="TÍTULO DE LA PELÍCULA" />
+                                <TableColumn fx:id="colOccupancyTheaterSchedule" prefWidth="280.0" text="SALA, FECHA Y HORA" />
+                                <TableColumn fx:id="colOccupancySeats" prefWidth="200.0" text="BUTACAS OCUPADAS" />
+                                <TableColumn fx:id="colOccupancyPercentage" prefWidth="160.0" text="OCUPACIÓN (%)" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 2: PELÍCULAS MÁS VISTAS -->
+                <Tab text="  PELÍCULAS MÁS VISTAS (ASISTENCIA)  ">
+                  <content>
+                    <VBox spacing="12.0" style="-fx-background-color: #050506; -fx-padding: 14;">
+                       <children>
+                          <Label styleClass="tarjeta-titulo" text="RANKING DE POPULARIDAD POR NÚMERO DE ESPECTADORES" />
+                          <TableView fx:id="tableTopAttendance" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                             <columns>
+                                <TableColumn fx:id="colAttendanceRanking" prefWidth="480.0" text="POSICIÓN / PELÍCULA" />
+                                <TableColumn fx:id="colAttendanceTickets" prefWidth="320.0" text="TOTAL DE ASISTENTES / ENTRADAS" />
+                             </columns>
+                          </TableView>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+
+                <!-- PESTAÑA 3: REPORTES DE TURNO E INCIDENCIAS DE CAJA -->
+                <Tab text="  📋 REPORTES DE TURNO E INCIDENCIAS DE CAJA  ">
+                  <content>
+                    <VBox spacing="10.0" style="-fx-background-color: #050506; -fx-padding: 12;">
+                       <children>
+                          <!-- Barra de filtros -->
+                          <HBox alignment="CENTER_LEFT" spacing="10.0">
+                             <children>
+                                <Label styleClass="eva-label" text="DESDE:" />
+                                <DatePicker fx:id="dpShiftStart" maxWidth="140.0" styleClass="eva-field" />
+                                <Label styleClass="eva-label" text="HASTA:" />
+                                <DatePicker fx:id="dpShiftEnd" maxWidth="140.0" styleClass="eva-field" />
+                                <Button mnemonicParsing="false" onAction="#onFilterShifts" styleClass="eva-button-ghost" text="🔄 FILTRAR" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label styleClass="eva-label" text="BUSCAR:" />
+                                <TextField fx:id="txtSearchShift" prefWidth="280.0" promptText="Buscar empleado o texto del suceso..." styleClass="eva-field" />
+                             </children>
+                          </HBox>
+                          
+                          <!-- Tabla de Cortes / Reportes de Turno -->
+                          <Label styleClass="tarjeta-titulo" text="CIERRES DE TURNO Y MENSAJES DE INCIDENCIA REGISTRADOS POR EL PERSONAL" />
+                          <TableView fx:id="tableShifts" prefHeight="170.0" styleClass="tabla-usuarios">
+                             <columns>
+                                <TableColumn fx:id="colShiftDate" prefWidth="95.0" text="FECHA" />
+                                <TableColumn fx:id="colShiftRecord" prefWidth="140.0" text="HORA REGISTRO" />
+                                <TableColumn fx:id="colShiftEmployee" prefWidth="180.0" text="EMPLEADO RESPONSABLE" />
+                                <TableColumn fx:id="colShiftPosition" prefWidth="105.0" text="PUESTO" />
+                                <TableColumn fx:id="colShiftTickets" prefWidth="75.0" text="BOLETOS" />
+                                <TableColumn fx:id="colShiftTotal" prefWidth="110.0" text="TOTAL DÍA (Q)" />
+                                <TableColumn fx:id="colShiftSummaryMessage" prefWidth="290.0" text="MENSAJE / SUCESO REPORTADO" />
+                             </columns>
+                          </TableView>
+
+                          <!-- Panel de Detalle del Turno Seleccionado -->
+                          <HBox spacing="12.0" VBox.vgrow="ALWAYS">
+                             <children>
+                                <!-- Columna Izquierda: Mensaje Completo del Turno -->
+                                <VBox spacing="6.0" styleClass="panel-incidencia" HBox.hgrow="ALWAYS">
+                                   <children>
+                                      <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                         <children>
+                                            <Label styleClass="eva-label" text="📝 MENSAJE Y SUCESOS DEL TURNO SELECCIONADO" />
+                                            <Region HBox.hgrow="ALWAYS" />
+                                            <Label fx:id="lblShiftResponsibleBadge" styleClass="badge-turno" text="Empleado: —" />
+                                         </children>
+                                      </HBox>
+                                      <TextArea fx:id="txtShiftFullMessage" editable="false" prefHeight="110.0" promptText="Selecciona un turno de la tabla superior para inspeccionar el mensaje completo del empleado, incidencias con clientes o reportes de sala..." styleClass="eva-field" wrapText="true" VBox.vgrow="ALWAYS" />
+                                      <HBox spacing="14.0">
+                                         <children>
+                                            <Label fx:id="lblShiftAdmissions" style="-fx-text-fill: #39FF6A; -fx-font-weight: bold; -fx-font-size: 11px;" text="Entradas: Q 0.00" />
+                                            <Label fx:id="lblShiftConcessions" style="-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 11px;" text="Dulcería: Q 0.00" />
+                                            <Label fx:id="lblShiftGrandTotal" style="-fx-text-fill: #FFD500; -fx-font-weight: bold; -fx-font-size: 11px;" text="Total Turno: Q 0.00" />
+                                         </children>
+                                      </HBox>
+                                   </children>
+                                </VBox>
+
+                                <!-- Columna Derecha: Conteo y Desglose de Productos (combos, palomitas, etc.) -->
+                                <VBox spacing="6.0" styleClass="panel-incidencia" HBox.hgrow="ALWAYS">
+                                   <children>
+                                      <Label styleClass="eva-label" text="🍿 CUENTA DE DULCERÍA (COMBOS, PALOMITAS, BEBIDAS)" />
+                                      <TableView fx:id="tableShiftDetails" prefHeight="110.0" styleClass="tabla-usuarios" VBox.vgrow="ALWAYS">
+                                         <columns>
+                                            <TableColumn fx:id="colDetCategory" prefWidth="110.0" text="CATEGORÍA" />
+                                            <TableColumn fx:id="colDetDescription" prefWidth="170.0" text="DESCRIPCIÓN" />
+                                            <TableColumn fx:id="colDetQuantity" prefWidth="60.0" text="CANT." />
+                                            <TableColumn fx:id="colDetPrice" prefWidth="80.0" text="P. UNIT." />
+                                            <TableColumn fx:id="colDetSubtotal" prefWidth="80.0" text="SUBTOTAL" />
+                                         </columns>
+                                      </TableView>
+                                   </children>
+                                </VBox>
+                             </children>
+                          </HBox>
+                       </children>
+                    </VBox>
+                  </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
