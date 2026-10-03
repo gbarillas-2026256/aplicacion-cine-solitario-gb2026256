@@ -22,9 +22,4 @@ public class PermissionService {
     public boolean needsRequest(Employee employee, Action action) {
         return canView(employee, action) && !canExecuteDirectly(employee, action);
     }
-
-    // Compatibility aliases
-    public boolean puedeVer(Employee e, Action a) { return canView(e, a); }
-    public boolean puedeEjecutarDirecto(Employee e, Action a) { return canExecuteDirectly(e, a); }
-    public boolean necesitaSolicitud(Employee e, Action a) { return needsRequest(e, a); }
 }

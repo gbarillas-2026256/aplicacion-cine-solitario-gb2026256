@@ -67,10 +67,4 @@ public class Theater {
         this.columns = columns;
     }
 
-    // Compatibility
-    public String getIdSala() { return idTheater; }
-    public String getNombreSala() { return theaterName; }
-    public String getTipoSala() { return theaterType; }
-    public int getFilas() { return rows; }
-    public int getColumnas() { return columns; }
 }

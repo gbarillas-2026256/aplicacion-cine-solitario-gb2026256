@@ -27,13 +27,4 @@ public class TicketService {
     public List<Ticket> getTicketsByCustomer(String idCustomer) {
         return ticketRepo.getTicketsByCustomer(idCustomer);
     }
-
-    // Compatibility aliases
-    public TicketPurchaseStatus comprar(String idFuncion, String idCliente, String idAsiento, BigDecimal precioFinal) {
-        return purchase(idFuncion, idCliente, idAsiento, precioFinal);
-    }
-
-    public List<Ticket> obtenerPorCliente(String idCliente) {
-        return getTicketsByCustomer(idCliente);
-    }
 }

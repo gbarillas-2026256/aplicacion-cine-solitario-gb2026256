@@ -92,10 +92,4 @@ public class Movie {
         this.trailerUrl = trailerUrl;
     }
 
-    // Compatibility getters for TableView properties if needed
-    public String getIdPelicula() { return idMovie; }
-    public String getTitulo() { return title; }
-    public String getGenero() { return genre; }
-    public String getClasificacion() { return rating; }
-    public String getSinopsis() { return synopsis; }
 }

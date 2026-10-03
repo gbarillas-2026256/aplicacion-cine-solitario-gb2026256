@@ -40,16 +40,4 @@ public enum Action {
         return freeLevel;
     }
 
-    // Compatibility aliases
-    public String getDescripcion() {
-        return description;
-    }
-
-    public int getNivelVisible() {
-        return visibleLevel;
-    }
-
-    public int getNivelLibre() {
-        return freeLevel;
-    }
 }

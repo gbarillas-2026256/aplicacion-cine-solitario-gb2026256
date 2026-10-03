@@ -7,73 +7,87 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 public class SceneManager {
-    private static SceneManager instanciaSceneManager;
-    private Stage stagePrincipal;
-            
-    private SceneManager(){ }
-    
-    public static SceneManager getInstanciaSceneManager(){
-        if( instanciaSceneManager == null  )
-            instanciaSceneManager = new SceneManager();
-        return instanciaSceneManager;
+    private static SceneManager instance;
+    private Stage mainStage;
+
+    private SceneManager() {
     }
 
-    public void changeRoot(Parent root, int width, int height, boolean maximizar) {
+    public static SceneManager getInstance() {
+        if (instance == null) {
+            instance = new SceneManager();
+        }
+        return instance;
+    }
+
+    public static SceneManager getInstanciaSceneManager() {
+        return getInstance();
+    }
+
+    public void changeRoot(Parent root, int width, int height, boolean maximize) {
         try {
-            if (stagePrincipal == null) {
+            if (mainStage == null) {
                 return;
             }
             if (root instanceof Region) {
                 ((Region) root).setMaxWidth(Double.MAX_VALUE);
                 ((Region) root).setMaxHeight(Double.MAX_VALUE);
             }
-            Scene currentScene = stagePrincipal.getScene();
+            Scene currentScene = mainStage.getScene();
             if (currentScene == null) {
                 if (width > 0 && height > 0) {
                     currentScene = new Scene(root, width, height);
                 } else {
                     currentScene = new Scene(root);
                 }
-                stagePrincipal.setScene(currentScene);
+                mainStage.setScene(currentScene);
             } else {
                 currentScene.setRoot(root);
             }
 
-            if (maximizar) {
-                if (!stagePrincipal.isMaximized()) {
-                    stagePrincipal.setMaximized(true);
+            if (maximize) {
+                if (!mainStage.isMaximized()) {
+                    mainStage.setMaximized(true);
                 }
                 Platform.runLater(() -> {
-                    if (!stagePrincipal.isMaximized()) {
-                        stagePrincipal.setMaximized(true);
+                    if (!mainStage.isMaximized()) {
+                        mainStage.setMaximized(true);
                     }
                 });
             } else {
-                stagePrincipal.setMaximized(false);
-                stagePrincipal.sizeToScene();
-                stagePrincipal.centerOnScreen();
+                mainStage.setMaximized(false);
+                mainStage.sizeToScene();
+                mainStage.centerOnScreen();
             }
-            stagePrincipal.show();
+            mainStage.show();
         } catch (Exception e) {
             System.out.println("Error al cambiar de vista: " + e.getMessage());
         }
     }
 
-    public void changeScene(Scene scene){
+    public void changeScene(Scene scene) {
         changeScene(scene, true);
     }
 
-    public void changeScene(Scene scene, boolean maximizar){
+    public void changeScene(Scene scene, boolean maximize) {
         if (scene != null) {
-            changeRoot(scene.getRoot(), 0, 0, maximizar);
+            changeRoot(scene.getRoot(), 0, 0, maximize);
         }
     }
-    
+
+    public Stage getMainStage() {
+        return mainStage;
+    }
+
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
+
     public Stage getStagePrincipal() {
-        return stagePrincipal;
+        return getMainStage();
     }
 
     public void setStagePrincipal(Stage stagePrincipal) {
-        this.stagePrincipal = stagePrincipal;
+        setMainStage(stagePrincipal);
     }
 }

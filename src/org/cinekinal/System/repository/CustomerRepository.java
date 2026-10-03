@@ -56,9 +56,4 @@ public class CustomerRepository {
         c.setVip(rs.getBoolean("es_vip"));
         return c;
     }
-
-    // Compatibility aliases
-    public void crear(Customer c) { create(c); }
-    public List<Customer> obtenerTodos() { return getAll(); }
-    public Customer obtenerOcrearClienteGenerico() { return getOrCreateGenericCustomer(); }
 }

@@ -40,9 +40,4 @@ public class CustomerService {
             return CustomerRegistrationStatus.CREATION_ERROR;
         }
     }
-
-    // Compatibility aliases
-    public CustomerRegistrationStatus registrar(String n, String a, String c, String u, String p) {
-        return register(n, a, c, u, p);
-    }
 }

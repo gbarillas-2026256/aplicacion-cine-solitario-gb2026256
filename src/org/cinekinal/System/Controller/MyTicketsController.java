@@ -147,7 +147,7 @@ public class MyTicketsController implements Initializable {
                 + "Precio: Q" + ticket.getFinalPrice();
 
         try {
-            Image qrImage = QRCodeGenerator.generar(qrContent, 200);
+            Image qrImage = QRCodeGenerator.generate(qrContent, 200);
             imgQR.setImage(qrImage);
         } catch (Exception e) {
             imgQR.setImage(null);

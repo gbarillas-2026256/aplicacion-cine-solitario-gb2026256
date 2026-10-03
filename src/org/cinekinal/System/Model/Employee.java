@@ -130,16 +130,4 @@ public class Employee {
         return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "").trim();
     }
 
-    // Compatibility getters
-    public String getIdEmpleado() { return idEmployee; }
-    public String getNombres() { return firstName; }
-    public String getApellidos() { return lastName; }
-    public String getCorreo() { return email; }
-    public String getUsuario() { return username; }
-    public boolean isActivo() { return active; }
-    public String getMotivoBaja() { return inactiveReason; }
-    public int getIdPuesto() { return positionId; }
-    public String getNombrePuesto() { return positionName; }
-    public int getNivelJerarquico() { return hierarchyLevel; }
-    public String getNombreCompleto() { return getFullName(); }
 }

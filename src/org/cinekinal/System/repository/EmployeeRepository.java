@@ -71,12 +71,4 @@ public class EmployeeRepository {
         employee.setHierarchyLevel(rs.getInt("nivel_jerarquico"));
         return employee;
     }
-
-    // Compatibility aliases
-    public void crear(Employee e) { create(e); }
-    public List<Employee> obtenerTodos() { return getAll(); }
-    public void desactivar(String id, String m) { deactivate(id, m); }
-    public void desactivar(String id) { deactivate(id); }
-    public void editar(String id, String n, String a, String c, int p) { edit(id, n, a, c, p); }
-    public void reportar(String id, String rep, String t, String d) { report(id, rep, t, d); }
 }

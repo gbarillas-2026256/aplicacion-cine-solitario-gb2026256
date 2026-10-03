@@ -44,12 +44,4 @@ public class Session {
         currentEmployee = null;
         currentCustomer = null;
     }
-
-    public static boolean esEmpleado() {
-        return isEmployee();
-    }
-
-    public static boolean esCliente() {
-        return isCustomer();
-    }
 }

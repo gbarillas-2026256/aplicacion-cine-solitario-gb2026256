@@ -401,7 +401,7 @@ public class BuyTicketController implements Initializable {
                         ? ticket.getCustomerName() : customerDisplayName;
 
                 String qrContent = buildQRContent(ticketId, selectedShowtime, selectedSeat, displayName);
-                Image qrImage = QRCodeGenerator.generar(qrContent, 220);
+                Image qrImage = QRCodeGenerator.generate(qrContent, 220);
 
                 displayTicket(ticketId, selectedShowtime, selectedSeat, displayName, card, qrImage);
                 loadSeatMap(selectedShowtime);

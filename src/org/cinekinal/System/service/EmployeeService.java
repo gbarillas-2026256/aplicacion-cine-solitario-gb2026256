@@ -84,12 +84,4 @@ public class EmployeeService {
             return false;
         }
     }
-
-    // Compatibility aliases
-    public EmployeeRegistrationStatus registrar(String n, String a, String c, String u, String p, int pos) {
-        return register(n, a, c, u, p, pos);
-    }
-    public List<Employee> obtenerTodos() { return getAll(); }
-    public boolean editar(String id, String n, String a, String c, int p) { return edit(id, n, a, c, p); }
-    public boolean reportar(String id, String rep, String t, String d) { return report(id, rep, t, d); }
 }

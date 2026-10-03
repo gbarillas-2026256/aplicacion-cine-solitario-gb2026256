@@ -86,17 +86,4 @@ public class CashClosingDetail {
         this.subtotal = subtotal;
     }
 
-    // Compatibility
-    public String getIdDetalle() { return idDetail; }
-    public void setIdDetalle(String id) { this.idDetail = id; }
-    public String getIdCorte() { return closingId; }
-    public void setIdCorte(String id) { this.closingId = id; }
-    public String getCategoria() { return category; }
-    public void setCategoria(String c) { this.category = c; }
-    public String getDescripcion() { return description; }
-    public void setDescripcion(String d) { this.description = d; }
-    public int getCantidad() { return quantity; }
-    public void setCantidad(int q) { this.quantity = q; }
-    public BigDecimal getPrecioUnitario() { return unitPrice; }
-    public void setPrecioUnitario(BigDecimal p) { this.unitPrice = p; }
 }

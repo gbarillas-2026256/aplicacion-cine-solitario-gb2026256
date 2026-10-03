@@ -16,9 +16,8 @@ public class ReportRepository {
             this.incomeToday = incomeToday != null ? incomeToday : BigDecimal.ZERO;
         }
 
-        // Compatibility
-        public int getBoletosHoy() { return ticketsToday; }
-        public BigDecimal getIngresosHoy() { return incomeToday; }
+        public int getTicketsToday() { return ticketsToday; }
+        public BigDecimal getIncomeToday() { return incomeToday; }
     }
 
     public static class ReportRow {
@@ -38,12 +37,6 @@ public class ReportRepository {
         public String getColumn2() { return column2; }
         public String getColumn3() { return column3; }
         public String getColumn4() { return column4; }
-
-        // Compatibility
-        public String getColumna1() { return column1; }
-        public String getColumna2() { return column2; }
-        public String getColumna3() { return column3; }
-        public String getColumna4() { return column4; }
     }
 
     public TodaySummary getTodaySummary() {
@@ -98,11 +91,4 @@ public class ReportRepository {
             return defaultValue;
         }
     }
-
-    // Compatibility aliases
-    public TodaySummary obtenerResumenHoy() { return getTodaySummary(); }
-    public List<ReportRow> obtenerIngresosPorDia(Date s, Date e) { return getDailyIncome(s, e); }
-    public List<ReportRow> obtenerTopPeliculas(Date s, Date e, int l) { return getTopMovies(s, e, l); }
-    public List<ReportRow> obtenerOcupacionCartelera() { return getBillboardOccupancy(); }
-    public List<ReportRow> obtenerIngresosPorPelicula(Date s, Date e) { return getMovieIncome(s, e); }
 }

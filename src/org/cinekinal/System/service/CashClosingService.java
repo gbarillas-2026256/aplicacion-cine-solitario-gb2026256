@@ -68,10 +68,4 @@ public class CashClosingService {
             return Collections.emptyList();
         }
     }
-
-    // Compatibility aliases
-    public CashClosingRepository.DailyTicketsSummary obtenerEntradasDelDia(Date f) { return getDailyTicketsSummary(f); }
-    public List<CashClosingRepository.TicketsPerMovie> obtenerEntradasPorPelicula(Date f) { return getTicketsPerMovie(f); }
-    public List<CashClosing> obtenerPorFecha(Date s, Date e) { return getByDateRange(s, e); }
-    public List<CashClosingDetail> obtenerDetalles(String id) { return getDetails(id); }
 }

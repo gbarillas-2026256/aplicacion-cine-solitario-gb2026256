@@ -14,9 +14,4 @@ public class SeatRepository {
             return seat;
         }, idTheater);
     }
-
-    // Compatibility alias
-    public List<Seat> obtenerPorSala(String idSala) {
-        return getByTheater(idSala);
-    }
 }

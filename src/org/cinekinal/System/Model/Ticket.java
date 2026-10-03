@@ -169,29 +169,4 @@ public class Ticket {
         this.customerId = customerId;
     }
 
-    // Compatibility
-    public String getIdBoleto() { return idTicket; }
-    public void setIdBoleto(String id) { this.idTicket = id; }
-    public String getTituloPelicula() { return movieTitle; }
-    public void setTituloPelicula(String t) { this.movieTitle = t; }
-    public String getNombreSala() { return theaterName; }
-    public void setNombreSala(String n) { this.theaterName = n; }
-    public Date getFecha() { return showDate; }
-    public void setFecha(Date f) { this.showDate = f; }
-    public Time getHora() { return showTime; }
-    public void setHora(Time h) { this.showTime = h; }
-    public String getFila() { return row; }
-    public void setFila(String f) { this.row = f; }
-    public int getNumero() { return seatNumber; }
-    public void setNumero(int n) { this.seatNumber = n; }
-    public BigDecimal getPrecioFinal() { return finalPrice; }
-    public void setPrecioFinal(BigDecimal p) { this.finalPrice = p; }
-    public Timestamp getFechaCompra() { return purchaseDate; }
-    public void setFechaCompra(Timestamp f) { this.purchaseDate = f; }
-    public String getNombreCliente() { return customerName; }
-    public void setNombreCliente(String n) { this.customerName = n; }
-    public boolean isUsado() { return entryUsed; }
-    public void setUsado(boolean u) { this.entryUsed = u; }
-    public Timestamp getHoraEntrada() { return entryTime; }
-    public void setHoraEntrada(Timestamp h) { this.entryTime = h; }
 }

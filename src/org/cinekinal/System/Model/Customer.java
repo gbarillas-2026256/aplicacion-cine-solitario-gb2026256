@@ -86,12 +86,4 @@ public class Customer {
         return (firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "").trim();
     }
 
-    // Compatibility getters
-    public String getIdCliente() { return idCustomer; }
-    public String getNombres() { return firstName; }
-    public String getApellidos() { return lastName; }
-    public String getCorreo() { return email; }
-    public String getUsuario() { return username; }
-    public boolean isEsVip() { return vip; }
-    public String getNombreCompleto() { return getFullName(); }
 }

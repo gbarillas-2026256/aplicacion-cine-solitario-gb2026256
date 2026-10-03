@@ -41,11 +41,4 @@ public class RequestService {
     public List<Request> getMyRequests(Employee employee) {
         return requestRepo.getByEmployee(employee.getIdEmployee());
     }
-
-    // Compatibility aliases
-    public AttemptResult intentar(Employee e, Action a, String m, Runnable d) { return attempt(e, a, m, d); }
-    public void aprobar(Request r, Employee a) { approve(r, a); }
-    public void rechazar(Request r, Employee a, String m) { reject(r, a, m); }
-    public List<Request> obtenerPendientes() { return getPending(); }
-    public List<Request> obtenerMisSolicitudes(Employee e) { return getMyRequests(e); }
 }

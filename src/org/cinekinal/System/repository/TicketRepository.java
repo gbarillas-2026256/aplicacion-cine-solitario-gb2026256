@@ -88,13 +88,4 @@ public class TicketRepository {
         }
         return ticket;
     }
-
-    // Compatibility aliases
-    public Set<String> obtenerAsientosOcupados(String id) { return getOccupiedSeats(id); }
-    public void comprar(String f, String c, String a, BigDecimal p) { purchase(f, c, a, p); }
-    public Ticket obtenerUltimoBoletoComprado(String f, String a) { return getLastPurchasedTicket(f, a); }
-    public List<Ticket> obtenerPorCliente(String c) { return getTicketsByCustomer(c); }
-    public Ticket buscarBoletoPorId(String id) { return findTicketById(id); }
-    public boolean marcarBoletoIngresado(String id) { return markTicketCheckedIn(id); }
-    public boolean estaBoletoIngresado(String id) { return isTicketCheckedIn(id); }
 }

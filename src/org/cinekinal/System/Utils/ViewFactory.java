@@ -160,19 +160,4 @@ public class ViewFactory {
     public void viewMyTickets(){
         loadScene("mytickets");
     }
-
-    // Spanish compatibility aliases
-    public void viewSolicitudes() { viewRequests(); }
-    public void viewMisSolicitudes() { viewMyRequests(); }
-    public void viewMensajes() { viewMessages(); }
-    public void viewComprarBoletos() { viewBuyTickets(); }
-    public void viewVerificarEntrada() { viewVerifyEntry(); }
-    public void viewRegistrarVenta() { viewBoxOfficeSale(); }
-    public void viewAdministrarPeliculas() { viewManageMovies(); }
-    public void viewAdministrarFuncionesSalas() { viewManageShowtimesTheaters(); }
-    public void viewCambiarPrecio() { viewChangePrice(); }
-    public void viewReportes() { viewReports(); }
-    public void viewGanancias() { viewEarnings(); }
-    public void viewCorteCaja() { viewCashClosing(); }
-    public void viewMisBoletos() { viewMyTickets(); }
 }

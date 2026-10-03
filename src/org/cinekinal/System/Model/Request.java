@@ -119,27 +119,4 @@ public class Request {
                 + (approverLastName != null ? approverLastName : "").trim();
     }
 
-    // Compatibility
-    public String getIdSolicitud() { return idRequest; }
-    public void setIdSolicitud(String id) { this.idRequest = id; }
-    public String getAccion() { return action; }
-    public void setAccion(String a) { this.action = a; }
-    public String getMotivo() { return reason; }
-    public void setMotivo(String m) { this.reason = m; }
-    public String getMotivoRespuesta() { return responseReason; }
-    public void setMotivoRespuesta(String m) { this.responseReason = m; }
-    public String getEstado() { return status; }
-    public void setEstado(String e) { this.status = e; }
-    public Timestamp getFechaSolicitud() { return requestDate; }
-    public void setFechaSolicitud(Timestamp f) { this.requestDate = f; }
-    public Timestamp getFechaRespuesta() { return responseDate; }
-    public void setFechaRespuesta(Timestamp f) { this.responseDate = f; }
-    public String getSolicitanteNombres() { return requesterFirstName; }
-    public void setSolicitanteNombres(String s) { this.requesterFirstName = s; }
-    public String getSolicitanteApellidos() { return requesterLastName; }
-    public void setSolicitanteApellidos(String s) { this.requesterLastName = s; }
-    public String getAprobadorNombres() { return approverFirstName; }
-    public void setAprobadorNombres(String a) { this.approverFirstName = a; }
-    public String getAprobadorApellidos() { return approverLastName; }
-    public void setAprobadorApellidos(String a) { this.approverLastName = a; }
 }

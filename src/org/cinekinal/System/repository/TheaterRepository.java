@@ -28,13 +28,4 @@ public class TheaterRepository {
                 name, type, rows, columns);
         return created != null ? created.getIdTheater() : null;
     }
-
-    // Compatibility aliases
-    public List<Theater> obtenerTodas() {
-        return getAll();
-    }
-
-    public String crear(String nombreSala, String tipoSala, int filas, int columnas) {
-        return create(nombreSala, tipoSala, filas, columnas);
-    }
 }

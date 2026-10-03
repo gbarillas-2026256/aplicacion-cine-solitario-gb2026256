@@ -116,23 +116,4 @@ public class CashClosing {
                 + (employeeLastName != null ? employeeLastName : "").trim();
     }
 
-    // Compatibility
-    public String getIdCorte() { return idClosing; }
-    public void setIdCorte(String id) { this.idClosing = id; }
-    public Date getFechaCorte() { return closingDate; }
-    public void setFechaCorte(Date d) { this.closingDate = d; }
-    public BigDecimal getTotalEntradas() { return totalTickets; }
-    public void setTotalEntradas(BigDecimal t) { this.totalTickets = t; }
-    public int getBoletosVendidos() { return ticketsSold; }
-    public void setBoletosVendidos(int b) { this.ticketsSold = b; }
-    public BigDecimal getTotalDulceria() { return totalConcessions; }
-    public void setTotalDulceria(BigDecimal t) { this.totalConcessions = t; }
-    public BigDecimal getTotalGeneral() { return grandTotal; }
-    public void setTotalGeneral(BigDecimal t) { this.grandTotal = t; }
-    public String getObservaciones() { return notes; }
-    public void setObservaciones(String o) { this.notes = o; }
-    public Timestamp getFechaRegistro() { return createdAt; }
-    public void setFechaRegistro(Timestamp f) { this.createdAt = f; }
-    public String getEmpleadoNombreCompleto() { return getEmployeeFullName(); }
-    public String getEmpleadoPuesto() { return employeePosition; }
 }

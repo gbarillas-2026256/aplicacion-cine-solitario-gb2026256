@@ -53,11 +53,4 @@ public class MovieRepository {
         movie.setTrailerUrl(rs.getString("trailer_url"));
         return movie;
     }
-
-    // Compatibility aliases
-    public List<Movie> obtenerActivas() { return getActiveMovies(); }
-    public void crear(String t, String g, String c, int d, String s, String p, String tr) { create(t, g, c, d, s, p, tr); }
-    public void crear(String t, String g, String c, int d, String s) { create(t, g, c, d, s); }
-    public void desactivar(String id) { deactivate(id); }
-    public void editar(String id, String t, String g, String c, int d, String s, String p, String tr) { edit(id, t, g, c, d, s, p, tr); }
 }

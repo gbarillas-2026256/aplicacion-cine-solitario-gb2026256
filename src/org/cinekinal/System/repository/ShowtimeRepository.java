@@ -65,11 +65,4 @@ public class ShowtimeRepository {
         showtime.setBasePrice(rs.getBigDecimal("precio_base"));
         return showtime;
     }
-
-    // Compatibility aliases
-    public List<Showtime> obtenerCartelera() { return getBillboard(); }
-    public List<Showtime> obtenerCarteleraPorFecha(Date d) { return getBillboardByDate(d); }
-    public List<Showtime> buscarPorTitulo(String q) { return searchByTitle(q); }
-    public void crear(String m, String t, Date d, Time h, BigDecimal p) { create(m, t, d, h, p); }
-    public boolean actualizarPrecioBase(String id, BigDecimal p) { return updateBasePrice(id, p); }
 }

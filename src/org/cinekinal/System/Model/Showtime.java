@@ -156,25 +156,4 @@ public class Showtime {
         this.movieId = movieId;
     }
 
-    // Compatibility
-    public String getIdFuncion() { return idShowtime; }
-    public void setIdFuncion(String id) { this.idShowtime = id; }
-    public String getIdSala() { return theaterId; }
-    public void setIdSala(String id) { this.theaterId = id; }
-    public String getTituloPelicula() { return movieTitle; }
-    public void setTituloPelicula(String t) { this.movieTitle = t; }
-    public String getNombreSala() { return theaterName; }
-    public void setNombreSala(String n) { this.theaterName = n; }
-    public String getTipoSala() { return theaterType; }
-    public void setTipoSala(String t) { this.theaterType = t; }
-    public Date getFecha() { return showDate; }
-    public void setFecha(Date f) { this.showDate = f; }
-    public Time getHora() { return showTime; }
-    public void setHora(Time h) { this.showTime = h; }
-    public String getGenero() { return genre; }
-    public void setGenero(String g) { this.genre = g; }
-    public String getClasificacion() { return rating; }
-    public void setClasificacion(String c) { this.rating = c; }
-    public String getSinopsis() { return synopsis; }
-    public void setSinopsis(String s) { this.synopsis = s; }
 }

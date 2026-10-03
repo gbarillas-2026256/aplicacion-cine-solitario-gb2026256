@@ -49,9 +49,4 @@ public class Seat {
         return row + number;
     }
 
-    // Compatibility
-    public String getIdAsiento() { return idSeat; }
-    public String getFila() { return row; }
-    public int getNumero() { return number; }
-    public String getEtiqueta() { return getLabel(); }
 }

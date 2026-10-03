@@ -239,7 +239,7 @@ public class ManageUsersController implements Initializable {
 
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("GESTIÓN DE EMPLEADO");
-        dialog.setHeaderText("Gestión de Colaborador: " + seleccionado.getNombreCompleto());
+        dialog.setHeaderText("Gestión de Colaborador: " + seleccionado.getFullName());
         aplicarEstiloDialogo(dialog);
 
         VBox content = new VBox(14);
@@ -248,11 +248,11 @@ public class ManageUsersController implements Initializable {
         // Tarjeta resumen del empleado
         VBox cardInfo = new VBox(5);
         cardInfo.setStyle("-fx-background-color: #202226; -fx-padding: 12; -fx-border-color: #33352E; -fx-border-width: 1; -fx-border-radius: 2;");
-        Label lblInfo1 = new Label("👤 NOMBRE: " + seleccionado.getNombreCompleto());
+        Label lblInfo1 = new Label("👤 NOMBRE: " + seleccionado.getFullName());
         lblInfo1.setStyle("-fx-text-fill: #FF6A13; -fx-font-weight: bold; -fx-font-size: 13px;");
-        Label lblInfo2 = new Label("USUARIO: " + seleccionado.getUsuario() + "   ·   ROL / PUESTO: " + seleccionado.getNombrePuesto());
+        Label lblInfo2 = new Label("USUARIO: " + seleccionado.getUsername() + "   ·   ROL / PUESTO: " + seleccionado.getPositionName());
         lblInfo2.setStyle("-fx-text-fill: #ECEDE9; -fx-font-size: 12px;");
-        Label lblInfo3 = new Label("CORREO: " + seleccionado.getCorreo());
+        Label lblInfo3 = new Label("CORREO: " + seleccionado.getEmail());
         lblInfo3.setStyle("-fx-text-fill: #9AA095; -fx-font-size: 11.5px;");
         cardInfo.getChildren().addAll(lblInfo1, lblInfo2, lblInfo3);
 
@@ -304,7 +304,7 @@ public class ManageUsersController implements Initializable {
     private void abrirDialogoEditar(Employee emp) {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.setTitle("EDITAR EMPLEADO");
-        dialog.setHeaderText("Modificar Datos: " + emp.getNombreCompleto());
+        dialog.setHeaderText("Modificar Datos: " + emp.getFullName());
         aplicarEstiloDialogo(dialog);
 
         ButtonType btnGuardar = new ButtonType("GUARDAR CAMBIOS", ButtonData.OK_DONE);
@@ -316,22 +316,22 @@ public class ManageUsersController implements Initializable {
         grid.setVgap(10);
         grid.setPadding(new Insets(16, 20, 16, 20));
 
-        TextField txtName = new TextField(emp.getNombres());
+        TextField txtName = new TextField(emp.getFirstName());
         txtName.getStyleClass().add("eva-field");
 
-        TextField txtLastName = new TextField(emp.getApellidos());
+        TextField txtLastName = new TextField(emp.getLastName());
         txtLastName.getStyleClass().add("eva-field");
 
-        TextField txtEmail = new TextField(emp.getCorreo());
+        TextField txtEmail = new TextField(emp.getEmail());
         txtEmail.getStyleClass().add("eva-field");
 
         ComboBox<String> cmbPuesto = new ComboBox<>(FXCollections.observableArrayList("Dueño", "Gerente", "Encargado", "Empleado"));
-        cmbPuesto.setValue(emp.getNombrePuesto());
+        cmbPuesto.setValue(emp.getPositionName());
         cmbPuesto.setMaxWidth(Double.MAX_VALUE);
         cmbPuesto.getStyleClass().add("eva-field");
 
         // Si es el Dueño principal, protegemos el cambio de rol a menor rango accidental
-        if (emp.getNivelJerarquico() == 1) {
+        if (emp.getHierarchyLevel() == 1) {
             cmbPuesto.setDisable(true);
         }
 
@@ -470,7 +470,7 @@ public class ManageUsersController implements Initializable {
     private void procederDarDeBaja(Employee seleccionado) {
         // Evitar que el Dueño se desactive a sí mismo
         Employee actual = Session.getCurrentEmployee();
-        if (actual != null && actual.getIdEmpleado().equals(seleccionado.getIdEmpleado())) {
+        if (actual != null && actual.getIdEmployee().equals(seleccionado.getIdEmployee())) {
             alertInfo.viewAlert("WARNING", "ACCIÓN NO PERMITIDA",
                     "NO PUEDES DARTE DE BAJA A TI MISMO",
                     "La cuenta del Dueño principal no puede ser desactivada desde este módulo.");
@@ -480,8 +480,8 @@ public class ManageUsersController implements Initializable {
         Alert confirmacion = new Alert(AlertType.CONFIRMATION);
         confirmacion.setTitle("CONFIRMAR BAJA");
         confirmacion.setHeaderText("DAR DE BAJA EMPLEADO");
-        confirmacion.setContentText("¿Seguro que deseas dar de baja a \"" + seleccionado.getNombreCompleto()
-                + "\" (" + seleccionado.getNombrePuesto() + ")?");
+        confirmacion.setContentText("¿Seguro que deseas dar de baja a \"" + seleccionado.getFullName()
+                + "\" (" + seleccionado.getPositionName() + ")?");
         aplicarEstiloDialogo(confirmacion);
 
         Optional<ButtonType> respuesta = confirmacion.showAndWait();

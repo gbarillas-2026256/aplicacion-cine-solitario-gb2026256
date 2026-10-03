@@ -17,9 +17,8 @@ public class CashClosingRepository {
             this.totalTickets = totalTickets != null ? totalTickets : BigDecimal.ZERO;
         }
 
-        // Compatibility getters
-        public int getBoletosVendidos() { return ticketsSold; }
-        public BigDecimal getTotalEntradas() { return totalTickets; }
+        public int getTicketsSold() { return ticketsSold; }
+        public BigDecimal getTotalTickets() { return totalTickets; }
     }
 
     public static class TicketsPerMovie {
@@ -36,10 +35,6 @@ public class CashClosingRepository {
         public String getTitle() { return title; }
         public int getTicketsSold() { return ticketsSold; }
         public BigDecimal getTotal() { return total; }
-
-        // Compatibility
-        public String getTitulo() { return title; }
-        public int getBoletosVendidos() { return ticketsSold; }
     }
 
     public DailyTicketsSummary getDailyTicketsSummary(Date date) {
@@ -99,13 +94,4 @@ public class CashClosingRepository {
             return detail;
         }, idClosing);
     }
-
-    // Compatibility aliases
-    public DailyTicketsSummary obtenerEntradasDelDia(Date f) { return getDailyTicketsSummary(f); }
-    public List<TicketsPerMovie> obtenerEntradasPorPelicula(Date f) { return getTicketsPerMovie(f); }
-    public boolean yaExisteCorte(String e, Date f) { return closingExistsToday(e, f); }
-    public String crear(String e, Date f, BigDecimal t, int b, String o) { return create(e, f, t, b, o); }
-    public void agregarDetalle(String id, CashClosingDetail d) { addDetail(id, d); }
-    public List<CashClosing> obtenerPorFecha(Date i, Date f) { return getByDateRange(i, f); }
-    public List<CashClosingDetail> obtenerDetalles(String id) { return getDetails(id); }
 }

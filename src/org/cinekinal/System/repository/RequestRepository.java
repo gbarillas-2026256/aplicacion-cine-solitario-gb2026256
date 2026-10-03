@@ -46,10 +46,4 @@ public class RequestRepository {
         s.setApproverLastName(rs.getString("aprobador_apellidos"));
         return s;
     }
-
-    // Compatibility aliases
-    public void crear(String r, String a, String m) { create(r, a, m); }
-    public void responder(String req, String app, String st, String res) { respond(req, app, st, res); }
-    public List<Request> obtenerPendientes() { return getPending(); }
-    public List<Request> obtenerPorEmpleado(String id) { return getByEmployee(id); }
 }

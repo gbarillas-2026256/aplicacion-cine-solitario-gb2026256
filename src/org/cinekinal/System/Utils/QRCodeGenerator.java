@@ -27,14 +27,14 @@ public class QRCodeGenerator {
     }
 
     /**
-     * Genera un código QR a partir de un texto arbitrario y lo convierte en una imagen de JavaFX.
+     * Generates a QR code image from arbitrary text content using ZXing.
      *
-     * @param contenido Texto a codificar en el QR.
-     * @param tamano    Ancho y alto en píxeles de la imagen resultante.
-     * @return Una instancia de {@link Image} con el QR generado, o {@code null} si ocurre algún fallo.
+     * @param content Text to encode in the QR code.
+     * @param size    Width and height in pixels of the resulting image.
+     * @return An {@link Image} instance with the generated QR, or {@code null} on failure.
      */
-    public static Image generar(String contenido, int tamano) {
-        if (contenido == null || contenido.isBlank() || tamano <= 0) {
+    public static Image generate(String content, int size) {
+        if (content == null || content.isBlank() || size <= 0) {
             return null;
         }
 
@@ -46,7 +46,7 @@ public class QRCodeGenerator {
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
             hints.put(EncodeHintType.MARGIN, 1);
 
-            BitMatrix matrix = writer.encode(contenido, BarcodeFormat.QR_CODE, tamano, tamano, hints);
+            BitMatrix matrix = writer.encode(content, BarcodeFormat.QR_CODE, size, size, hints);
 
             int width = matrix.getWidth();
             int height = matrix.getHeight();
@@ -66,5 +66,9 @@ public class QRCodeGenerator {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static Image generar(String contenido, int tamano) {
+        return generate(contenido, tamano);
     }
 }
