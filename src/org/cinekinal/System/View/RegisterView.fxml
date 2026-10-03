@@ -31,9 +31,9 @@
                         <Insets bottom="20.0" left="26.0" right="26.0" top="20.0" />
                      </padding>
                      <children>
-                        <ImageView fitHeight="260.0" fitWidth="260.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="335.0" fitWidth="264.0">
                            <image>
-                              <Image url="@../resources/imagenes/eva/register_side_rei.png" />
+                              <Image url="@../resources/imagenes/eva/cine_kinal_logo.png" />
                            </image>
                         </ImageView>
                         <Label styleClass="panel-decorativo-titulo" text="NUEVA CUENTA" />
