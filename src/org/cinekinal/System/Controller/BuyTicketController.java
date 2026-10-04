@@ -1,9 +1,7 @@
 package org.cinekinal.system.controller;
 
-import java.awt.Desktop;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -50,7 +48,9 @@ import org.cinekinal.system.service.TicketService;
 import org.cinekinal.system.utils.AlertInformation;
 import org.cinekinal.system.utils.QRCodeGenerator;
 import org.cinekinal.system.utils.Session;
+import org.cinekinal.system.utils.TrailerPlayer;
 import org.cinekinal.system.utils.ViewFactory;
+import java.net.URI;
 
 public class BuyTicketController implements Initializable {
 
@@ -311,19 +311,7 @@ public class BuyTicketController implements Initializable {
     @FXML
     public void onWatchTrailer(MouseEvent event) {
         if (selectedShowtime != null && selectedShowtime.getTrailerUrl() != null) {
-            openWebLink(selectedShowtime.getTrailerUrl());
-        }
-    }
-
-    private void openWebLink(String url) {
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(new URI(url));
-            } else {
-                Runtime.getRuntime().exec(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
-            }
-        } catch (Exception e) {
-            alertInfo.viewAlert("WARNING", "TRÁILER", "Enlace del tráiler:", url);
+            TrailerPlayer.play(selectedShowtime.getTrailerUrl());
         }
     }
 

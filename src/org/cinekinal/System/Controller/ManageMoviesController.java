@@ -1,8 +1,10 @@
 package org.cinekinal.system.controller;
 
-import java.awt.Desktop;
-import java.net.URI;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -27,9 +29,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.stage.FileChooser;
 import org.cinekinal.system.model.Movie;
 import org.cinekinal.system.repository.MovieRepository;
 import org.cinekinal.system.utils.AlertInformation;
+import org.cinekinal.system.utils.TrailerPlayer;
 import org.cinekinal.system.utils.Validations;
 import org.cinekinal.system.utils.ViewFactory;
 
@@ -173,8 +179,10 @@ public class ManageMoviesController implements Initializable {
         txtPoster.getStyleClass().add("eva-field");
 
         TextField txtTrailer = new TextField();
-        txtTrailer.setPromptText("https://www.youtube.com/watch?v=...");
+        txtTrailer.setPromptText("(ningún archivo elegido)");
+        txtTrailer.setEditable(false);
         txtTrailer.getStyleClass().add("eva-field");
+        HBox trailerPicker = buildTrailerPicker(txtTrailer);
 
         grid.add(createLabel("TÍTULO:"), 0, 0);
         grid.add(txtTitle, 1, 0);
@@ -194,8 +202,8 @@ public class ManageMoviesController implements Initializable {
         grid.add(createLabel("URL PÓSTER:"), 0, 5);
         grid.add(txtPoster, 1, 5);
 
-        grid.add(createLabel("URL TRÁILER:"), 0, 6);
-        grid.add(txtTrailer, 1, 6);
+        grid.add(createLabel("TRÁILER (ARCHIVO):"), 0, 6);
+        grid.add(trailerPicker, 1, 6);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -274,7 +282,9 @@ public class ManageMoviesController implements Initializable {
         txtPoster.getStyleClass().add("eva-field");
 
         TextField txtTrailer = new TextField(selected.getTrailerUrl() != null ? selected.getTrailerUrl() : "");
+        txtTrailer.setEditable(false);
         txtTrailer.getStyleClass().add("eva-field");
+        HBox trailerPicker = buildTrailerPicker(txtTrailer);
 
         grid.add(createLabel("TÍTULO:"), 0, 0);
         grid.add(txtTitle, 1, 0);
@@ -294,8 +304,8 @@ public class ManageMoviesController implements Initializable {
         grid.add(createLabel("URL PÓSTER:"), 0, 5);
         grid.add(txtPoster, 1, 5);
 
-        grid.add(createLabel("URL TRÁILER:"), 0, 6);
-        grid.add(txtTrailer, 1, 6);
+        grid.add(createLabel("TRÁILER (ARCHIVO):"), 0, 6);
+        grid.add(trailerPicker, 1, 6);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -353,17 +363,39 @@ public class ManageMoviesController implements Initializable {
         if (movie == null || movie.getTrailerUrl() == null || movie.getTrailerUrl().trim().isEmpty()) {
             return;
         }
+        TrailerPlayer.play(movie.getTrailerUrl().trim());
+    }
 
-        try {
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                Desktop.getDesktop().browse(new URI(movie.getTrailerUrl().trim()));
-            } else {
-                new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", movie.getTrailerUrl().trim()).start();
+    /**
+     * Builds a "pick a local trailer file" control: a read-only field showing
+     * the stored path plus a button that opens a FileChooser, copies the
+     * chosen video into the trailers/ folder next to the app, and writes the
+     * resulting path into the field.
+     */
+    private HBox buildTrailerPicker(TextField txtTrailer) {
+        Button btnChoose = new Button("ELEGIR...");
+        btnChoose.getStyleClass().add("eva-button-ghost");
+        btnChoose.setOnAction(e -> {
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Elegir video del tráiler");
+            chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Video MP4", "*.mp4"));
+            File chosen = chooser.showOpenDialog(btnChoose.getScene().getWindow());
+            if (chosen == null) {
+                return;
             }
-        } catch (Exception e) {
-            alertInfo.viewAlert("ERROR", "ERROR AL ABRIR TRÁILER", "FALLO DE NAVEGADOR",
-                    "No se pudo abrir el navegador web: " + e.getMessage());
-        }
+            try {
+                File trailersDir = new File("trailers");
+                trailersDir.mkdirs();
+                File dest = new File(trailersDir, chosen.getName());
+                Files.copy(chosen.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                txtTrailer.setText(dest.getPath());
+            } catch (IOException ex) {
+                alertInfo.viewAlert("ERROR", "NO SE PUDO COPIAR EL ARCHIVO", "ERROR AL GUARDAR", ex.getMessage());
+            }
+        });
+        HBox box = new HBox(8, txtTrailer, btnChoose);
+        HBox.setHgrow(txtTrailer, Priority.ALWAYS);
+        return box;
     }
 
     @FXML
